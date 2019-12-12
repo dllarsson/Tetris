@@ -1,0 +1,7 @@
+#gameContainer{
+    display: inline-flex;
+}
+#counter{
+    font-size: 75px;
+    padding: 20px;
+}
