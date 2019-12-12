@@ -1,7 +1,13 @@
+$(document).ready(function(){
+    window.addEventListener("keydown", KeyPressed, false);
+    
+});
+
+
+
 localStorage.setItem("x", 0);
 localStorage.setItem("y", 0);
 localStorage.setItem("tick", 0);
-var counter = 0;
 function PaintGameBoard(){
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
@@ -19,19 +25,18 @@ function PaintGameBoard(){
         }
         x += 35;
     }
-   
-
-
-    
 }
 
-function PaintSymbol(x,y){
+function PaintSymbol(x, y, rotation){
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
     
-    // ctx.translate(x, y);
-    // ctx.rotate((Math.PI / 180) * 90);
-    // ctx.translate(-x , -y -35);
+    if (rotation == 1){
+       ctx.translate(x, y);
+       ctx.rotate((Math.PI / 180) * 270);
+       ctx.translate(-x , -y -35);
+    }
+
     ctx.clearRect(0,0, canvas.clientWidth, canvas.height);
     PaintGameBoard();
     ctx.beginPath();  // T-block 
@@ -45,6 +50,7 @@ function PaintSymbol(x,y){
     ctx.lineTo(x, y + 35);
     ctx.closePath();
     ctx.fillStyle = "red";
+
     ctx.fill();
     
 }
@@ -52,27 +58,72 @@ function PaintSymbol(x,y){
 
 function UpdateGameBoard(){
     
-    var x = localStorage.getItem("x");
+    var x = Number(localStorage.getItem("x"));
     var y = localStorage.getItem("y");
     var tick = localStorage.getItem("tick");
     y = tick * 35;
     PaintSymbol(x,y)
     
     tick++;
-    localStorage.setItem("x", x);
     localStorage.setItem("y", y);
     localStorage.setItem("tick", tick);
 }
 
-
-function Play(){
-
-    setInterval(function(){ 
-        counter++;
-        document.getElementById("counter").textContent = counter;
+function Reset(){
+    localStorage.clear();
+}
+function Play(stop){
+        var refreshintervalID = setInterval(function(){ 
+        $("#counter").text(localStorage.getItem("tick"));
         UpdateGameBoard();
         
-    }, 1000);
+    }, 750);
+    if (stop == 1){
+        clearInterval(refreshintervalID);
+        localStorage.clear();
+    }
 }
-PaintGameBoard();
-Play();
+
+
+
+function KeyPressed(e){
+    var keyCode = e.keyCode;
+    if(keyCode == 37){      // Left key
+        Move(37);
+    }
+    else if(keyCode == 38){     // Up key
+        Move(38);
+    }
+    else if(keyCode == 39){     // Right key
+        Move(39);
+    }
+    else if(keyCode == 90){     // Down key
+        Move(90);
+    }
+};
+function Move(direction){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    if (direction == 39){       // Move Right
+        x = x + 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+    }
+    else if(direction == 37){       // Move Left
+        x = x - 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+    }
+    else if(direction == 37){       // Move Left
+        x = x - 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+    }
+    else if(direction == 90){       // Rotate counter clockwise
+        
+        
+        PaintSymbol(x, y, 1);
+    }
+}
+
+
