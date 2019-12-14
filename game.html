@@ -9,10 +9,11 @@
         <div class="header">
             <h1>Welcome to tetris game</h1>
         </div>
+        <button onclick="enableOrDisableTwoPlayers()" id="playerMode">Två spelare</button>
         <div id="gameContainer">
             <canvas id="game" height="700px" width="350px" style="border: 2px solid black"></canvas>
             <div>
-                <p id="counter">0</p>
+                <p id="counter" class="counter">0</p>
                 <button onclick="Play();">Play</button>
 
                 <button onclick="Play(1);">Reset</button>
