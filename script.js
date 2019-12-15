@@ -1,5 +1,9 @@
 $(document).ready(function(){
     window.addEventListener("keydown", KeyPressed, false);
+    document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
+    document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
+    document.getElementById("rotationArrow").addEventListener("touchstart", rotationMove, false);
+
     
 });
 
@@ -125,5 +129,23 @@ function Move(direction){
         PaintSymbol(x, y, 1);
     }
 }
-
+function leftMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x - 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function rightMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x + 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function rotationMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    PaintSymbol(x, y, 1);
+}
 
