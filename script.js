@@ -8,6 +8,7 @@ $(document).ready(function(){
 });
 var x = 0;
 var y = 0;
+var symbol;
 
 var colors=["blue","#03f8fc","green","orange","#b503fc","red","yellow"];
 let makePiece=function(type){
@@ -97,7 +98,11 @@ function PaintGameBoard(){
 }
 
 var getSymbol = randomizeSymbol();
+<<<<<<< HEAD
 var symbol = getSymbol;
+=======
+symbol = getSymbol;
+>>>>>>> 9300e55fb9c93885110f11217e724f22f962b9c8
 function randomizeSymbol(){
     var symbols = ["t","o,","l","j","s","z","i"];
     return symbols[Math.floor(Math.random() * 8)]
@@ -106,16 +111,29 @@ function randomizeSymbol(){
 
 function PaintSymbol(x,y,s, direction){
     var piece = makePiece(s);
+<<<<<<< HEAD
     if (direction == 39){
         x++;
     }
     if (direction == 37){
         x--;
     }
+=======
+    var length = 0;
+    var falseMove;
+>>>>>>> 9300e55fb9c93885110f11217e724f22f962b9c8
     for (let i = 0; i < piece.length; i++) {
+
         for (let j = 0; j < piece.length; j++) {
+<<<<<<< HEAD
            
             Board[x + j][y + i] = piece[i][j];
+=======
+            if(x<0 && x >9 && y> 19) falseMove = true;
+            if (falseMove == false){
+                Board[x + j][y + i] = piece[i][j];
+            }
+>>>>>>> 9300e55fb9c93885110f11217e724f22f962b9c8
         }
         
     }
@@ -140,6 +158,10 @@ function PaintSymbol(x,y,s, direction){
 function UpdateGameBoard(){
     
     var tick = localStorage.getItem("tick");
+<<<<<<< HEAD
+=======
+    PaintSymbol(x,y,symbol);
+>>>>>>> 9300e55fb9c93885110f11217e724f22f962b9c8
     
     tick++;
     y++;
