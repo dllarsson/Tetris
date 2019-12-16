@@ -6,13 +6,10 @@ $(document).ready(function(){
 
     MakeGameBoard();
 });
-<<<<<<< HEAD
 var x = 0;
 var y = 0;
-=======
 
 var colors=["blue","#03f8fc","green","orange","#b503fc","red","yellow"];
->>>>>>> f57869b161fbe168b21b5c137870d5931fe7706e
 let makePiece=function(type){
     if(type==="t"){
         return [
