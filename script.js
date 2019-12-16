@@ -4,8 +4,10 @@ $(document).ready(function(){
     document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
     document.getElementById("rotationArrow").addEventListener("touchstart", RotationMove, false);
 
-    
+    MakeGameBoard();
 });
+var x = 0;
+var y = 0;
 let makePiece=function(type){
     if(type==="t"){
         return [
@@ -58,7 +60,7 @@ let makePiece=function(type){
     }
 };
 
-var Board = MakeGameBoard();
+var Board = [];
 function MakeGameBoard(){
     var gameBoard = [];
     for (let i = 0; i < 10; i++) {
@@ -68,9 +70,8 @@ function MakeGameBoard(){
         }
         gameBoard.push(tempArr);
     }
-    return gameBoard;
+    Board = gameBoard;
 }
-PaintSymbol(5,10,"z");
 localStorage.setItem("x", 0);
 localStorage.setItem("y", 0);
 localStorage.setItem("tick", 0);
@@ -93,6 +94,13 @@ function PaintGameBoard(){
     }
 }
 
+var getSymbol = randomizeSymbol();
+localStorage.setItem("currentSymbol", getSymbol);
+function randomizeSymbol(){
+    var symbols = ["t","o,","l","j","s","z","i"];
+    return symbols[Math.floor(Math.random() * 8)]
+}
+
 
 function PaintSymbol(x,y,s){
     var piece = makePiece(s);
@@ -104,33 +112,27 @@ function PaintSymbol(x,y,s){
     }
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
-    var countI = 0;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     for (let i = 0; i < 10; i++) {
-        var countJ = 0;
         for (let j = 0; j < 20; j++) {
             if (Board[i][j] != 0){
                 ctx.fillStyle = 'red';
-                ctx.fillRect(countI * 35, countJ*35, 35,35);
+                ctx.fillRect(i * 35, j*35, 35,35);
             }
-            countJ++;
         }
-        countI++;
     }
-    
+    MakeGameBoard();
 }
 
 
 
 function UpdateGameBoard(){
     
-    var x = Number(localStorage.getItem("x"));
-    var y = localStorage.getItem("y");
     var tick = localStorage.getItem("tick");
-    y = tick * 35;
-    PaintSymbol(x,y)
+    PaintSymbol(x,y,localStorage.getItem("currentSymbol"));
     
     tick++;
-    localStorage.setItem("y", y);
+    y++;
     localStorage.setItem("tick", tick);
 }
 
@@ -145,7 +147,7 @@ function Play(stop){
     }, 750);
     if (stop == 1){
         clearInterval(refreshintervalID);
-        localStorage.clear();
+       y = 0;
     }
 }
 
