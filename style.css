@@ -1,5 +1,11 @@
 #gameContainer{
-    display: inline-flex;
+    display:inline-flex;
+    padding-top:0;
+}
+
+div{
+    margin-right:5px;
+    margin-left:5px;
 }
 .counter{
     font-size: 75px;
