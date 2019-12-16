@@ -126,17 +126,19 @@ function PaintSymbol(x, y, s, direction) {
         var tempArr = piece[l - 1];
         for (let c = 0; c < l; c++) {
 
-            if (tempArr[c] != 0 || indexOfLast == 0) {
+            if (tempArr[c] != 0 && indexOfLast == 0) {
                 indexOfLast = l;
+                break;
             }
           
 
         }
+        if (indexOfLast != 0) break;
     }
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x < 0 || x > 9 || y > 19 || x || y + indexOfLast == 20) {
+            if (x < 0 || x > 9 || y > 19 || x || y + indexOfLast > 20) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
