@@ -98,22 +98,27 @@ function PaintGameBoard() {
 }
 
 var getSymbol = randomizeSymbol();
+
 symbol = getSymbol;
 function randomizeSymbol() {
     var symbols = ["t", "o", "l", "j", "s", "z", "i"];
+
     return symbols[Math.floor(Math.random() * 8)]
 }
 
 
 function PaintSymbol(x, y, s, direction) {
     var piece = makePiece(s);
-    if (direction == 39) {
+
+    if (direction == 39){
+
         x++;
     }
     if (direction == 37) {
         x--;
     }
     var length = 0;
+
     var falseMove = false;
     var indexOfLast = 0;
     for (let l = piece.length; l >= 0; l--) {
@@ -125,6 +130,7 @@ function PaintSymbol(x, y, s, direction) {
                 indexOfLast = l;
             }
           
+
         }
     }
     for (let i = 0; i < piece.length; i++) {
@@ -171,7 +177,9 @@ function PaintSymbol(x, y, s, direction) {
 function UpdateGameBoard() {
 
     var tick = localStorage.getItem("tick");
-    PaintSymbol(x, y, symbol);
+
+    PaintSymbol(x,y,symbol);
+    
 
     tick++;
     y++;
