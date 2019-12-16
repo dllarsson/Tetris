@@ -1,9 +1,10 @@
-var twoPlayersEnabled = false;
-var gameOneStarted = false;
-
-$(document).ready(function () {
+$(document).ready(function(){
     window.addEventListener("keydown", KeyPressed, false);
-    PaintGameBoard();
+    document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
+    document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
+    document.getElementById("rotationArrow").addEventListener("touchstart", RotationMove, false);
+
+    MakeGameBoard();
 });
 var x = 0;
 var y = 0;
@@ -64,43 +65,32 @@ let makePiece=function(type){
     }
 };
 
-function enableOrDisableTwoPlayers() {
-    if (!twoPlayersEnabled) {
-        twoPlayersEnabled = true;
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = "twoPlayers.js";
-        s.id = "twoPlayerScript";
-        console.log(s);
-        $("#playerMode").text("En spelare");
-        $("head").append(s);
+var Board = [];
+function MakeGameBoard(){
+    var gameBoard = [];
+    for (let i = 0; i < 10; i++) {
+        var tempArr = [];
+        for (let j = 0; j < 20; j++) {
+            tempArr[j] = 0;
+        }
+        gameBoard.push(tempArr);
     }
-
-    else {
-        twoPlayersEnabled = false;
-        $("#twoPlayerScript").remove();
-        
-        $("#playerMode").text("Två spelare");
-        location.reload();
-    }
-
+    Board = gameBoard;
 }
-
-
 localStorage.setItem("x", 0);
 localStorage.setItem("y", 0);
 localStorage.setItem("tick", 0);
-function PaintGameBoard() {
+function PaintGameBoard(){
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
 
     var x = 0;
     var y = 0;
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++){
         if (i % 2 == 0) y = 0;
         else y = 35;
-        for (var j = 0; j < 20; j++) {
+        for(var j = 0; j < 20; j++){
             ctx.fillStyle = "#f0f0f0";
             ctx.fillRect(x, y, 35, 35);
             y += 70;
@@ -147,6 +137,8 @@ function PaintSymbol(x,y,s){
             }
         }
     }
+    MakeGameBoard();
+}
 
 function paintNextPieceOne(){
     var piece=makePiece(nextSymbols[1]);
@@ -207,81 +199,97 @@ else{
 }
 }
 
-}
 
-
-function UpdateGameBoard() {
-
-    var x = Number(localStorage.getItem("x"));
-    var y = localStorage.getItem("y");
+function UpdateGameBoard(){
+    
     var tick = localStorage.getItem("tick");
     var nextSymbol = nextSymbols[0];
     PaintSymbol(x,y,nextSymbol);
     
     tick++;
-    localStorage.setItem("y", y);
+    y++;
     localStorage.setItem("tick", tick);
 }
 
-function Reset() {
+function Reset(){
     localStorage.clear();
 }
-function Play(stop) {
-    var refreshintervalID = setInterval(function () {
+function Play(stop){
+        var refreshintervalID = setInterval(function(){ 
         $("#counter").text(localStorage.getItem("tick"));
         generateNextThreePieces();
         paintNextPieceOne();
         paintNextPieceTwo();
         UpdateGameBoard();
-
+        
     }, 750);
-    if (stop == 1) {
+    if (stop == 1){
         clearInterval(refreshintervalID);
-        gameOneStarted = false;
-        localStorage.clear();
+       y = 0;
     }
 }
 
 
 
-function KeyPressed(e) {
+
+function KeyPressed(e){
     var keyCode = e.keyCode;
-    if (keyCode == 37 && gameOneStarted) {      // Left key
+    if(keyCode == 37){      // Left key
         Move(37);
     }
-    else if (keyCode == 38 && gameOneStarted) {     // Up key
+    else if(keyCode == 38){     // Up key
         Move(38);
     }
-    else if (keyCode == 39 && gameOneStarted) {     // Right key
+    else if(keyCode == 39){     // Right key
         Move(39);
     }
-    else if (keyCode == 90 && gameOneStarted) {     // Down key
+    else if(keyCode == 90){     // Down key
         Move(90);
     }
 };
-function Move(direction) {
+function Move(direction){
     var x = Number(localStorage.getItem("x"));
     var y = Number(localStorage.getItem("y"));
-    if (direction == 39) {       // Move Right
+    if (direction == 39){       // Move Right
         x = x + 35;
         localStorage.setItem("x", x);
         PaintSymbol(x, y);
     }
-    else if (direction == 37) {       // Move Left
+    else if(direction == 37){       // Move Left
         x = x - 35;
         localStorage.setItem("x", x);
         PaintSymbol(x, y);
     }
-    else if (direction == 37) {       // Move Left
+    else if(direction == 37){       // Move Left
         x = x - 35;
         localStorage.setItem("x", x);
         PaintSymbol(x, y);
     }
-    else if (direction == 90) {       // Rotate counter clockwise
-
-
+    else if(direction == 90){       // Rotate counter clockwise
+        
+        
         PaintSymbol(x, y, 1);
     }
 }
+function LeftMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x - 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function RightMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x + 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function RotationMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    PaintSymbol(x, y, 1);
+}
+
 
 
