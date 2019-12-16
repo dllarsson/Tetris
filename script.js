@@ -97,17 +97,24 @@ function PaintGameBoard(){
 }
 
 var getSymbol = randomizeSymbol();
-localStorage.setItem("currentSymbol", getSymbol);
+var symbol = getSymbol;
 function randomizeSymbol(){
     var symbols = ["t","o,","l","j","s","z","i"];
     return symbols[Math.floor(Math.random() * 8)]
 }
 
 
-function PaintSymbol(x,y,s){
+function PaintSymbol(x,y,s, direction){
     var piece = makePiece(s);
+    if (direction == 39){
+        x++;
+    }
+    if (direction == 37){
+        x--;
+    }
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
+           
             Board[x + j][y + i] = piece[i][j];
         }
         
@@ -133,7 +140,6 @@ function PaintSymbol(x,y,s){
 function UpdateGameBoard(){
     
     var tick = localStorage.getItem("tick");
-    PaintSymbol(x,y,localStorage.getItem("currentSymbol"));
     
     tick++;
     y++;
@@ -174,22 +180,19 @@ function KeyPressed(e){
     }
 };
 function Move(direction){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
     if (direction == 39){       // Move Right
-        x = x + 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
+        // localStorage.setItem("x", x);
+        PaintSymbol(x, y, symbol, direction);
     }
     else if(direction == 37){       // Move Left
-        x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
+        // x = x - 35;
+        // localStorage.setItem("x", x);
+        PaintSymbol(x, y, symbol, direction);
     }
     else if(direction == 37){       // Move Left
-        x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
+        // x = x - 35;
+        // localStorage.setItem("x", x);
+        PaintSymbol(x, y, symbol, direction);
     }
     else if(direction == 90){       // Rotate counter clockwise
         
@@ -198,23 +201,23 @@ function Move(direction){
     }
 }
 function LeftMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
+    // var x = Number(localStorage.getItem("x"));
+    // var y = Number(localStorage.getItem("y"));
+    // x = x - 35;
+    //     localStorage.setItem("x", x);
+        PaintSymbol(x, y, symbol, 37);
 };
 function RightMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    x = x + 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
+    // var x = Number(localStorage.getItem("x"));
+    // var y = Number(localStorage.getItem("y"));
+    // x = x + 35;
+    //     localStorage.setItem("x", x);
+        PaintSymbol(x, y, symbol, 39);
 };
 function RotationMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    PaintSymbol(x, y, 1);
+    // var x = Number(localStorage.getItem("x"));
+    // var y = Number(localStorage.getItem("y"));
+    // PaintSymbol(x, y, 1);
 }
 
 
