@@ -108,29 +108,47 @@ function randomizeSymbol(){
 function PaintSymbol(x,y,s){
     var piece = makePiece(s);
     var length = 0;
-    var falseMove;
+    var falseMove = false;
+    var indexOfLast = 0;
+    for (let l = piece.length - 1; l < piece.length; l--) {
+          
+            var tempArr = piece[piece.length -1];   
+            for (let c = 0; c < piece.length - 1; c++) {
+              
+                if (tempArr[c] != 0) {
+                    indexOfLast = l;
+                    break;
+                }
+            }  
+            break;
+    }
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if(x<0 && x >9 && y> 19) falseMove = true;
+            if(x<0 || x >9 ||y> 19 || x || y +  indexOfLast >= 19) {
+                falseMove = true;
+            }
             if (falseMove == false){
                 Board[x + j][y + i] = piece[i][j];
             }
         }
         
     }
-    var canvas = document.getElementById("game");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 20; j++) {
-            if (Board[i][j] != 0){
-                console.log(Board[i][j]-1)
-                ctx.fillStyle = colors[Board[i][j]-1];
-                ctx.fillRect(i * 35, j*35, 35,35);
+    if (falseMove != true){
+        var canvas = document.getElementById("game");
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 20; j++) {
+                if (Board[i][j] != 0){
+                    console.log(Board[i][j]-1)
+                    ctx.fillStyle = colors[Board[i][j]-1];
+                    ctx.fillRect(i * 35, j*35, 35,35);
+                }
             }
         }
     }
+
     MakeGameBoard();
 }
 
