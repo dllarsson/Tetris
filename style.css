@@ -5,3 +5,16 @@
     font-size: 75px;
     padding: 20px;
 }
+#touchCtrl{
+    display: inline-flex;
+}
+#leftArrow, #rightArrow, #rotationArrow{
+    opacity: 0.2;
+    box-sizing: border-box;
+    padding: none;
+}
+#leftArrow img, #rightArrow img, #rotationArrow img{
+    width: auto;
+    height: auto;
+    max-width: 60px;
+}

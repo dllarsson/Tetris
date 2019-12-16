@@ -1,5 +1,9 @@
 $(document).ready(function(){
     window.addEventListener("keydown", KeyPressed, false);
+    document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
+    document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
+    document.getElementById("rotationArrow").addEventListener("touchstart", RotationMove, false);
+
     
 });
 let makePiece=function(type){
@@ -187,7 +191,25 @@ function Move(direction){
         PaintSymbol(x, y, 1);
     }
 }
-
+function LeftMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x - 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function RightMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    x = x + 35;
+        localStorage.setItem("x", x);
+        PaintSymbol(x, y);
+};
+function RotationMove(){
+    var x = Number(localStorage.getItem("x"));
+    var y = Number(localStorage.getItem("y"));
+    PaintSymbol(x, y, 1);
+}
 
 
 
