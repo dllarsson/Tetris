@@ -1,14 +1,15 @@
 $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
-    document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
-    document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
-    document.getElementById("rotationArrow").addEventListener("touchstart", RotationMove, false);
+    //document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
+    //document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
+    //document.getElementById("directionArrow").addEventListener("touchstart", directionMove, false);
+    MakeGameBoard();
 
 });
-MakeGameBoard();
 var x = 0;
 var y = 0;
 var symbol;
+var tick = 0;
 
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
 let makePiece = function (type) {
@@ -75,9 +76,6 @@ function MakeGameBoard() {
     }
     Board = gameBoard;
 }
-localStorage.setItem("x", 0);
-localStorage.setItem("y", 0);
-localStorage.setItem("tick", 0);
 function PaintGameBoard() {
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
@@ -103,21 +101,12 @@ symbol = getSymbol;
 function randomizeSymbol() {
     var symbols = ["t", "o", "l", "j", "s", "z", "i"];
 
-    return symbols[Math.floor(Math.random() * 8)]
+    return symbols[Math.floor(Math.random() * 7)]
 }
 
 
 function PaintSymbol(x, y, s, direction) {
     var piece = makePiece(s);
-
-    if (direction == 39){
-
-        x++;
-    }
-    if (direction == 37) {
-        x--;
-    }
-    var length = 0;
 
     var falseMove = false;
     var indexOfLast = 0;
@@ -177,36 +166,58 @@ function PaintSymbol(x, y, s, direction) {
 
 
 function UpdateGameBoard() {
-
-    var tick = localStorage.getItem("tick");
-
-    PaintSymbol(x,y,symbol);
+    if (symbol == ""){
+        symbol = randomizeSymbol();
+    }
+    PaintSymbol(x,y,symbol,23);
     
 
     tick++;
     y++;
-    localStorage.setItem("tick", tick);
+
+    console.log(x+ "    " +y);
 }
 
-function Reset() {
-   
-}
 function Play(stop) {
     MakeGameBoard();
     var refreshintervalID = setInterval(function () {
-        $("#counter").text(localStorage.getItem("tick"));
+        $("#counter").text(tick);
         UpdateGameBoard();
 
-    }, 750);
+    }, 50);
     if (stop == 1) {
         clearInterval(refreshintervalID);
 
         symbol = randomizeSymbol();
         y = 0;
     }
+    if(stop == 2){
+        Rotate(symbol, 1);
+    }
 }
 
-
+// function Rotate(sym, direction){
+//     let rotate=function(sym,direction){
+// 		for(let y=0;y<sym.length;++y){
+// 			for(let x=0;x<y;++x){
+// 				[
+// 					sym[x][y],
+// 					sym[y][x]
+// 				]=[
+// 					sym[y][x],
+// 					sym[x][y],
+// 				]
+// 			}
+// 		}
+// 		if(dir>0){
+// 			sym.forEach(row=>row.reverse());
+// 		}
+// 		else{
+// 			sym.reverse();
+// 		}
+//     };
+//     return rotate;
+// }
 
 
 function KeyPressed(e) {
@@ -218,31 +229,12 @@ function KeyPressed(e) {
         Move(38);
     }
     else if (keyCode == 39) {     // Right key
-        Move(39);
+        x++;
+        UpdateGameBoard();
     }
     else if (keyCode == 90) {     // Down key
         Move(90);
     }
 }
-function Move(direction) {
-    if (direction == 39) {       // Move Right
-        // localStorage.setItem("x", x);
-        PaintSymbol(x, y, symbol, direction);
-    }
-    else if (direction == 37) {       // Move Left
-        // x = x - 35;
-        // localStorage.setItem("x", x);
-        PaintSymbol(x, y, symbol, direction);
-    }
-    else if (direction == 37) {       // Move Left
-        // x = x - 35;
-        // localStorage.setItem("x", x);
-        PaintSymbol(x, y, symbol, direction);
-    }
-    else if (direction == 90) {       // Rotate counter clockwise
 
-
-        PaintSymbol(x, y, 1);
-    }
-}
 
