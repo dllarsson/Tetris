@@ -2,9 +2,71 @@ $(document).ready(function(){
     window.addEventListener("keydown", KeyPressed, false);
     
 });
+let makePiece=function(type){
+    if(type==="t"){
+        return [
+            [0,0,0],
+            [5,5,5],
+            [0,5,0]
+        ];
+    }
+    else if(type==="o"){
+        return [
+            [7,7],
+            [7,7]
+        ];
+    }
+    else if(type==="l"){
+        return [
+            [0,4,0],
+            [0,4,0],
+            [0,4,4]
+        ];
+    }
+    else if(type==="j"){
+        return [
+            [0,1,0],
+            [0,1,0],
+            [1,1,0]
+        ];
+    }
+    else if(type==="i"){
+        return [
+            [0,2,0,0],
+            [0,2,0,0],
+            [0,2,0,0],
+            [0,2,0,0]
+        ];
+    }
+    else if(type==="s"){
+        return [
+            [0,3,3],
+            [3,3,0],
+            [0,0,0]
+        ];
+    }
+    else if(type==="z"){
+        return [
+            [6,6,0],
+            [0,6,6],
+            [0,0,0]
+        ];
+    }
+};
 
-
-
+var Board = MakeGameBoard();
+function MakeGameBoard(){
+    var gameBoard = [];
+    for (let i = 0; i < 10; i++) {
+        var tempArr = [];
+        for (let j = 0; j < 20; j++) {
+            tempArr[j] = 0;
+        }
+        gameBoard.push(tempArr);
+    }
+    return gameBoard;
+}
+PaintSymbol(5,10,"z");
 localStorage.setItem("x", 0);
 localStorage.setItem("y", 0);
 localStorage.setItem("tick", 0);
@@ -27,33 +89,32 @@ function PaintGameBoard(){
     }
 }
 
-function PaintSymbol(x, y, rotation){
+
+function PaintSymbol(x,y,s){
+    var piece = makePiece(s);
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece.length; j++) {
+            Board[x + j][y + i] = piece[i][j];
+        }
+        
+    }
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
-    
-    if (rotation == 1){
-       ctx.translate(x, y);
-       ctx.rotate((Math.PI / 180) * 270);
-       ctx.translate(-x , -y -35);
+    var countI = 0;
+    for (let i = 0; i < 10; i++) {
+        var countJ = 0;
+        for (let j = 0; j < 20; j++) {
+            if (Board[i][j] != 0){
+                ctx.fillStyle = 'red';
+                ctx.fillRect(countI * 35, countJ*35, 35,35);
+            }
+            countJ++;
+        }
+        countI++;
     }
-
-    ctx.clearRect(0,0, canvas.clientWidth, canvas.height);
-    PaintGameBoard();
-    ctx.beginPath();  // T-block 
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 105, y);
-    ctx.lineTo(x + 105, y + 35);
-    ctx.lineTo(x + 70, y + 35);
-    ctx.lineTo(x + 70, y + 70);
-    ctx.lineTo(x + 35, y + 70);
-    ctx.lineTo(x + 35, y + 35);
-    ctx.lineTo(x, y + 35);
-    ctx.closePath();
-    ctx.fillStyle = "red";
-
-    ctx.fill();
     
 }
+
 
 
 function UpdateGameBoard(){
@@ -83,6 +144,7 @@ function Play(stop){
         localStorage.clear();
     }
 }
+
 
 
 
@@ -125,5 +187,7 @@ function Move(direction){
         PaintSymbol(x, y, 1);
     }
 }
+
+
 
 
