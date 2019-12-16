@@ -6,6 +6,8 @@ $(document).ready(function(){
 
     
 });
+
+var colors=["blue","#03f8fc","green","orange","#b503fc","red","yellow"];
 let makePiece=function(type){
     if(type==="t"){
         return [
@@ -109,7 +111,8 @@ function PaintSymbol(x,y,s){
         var countJ = 0;
         for (let j = 0; j < 20; j++) {
             if (Board[i][j] != 0){
-                ctx.fillStyle = 'red';
+                console.log(Board[i][j]-1)
+                ctx.fillStyle = colors[Board[i][j]-1];
                 ctx.fillRect(countI * 35, countJ*35, 35,35);
             }
             countJ++;
@@ -118,6 +121,7 @@ function PaintSymbol(x,y,s){
     }
     
 }
+
 
 
 
