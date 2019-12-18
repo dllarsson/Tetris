@@ -48,15 +48,14 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
   padding: 5px 0;
 }
 
-.header {
-}
+/*.header {
+}*/
 
 h1 {
   color: rgb(0, 0, 0);
 }
 
 /*CSS for navbar animation links*/
-@import url(https://fonts.googleapis.com/css?family=Raleway:400, 500);
 .nav {
   font-family: "Raleway", Arial, sans-serif;
   text-align: center;
@@ -115,8 +114,8 @@ h1 {
 }
 
 /*Used as a leadbord to show current leaders of the tetris game*/
-.sidebar {
-}
+/*.sidebar {
+}*/
 
 .gameContainer {
   float: left;
@@ -162,23 +161,24 @@ h1 {
     color: rgba(0, 0, 0, 0.5);
   }
 }
-<<<<<<< HEAD
-=======
+
 #counter{
     font-size: 75px;
     padding: 20px;
 }
+
 #touchCtrl{
     display: inline-flex;
 }
+
 #leftArrow, #rightArrow, #rotationArrow{
     opacity: 0.2;
     box-sizing: border-box;
     padding: none;
 }
+
 #leftArrow img, #rightArrow img, #rotationArrow img{
     width: auto;
     height: auto;
     max-width: 60px;
 }
->>>>>>> 5dbe6cf048e22d9907bcd707814877e5096b84b9
