@@ -13,21 +13,18 @@ var tick = 0;
 var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
-var player;
+var playerName;
 
-function handleUsernameFromInput(){
-    player={
-        username:$("#usernameInput").val(),
-        score:""
-    }
-    $("#usernameText").css("display","block");
-    $("#usernameText").text("Your username is: " + player.username);
+function handleUsernameFromInput() {
+    playerName = $("#usernameInput").val()
+    $("#usernameText").css("display", "block");
+    $("#usernameText").text("Your username is: " + playerName);
     $("#usernameInput").val("");
-    $("#usernameContainer").css("display","none");
-    console.log(player.username);
+    $("#usernameContainer").css("display", "none");
+    console.log(playerName);
 }
 
-function SetX(coord){
+function SetX(coord) {
     x = coord;
 }
 
@@ -123,8 +120,8 @@ function randomizeSymbol() {
 function generateNextThreeSymbols() {
     while (nextSymbols.length < 3) {
         var symbolToPushToArray = randomizeSymbol();
-        if(!nextSymbols.includes(symbolToPushToArray)){
-        nextSymbols.push(randomizeSymbol());
+        if (!nextSymbols.includes(symbolToPushToArray)) {
+            nextSymbols.push(randomizeSymbol());
         }
     }
 }
@@ -138,7 +135,7 @@ function GetSymbolXY(symbol) {
     for (let j = 0; j < symbol.length; j++) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0){
+            if (tempSymbol[j] != 0) {
                 xx = j;
                 isValue = true;
                 break;
@@ -162,10 +159,10 @@ function GetSymbolXY(symbol) {
     }
     isValue = false;
 
-    for (let j = symbol.length -1; j >= 0; j--) {
+    for (let j = symbol.length - 1; j >= 0; j--) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0){
+            if (tempSymbol[j] != 0) {
                 xl = j;
                 isValue = true;
                 break;
@@ -176,7 +173,7 @@ function GetSymbolXY(symbol) {
     }
     isValue = false;
 
-    for (var i = symbol.length -1; i >= 0; i--) {
+    for (var i = symbol.length - 1; i >= 0; i--) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
@@ -187,7 +184,7 @@ function GetSymbolXY(symbol) {
         }
         if (isValue) break;
     }
-    var indexes = [xx,yy,xl,yl];
+    var indexes = [xx, yy, xl, yl];
     return indexes;
 }
 function PaintSymbol(x, y, direction) {
@@ -200,15 +197,15 @@ function PaintSymbol(x, y, direction) {
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x + indexes[0] < 0 || x + indexes[2] > 9|| y + indexes[3] > 19) {
+            if (x + indexes[0] < 0 || x + indexes[2] > 9 || y + indexes[3] > 19) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
-                    
+
                     if (falseMove == false) {
-                        if (piece[i][j] != 0){
+                        if (piece[i][j] != 0) {
                             Board[x + j][y + i] = piece[i][j];
                         }
                     }

@@ -20,6 +20,7 @@ body {
 canvas{
   margin-left:5px;
   margin-right:5px;
+  background-color:rgb(226, 226, 226);
 }
 
 #usernameText{
@@ -35,7 +36,6 @@ canvas{
   top: 0;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
@@ -54,23 +54,6 @@ input{
 
 #usernameContent input,button{
   vertical-align: middle;
-}
-
-#usernameContent button{
-  background-color: rgb(0, 0, 0);
-  border: none;
-  color: rgb(197, 197, 197);
-  padding: 16px 32px;
-  text-align: center;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition: 0.3s;
-  margin-top:3px;
-}
-
-#usernameContent button:hover{
-    background-color: black;
-    color: red;
 }
 
 /*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
@@ -216,7 +199,6 @@ h1 {
       ".  game game game"
       "footer footer footer footer";
   }
-
   .nav li {
     display: inline-block;
   }
