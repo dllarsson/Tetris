@@ -55,6 +55,13 @@ function PaintSymbol(x, y, rotation){
     
 }
 
+function PaintSymbol(x, y, rotation){
+    var canvas = document.getElementById("game");
+    var ctx = canvas.getContext("2d");
+
+
+}
+
 
 function UpdateGameBoard(){
     
@@ -123,6 +130,16 @@ function Move(direction){
         
         
         PaintSymbol(x, y, 1);
+    }
+}
+
+//Menu effect
+function barFunction() {
+    var x = document.getElementById("nav");
+    if (x.style.display === "block") {
+        x.style.display = "none";
+    } else {
+        x.style.display = "block";
     }
 }
 

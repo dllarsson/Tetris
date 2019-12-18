@@ -3,21 +3,36 @@
     <head>
         <title>Tetris game!</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+        
         
     </head>
     <body>
+        <div class="grid-container">
+
         <div class="header">
             <h1>Welcome to tetris game</h1>
         </div>
-        <div id="gameContainer">
-            <canvas id="game" height="700px" width="350px" style="border: 2px solid black"></canvas>
+        <div class="nav">
+            <ul class="navul">
+                <li><a href="game.html">PLAY</a></li>
+                <li><a href="">RULES</a></li>
+            </li>
+        </ul>
+        </div>
+
+        <div class="sidebar"><p>Leadboard</p></div>
+        <div class="gameContainer">
+            <canvas id="game" height="450px" width="350px" style="border: 2px solid black"></canvas>
             <div>
                 <p id="counter">0</p>
-                <button onclick="Play();">Play</button>
+                <button class="btn" onclick="Play();">Play</button>
 
-                <button onclick="Play(1);">Reset</button>
+                <button class="btn" onclick="Play(1);">Reset</button>
             </div>
         </div>
+    
+    </div>
         <footer>
             <p>A game made by David Martin Hilda Patrik</p>
             <link rel="stylesheet" type="text/css" href="style.css">
