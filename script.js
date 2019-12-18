@@ -8,6 +8,7 @@ $(document).ready(function () {
 });
 var x = 0;
 var y = 0;
+var AtBottom = false;
 //var symbol;
 var tick = 0;
 var SymbolXY = [];
@@ -71,12 +72,21 @@ let makePiece = function (type) {
 };
 
 var Board = [];
+var BoardWithPieces = [];
 function MakeGameBoard() {
+    
     var gameBoard = [];
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
         for (let j = 0; j < 20; j++) {
-            tempArr[j] = 0;
+            
+                tempArr[j] = 0;
+                if (Board.length != 0){
+                    if(Board[i][j] == 99){
+                        tempArr[j] = 99;
+                    }
+                }
+
         }
         gameBoard.push(tempArr);
     }
@@ -177,13 +187,26 @@ function PaintSymbol(x, y, direction) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
     var indexes = GetSymbolXY(piece);
-    if (x + indexes[2] > 9) SetX(x - 1);
-    if (x - indexes[0] < 0) SetX(x + 1);
+    var isAtBottom = false;
+    if(y + indexes[3] == 19){ //Block reaches bottom
+        isAtBottom = true;
+        console.log("Stop");
+    }
+    if (x + indexes[2] > 9){
+        SetX(x - 1);
+        return console.log("Too far right");
+    }
+    
+    if (x - indexes[0] < 0) {
+        SetX(x + 1);
+        return console.log("Too far right");
+    }
+
 
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x + indexes[0] < 0 || x + indexes[2] > 9|| y + indexes[3] > 19) {
+            if (x + indexes[0] < 0 || x + indexes[2] > 9) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
@@ -198,13 +221,25 @@ function PaintSymbol(x, y, direction) {
                 }
 
             }
+            if (isAtBottom){
+                BoardWithPieces = Board;
+                AtBottom = true;
+                isAtBottom = false;
+
+            }
             if (falseMove != true) {
                 var canvas = document.getElementById("game");
                 var ctx = canvas.getContext("2d");
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 20; j++) {
                         if (Board[i][j] != 0) {
+                            if (AtBottom){
+
+                                Board[i][j] = 99;
+                            }
                             console.log(Board[i][j] - 1)
                             ctx.fillStyle = colors[Board[i][j] - 1];
                             ctx.fillRect(i * 35, j * 35, 35, 35);
@@ -285,11 +320,17 @@ function UpdateGameBoard() {
     if (nextSymbols.length < 1) {
         generateNextThreeSymbols();
     }
-    PaintSymbol(x, y, nextSymbols[0], 23);
+    
+    if (AtBottom){
+        PaintSymbol(x, y, nextSymbols.shift(), 23);
 
+    }
+    else {
+        PaintSymbol(x, y, nextSymbols[0], 23);
+    }
 
     tick++;
-    y++;
+    
 
     console.log(x + "    " + y);
 }
@@ -302,6 +343,11 @@ function Play(stop) {
         paintNextSymbolOne();
         paintNextSymbolTwo();
         UpdateGameBoard();
+        if (AtBottom){
+            y = 0;
+            AtBottom = false;
+        }
+        y++;
 
     }, 800);
     if (stop == 1) {
