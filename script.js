@@ -109,7 +109,7 @@ function generateNextThreeSymbols() {
 }
 
 
-function PaintSymbol(x, y, direction) {
+function PaintSymbol(x, y, /*direction*/) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
     var indexOfLast = 0;
@@ -289,13 +289,15 @@ function Play(stop) {
 function KeyPressed(e) {
     var keyCode = e.keyCode;
     if (keyCode == 37) {        // Left key
-        Move(37);
+        x--;
+        UpdateGameBoard();
     }
     else if (keyCode == 38) {   // Up key
         Move(38);
     }
     else if (keyCode == 39) {   // Right key
         x++;
+        PaintSymbol(x,y)
         UpdateGameBoard();
     }
     else if (keyCode == 88) {   //X Key
