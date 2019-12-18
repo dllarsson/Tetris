@@ -13,6 +13,9 @@ var tick = 0;
 var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
+function SetX(coord){
+    x = coord;
+}
 
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
 let makePiece = function (type) {
@@ -173,36 +176,24 @@ function GetSymbolXY(symbol) {
 function PaintSymbol(x, y, direction) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
-    var indexOfLast = 0;
     var indexes = GetSymbolXY(piece);
-    for (let l = piece.length; l >= 0; l--) {
+    if (x + indexes[2] > 9) SetX(x - 1);
+    if (x - indexes[0] < 0) SetX(x + 1);
 
-        var tempArr = piece[l - 1];
-        for (let c = 0; c < l; c++) {
-
-            if (tempArr[c] != 0 && indexOfLast == 0) {
-                indexOfLast = l;
-                break;
-            }
-
-
-        }
-        if (indexOfLast != 0) break;
-    }
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x < 0 || x > 9 || y > 19 || y + indexOfLast > 20) {
+            if (x + indexes[0] < 0 || x + indexes[2] > 9|| y + indexes[3] > 19) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
-
-                    Board[x + j][y + i] = piece[i][j];
-                    if (x < 0 && x > 9 && y > 19) falseMove = true;
+                    
                     if (falseMove == false) {
-                        Board[x + j][y + i] = piece[i][j];
+                        if (piece[i][j] != 0){
+                            Board[x + j][y + i] = piece[i][j];
+                        }
                     }
                 }
 
@@ -351,7 +342,8 @@ function Play(stop) {
 function KeyPressed(e) {
     var keyCode = e.keyCode;
     if (keyCode == 37) {        // Left key
-        Move(37);
+        x--;
+        UpdateGameBoard();
     }
     else if (keyCode == 38) {   // Up key
         Move(38);
