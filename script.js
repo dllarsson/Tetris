@@ -1,72 +1,91 @@
-$(document).ready(function(){
+$(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
-    document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
-    document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
-    document.getElementById("rotationArrow").addEventListener("touchstart", RotationMove, false);
-
+    //document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
+    //document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
+    //document.getElementById("directionArrow").addEventListener("touchstart", directionMove, false);
     MakeGameBoard();
+
 });
 var x = 0;
 var y = 0;
-var symbol;
-var nextSymbols=[];
-var savedPiece=[];
+//var symbol;
+var tick = 0;
+var SymbolXY = [];
+var nextSymbols = [];
+var savedSymbol = [];
+var player;
 
-var colors=["blue","#03f8fc","green","orange","#b503fc","red","yellow"];
-let makePiece=function(type){
-    if(type==="t"){
+function handleUsernameFromInput(){
+    player={
+        username:$("#usernameInput").val(),
+        score:""
+    }
+    $("#usernameText").css("display","block");
+    $("#usernameText").text("Your username is: " + player.username);
+    $("#usernameInput").val("");
+    $("#usernameContainer").css("display","none");
+    console.log(player.username);
+}
+
+function SetX(coord){
+    x = coord;
+}
+
+var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
+let makePiece = function (type) {
+    if (type === "t") {
         return [
-            [0,0,0],
-            [5,5,5],
-            [0,5,0]
+            [0, 0, 0],
+            [5, 5, 5],
+            [0, 5, 0]
         ];
     }
-    else if(type==="o"){
+    else if (type === "o") {
         return [
-            [7,7],
-            [7,7]
+            [7, 7],
+            [7, 7]
         ];
     }
-    else if(type==="l"){
+    else if (type === "l") {
         return [
-            [0,4,0],
-            [0,4,0],
-            [0,4,4]
+            [0, 4, 0],
+            [0, 4, 0],
+            [0, 4, 4]
         ];
     }
-    else if(type==="j"){
+    else if (type === "j") {
         return [
-            [0,1,0],
-            [0,1,0],
-            [1,1,0]
+            [0, 1, 0],
+            [0, 1, 0],
+            [1, 1, 0]
         ];
     }
-    else if(type==="i"){
+    else if (type === "i") {
         return [
-            [0,2,0,0],
-            [0,2,0,0],
-            [0,2,0,0],
-            [0,2,0,0]
+            [0, 2, 0, 0],
+            [0, 2, 0, 0],
+            [0, 2, 0, 0],
+            [0, 2, 0, 0]
         ];
     }
-    else if(type==="s"){
+    else if (type === "s") {
         return [
-            [0,3,3],
-            [3,3,0],
-            [0,0,0]
+            [0, 3, 3],
+            [3, 3, 0],
+            [0, 0, 0]
         ];
     }
-    else if(type==="z"){
+    else if (type === "z") {
         return [
-            [6,6,0],
-            [0,6,6],
-            [0,0,0]
+            [6, 6, 0],
+            [0, 6, 6],
+            [0, 0, 0]
         ];
     }
 };
 
 var Board = [];
-function MakeGameBoard(){
+function MakeGameBoard() {
     var gameBoard = [];
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
@@ -77,20 +96,17 @@ function MakeGameBoard(){
     }
     Board = gameBoard;
 }
-localStorage.setItem("x", 0);
-localStorage.setItem("y", 0);
-localStorage.setItem("tick", 0);
-function PaintGameBoard(){
+function PaintGameBoard() {
     var canvas = document.getElementById("game");
     var ctx = canvas.getContext("2d");
 
     var x = 0;
     var y = 0;
 
-    for (var i = 0; i < 10; i++){
+    for (var i = 0; i < 10; i++) {
         if (i % 2 == 0) y = 0;
         else y = 35;
-        for(var j = 0; j < 20; j++){
+        for (var j = 0; j < 20; j++) {
             ctx.fillStyle = "#f0f0f0";
             ctx.fillRect(x, y, 35, 35);
             y += 70;
@@ -99,197 +115,276 @@ function PaintGameBoard(){
     }
 }
 
-var getSymbol = randomizeSymbol();
-//symbol = getSymbol;
-function randomizeSymbol(){
-    var symbols = ["t","o","l","j","s","z","i"];
-    return symbols[Math.floor(Math.random() * 7)];
-}
+function randomizeSymbol() {
+    var symbols = ["t", "o", "l", "j", "s", "z", "i"];
 
-function generateNextThreePieces(){
-    while(nextSymbols.length<3){
+    return symbols[Math.floor(Math.random() * 7)]
+}
+function generateNextThreeSymbols() {
+    while (nextSymbols.length < 3) {
+        var symbolToPushToArray = randomizeSymbol();
+        if(!nextSymbols.includes(symbolToPushToArray)){
         nextSymbols.push(randomizeSymbol());
+        }
     }
 }
 
+function GetSymbolXY(symbol) {
+    var isValue = false;
+    var xx = 0;
+    var yy = 0;
+    var xl = 0;
+    var yl = 0;
+    for (let j = 0; j < symbol.length; j++) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0){
+                xx = j;
+                isValue = true;
+                break;
+            }
 
-function PaintSymbol(x,y,s){
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (var i = 0; i < symbol.length; i++) {
+        var tempSymbol = symbol[i];
+        for (var j = 0; j < symbol.length; j++) {
+            if (tempSymbol[j] != 0) {
+                yy = i;
+                isValue = true;
+                break;
+            }
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (let j = symbol.length -1; j >= 0; j--) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0){
+                xl = j;
+                isValue = true;
+                break;
+            }
+
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (var i = symbol.length -1; i >= 0; i--) {
+        var tempSymbol = symbol[i];
+        for (var j = 0; j < symbol.length; j++) {
+            if (tempSymbol[j] != 0) {
+                yl = i;
+                isValue = true;
+                break;
+            }
+        }
+        if (isValue) break;
+    }
+    var indexes = [xx,yy,xl,yl];
+    return indexes;
+}
+function PaintSymbol(x, y, direction) {
     var piece = makePiece(nextSymbols[0]);
-    var length = 0;
-    var falseMove=false;
+    var falseMove = false;
+    var indexes = GetSymbolXY(piece);
+    if (x + indexes[2] > 9) SetX(x - 1);
+    if (x - indexes[0] < 0) SetX(x + 1);
+
     for (let i = 0; i < piece.length; i++) {
+
         for (let j = 0; j < piece.length; j++) {
-            if(x<0 && x >9 && y> 19) falseMove = true;
-            if (falseMove == false){
-                Board[x + j][y + i] = piece[i][j];
+            if (x + indexes[0] < 0 || x + indexes[2] > 9|| y + indexes[3] > 19) {
+                falseMove = true;
             }
-        }
-        
-    }
-    var canvas = document.getElementById("game");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 20; j++) {
-            if (Board[i][j] != 0){
-                ctx.fillStyle = colors[Board[i][j]-1];
-                ctx.fillRect(i * 35, j*35, 35,35);
+            for (let i = 0; i < piece.length; i++) {
+
+                for (let j = 0; j < piece.length; j++) {
+                    
+                    if (falseMove == false) {
+                        if (piece[i][j] != 0){
+                            Board[x + j][y + i] = piece[i][j];
+                        }
+                    }
+                }
+
             }
+            if (falseMove != true) {
+                var canvas = document.getElementById("game");
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < 10; i++) {
+                    for (let j = 0; j < 20; j++) {
+                        if (Board[i][j] != 0) {
+                            console.log(Board[i][j] - 1)
+                            ctx.fillStyle = colors[Board[i][j] - 1];
+                            ctx.fillRect(i * 35, j * 35, 35, 35);
+                        }
+                    }
+                }
+            }
+
+            MakeGameBoard();
         }
     }
-    MakeGameBoard();
 }
 
-function paintNextPieceOne(){
-    var piece=makePiece(nextSymbols[1]);
-    var pieceOneCanvas = document.getElementById("pieceOne");
+function paintNextSymbolOne() {
+    var piece = makePiece(nextSymbols[1]);
+    var pieceOneCanvas = document.getElementById("nextSymbolOne");
     var pieceOneContext = pieceOneCanvas.getContext("2d");
-    pieceOneContext.clearRect(0,0,pieceOneCanvas.width,pieceOneCanvas.height);
+    pieceOneContext.clearRect(0, 0, pieceOneCanvas.width, pieceOneCanvas.height);
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
-                if(piece[i][j]!=0){
-                pieceOneContext.fillStyle = colors[piece[i][j]-1];
-                pieceOneContext.fillRect(j * 20, i*20, 20,20);
-                }
+            if (piece[i][j] != 0) {
+                pieceOneContext.fillStyle = colors[piece[i][j] - 1];
+                pieceOneContext.fillRect(i * 20, j * 20, 20, 20);
+            }
         }
     }
 }
 
-function paintNextPieceTwo(){
-    var piece=makePiece(nextSymbols[2]);
-    var pieceTwoCanvas = document.getElementById("pieceTwo");
+function paintNextSymbolTwo() {
+    var piece = makePiece(nextSymbols[2]);
+    var pieceTwoCanvas = document.getElementById("nextSymbolTwo");
     var pieceTwoContext = pieceTwoCanvas.getContext("2d");
-    pieceTwoContext.clearRect(0,0,pieceTwoCanvas.width,pieceTwoCanvas.height);
+    pieceTwoContext.clearRect(0, 0, pieceTwoCanvas.width, pieceTwoCanvas.height);
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
-                if(piece[i][j]!=0){
-                pieceTwoContext.fillStyle = colors[piece[i][j]-1];
-                pieceTwoContext.fillRect(j * 20, i*20, 20,20);
-                }
-        }
-    }
-}
-function paintSavedPiece(){
-    var piece=makePiece(savedPiece[0]);
-    var savedPieceCanvas = document.getElementById("savedPiece");
-    var savedPieceContext = savedPieceCanvas.getContext("2d");
-    savedPieceContext.clearRect(0,0,savedPieceCanvas.width,savedPieceCanvas.height);
-    for (let i = 0; i < piece.length; i++) {
-        for (let j = 0; j < piece.length; j++) {
-                if(piece[i][j]!=0){
-                savedPieceContext.fillStyle = colors[piece[i][j]-1];
-                savedPieceContext.fillRect(j * 20, i*20, 20,20);
-                }
+            if (piece[i][j] != 0) {
+                pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
+                pieceTwoContext.fillRect(i * 20, j * 20, 20, 20);
+            }
         }
     }
 }
 
-function savePiece(){
-if(savedPiece.length<1){
-    savedPiece[0]=nextSymbols[0];
-    nextSymbols.splice(0,1);
-    paintSavedPiece();
+function paintSavedSymbol() {
+    var piece = makePiece(savedSymbol[0]);
+    var savedSymbolCanvas = document.getElementById("savedSymbol");
+    var savedSymbolContext = savedSymbolCanvas.getContext("2d");
+    savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece.length; j++) {
+            if (piece[i][j] != 0) {
+                savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
+                savedSymbolContext.fillRect(i * 20, j * 20, 20, 20);
+            }
+        }
+    }
 }
 
-else{
-    var pieceToSwap = savedPiece[0];
-    savedPiece[0] = nextSymbols[0];
-    nextSymbols[0]=pieceToSwap;
-    paintSavedPiece();
-}
+function saveSymbol() {
+    if (savedSymbol.length < 1) {
+        savedSymbol[0] = nextSymbols[0];
+        nextSymbols.splice(0, 1);
+        y = 0;
+        paintSavedSymbol();
+    }
+    else {
+        var symbolToSwap = savedSymbol[0];
+        savedSymbol[0] = nextSymbols[0];
+        nextSymbols[0] = symbolToSwap;
+        y = 0;
+        paintSavedSymbol();
+    }
 }
 
 
-function UpdateGameBoard(){
-    
-    var tick = localStorage.getItem("tick");
-    var nextSymbol = nextSymbols[0];
-    PaintSymbol(x,y,nextSymbol);
-    
+
+function UpdateGameBoard() {
+    if (nextSymbols.length < 1) {
+        generateNextThreeSymbols();
+    }
+    PaintSymbol(x, y, nextSymbols[0], 23);
+
+
     tick++;
     y++;
-    localStorage.setItem("tick", tick);
+
+    console.log(x + "    " + y);
 }
 
-function Reset(){
-    localStorage.clear();
-}
-function Play(stop){
-        var refreshintervalID = setInterval(function(){ 
-        $("#counter").text(localStorage.getItem("tick"));
-        generateNextThreePieces();
-        paintNextPieceOne();
-        paintNextPieceTwo();
+function Play(stop) {
+    MakeGameBoard();
+    var refreshintervalID = setInterval(function () {
+        $("#counter").text(tick);
+        generateNextThreeSymbols();
+        paintNextSymbolOne();
+        paintNextSymbolTwo();
         UpdateGameBoard();
-        
-    }, 750);
-    if (stop == 1){
+
+    }, 800);
+    if (stop == 1) {
         clearInterval(refreshintervalID);
-       y = 0;
+        nextSymbols = [];
+        generateNextThreeSymbols();
+        y = 0;
+    }
+    if (stop == 2) {
+        Rotate(symbol, 1);
     }
 }
 
+// function Rotate(sym, direction){
+//     let rotate=function(sym,direction){
+// 		for(let y=0;y<sym.length;++y){
+// 			for(let x=0;x<y;++x){
+// 				[
+// 					sym[x][y],
+// 					sym[y][x]
+// 				]=[
+// 					sym[y][x],
+// 					sym[x][y],
+// 				]
+// 			}
+// 		}
+// 		if(dir>0){
+// 			sym.forEach(row=>row.reverse());
+// 		}
+// 		else{
+// 			sym.reverse();
+// 		}
+//     };
+//     return rotate;
+// }
 
 
-
-function KeyPressed(e){
+function KeyPressed(e) {
     var keyCode = e.keyCode;
-    if(keyCode == 37){      // Left key
-        Move(37);
+    if (keyCode == 37) {        // Left key
+        x--;
+        UpdateGameBoard();
     }
-    else if(keyCode == 38){     // Up key
+    else if (keyCode == 38) {   // Up key
         Move(38);
     }
-    else if(keyCode == 39){     // Right key
-        Move(39);
+    else if (keyCode == 39) {   // Right key
+        x++;
+        UpdateGameBoard();
     }
-    else if(keyCode == 90){     // Down key
+    else if (keyCode == 88) {   //X Key
+        saveSymbol();
+    }
+    else if (keyCode == 90) {   // Down key
         Move(90);
     }
-};
-function Move(direction){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    if (direction == 39){       // Move Right
-        x = x + 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
-    }
-    else if(direction == 37){       // Move Left
-        x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
-    }
-    else if(direction == 37){       // Move Left
-        x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
-    }
-    else if(direction == 90){       // Rotate counter clockwise
-        
-        
-        PaintSymbol(x, y, 1);
-    }
-}
-function LeftMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    x = x - 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
-};
-function RightMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    x = x + 35;
-        localStorage.setItem("x", x);
-        PaintSymbol(x, y);
-};
-function RotationMove(){
-    var x = Number(localStorage.getItem("x"));
-    var y = Number(localStorage.getItem("y"));
-    PaintSymbol(x, y, 1);
 }
 
+//Menu effect
+function barFunction() {
+    var x = document.getElementById("nav");
+    if (x.style.display === "block") {
+        x.style.display = "none";
+    } else {
+        x.style.display = "block";
+    }
+}
 
 

@@ -1,24 +1,247 @@
-#gameContainer{
-    display:inline-flex;
-    padding-top:0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-div{
-    margin-right:5px;
-    margin-left:5px;
+body {
+  background-color: black;
 }
+
+#gameContainer{
+  display: inline-flex;
+  text-align:center;
+}
+
+#gameAndControlsContainer{
+  text-align: center;
+}
+
+canvas{
+  margin-left:5px;
+  margin-right:5px;
+}
+
+#usernameText{
+  display:none;
+  position:absolute
+}
+
+#usernameContainer{
+  font-family: "Raleway", Arial, sans-serif;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+#usernameContent{
+  text-align:center;
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+
+input{
+  padding: 17px 30px;
+}
+
+#usernameContent input,button{
+  vertical-align: middle;
+}
+
+#usernameContent button{
+  background-color: rgb(0, 0, 0);
+  border: none;
+  color: rgb(197, 197, 197);
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition: 0.3s;
+  margin-top:3px;
+}
+
+#usernameContent button:hover{
+    background-color: black;
+    color: red;
+}
+
+/*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
+In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
+Mostof the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
+.header {
+  grid-area: header;
+}
+.nav {
+  grid-area: nav;
+}
+.sidebar {
+  grid-area: leadboard;
+}
+.gameContainer {
+  grid-area: game;
+}
+.footer {
+  grid-area: footer;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    "header header header header"
+    "game game game game"
+    "game game game game"
+    "game game game game"
+    "game game game game"
+    "nav nav leadboard leadboard"
+    "footer footer footer footer";
+  grid-gap: 5px;
+  background-color: rgb(0, 0, 0);
+  padding: 10px;
+}
+
+.grid-container > div {
+  background-color: rgba(180, 180, 180, 0.8);
+  text-align: center;
+  padding: 5px 0;
+}
+
+/*.header {
+}*/
+
+h1 {
+  color: rgb(0, 0, 0);
+}
+
+/*CSS for navbar animation links*/
+.nav {
+  font-family: "Raleway", Arial, sans-serif;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 10px 0;
+  letter-spacing: 1px;
+  background-color: white;
+}
+.nav * {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+}
+
+.nav li {
+  display: block;
+  list-style: outside none none;
+  margin: 10px 0;
+  padding: 0;
+}
+.nav a {
+  width: 100px;
+  margin: auto;
+  display: block;
+  padding: 10px 0;
+  position: relative;
+  text-decoration: none;
+  background-color: rgba(180, 180, 180, 0.8);
+  color: rgba(255, 0, 0, 1);
+}
+.nav a:before {
+  position: absolute;
+  content: "";
+  -webkit-transition: all 0.35s ease;
+  transition: all 0.35s ease;
+  opacity: 0;
+  left: 15%;
+  right: 15%;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid rgb(255, 0, 0);
+  border-right: 1px solid rgb(255, 0, 0);
+}
+.nav a:hover,
+.nav a:focus {
+  color: #000000;
+}
+
+.nav a:hover:before,
+.nav a:focus:before {
+  opacity: 1;
+  left: 0;
+  right: 0;
+}
+
+/*Used as a leadbord to show current leaders of the tetris game*/
+/*.sidebar {
+}*/
+
+.gameContainer {
+  float: left;
+}
+
+#game {
+  background-color: rgb(226, 226, 226);
+}
+
+.btn {
+  background-color: rgb(0, 0, 0);
+  border: none;
+  color: rgb(197, 197, 197);
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: black;
+  color: red;
+}
+
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  .grid-container {
+    grid-template-areas:
+      "header game game game"
+      "nav game game game"
+      " leadboard game game game"
+      ".  game game game"
+      "footer footer footer footer";
+  }
+
+  .nav li {
+    display: inline-block;
+  }
+
+  .nav a {
+    border: none;
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
 #counter{
     font-size: 75px;
     padding: 20px;
 }
+
 #touchCtrl{
     display: inline-flex;
 }
+
 #leftArrow, #rightArrow, #rotationArrow{
     opacity: 0.2;
     box-sizing: border-box;
     padding: none;
 }
+
 #leftArrow img, #rightArrow img, #rotationArrow img{
     width: auto;
     height: auto;
