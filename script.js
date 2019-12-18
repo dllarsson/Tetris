@@ -10,6 +10,7 @@ var x = 0;
 var y = 0;
 //var symbol;
 var tick = 0;
+var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
 
@@ -108,11 +109,72 @@ function generateNextThreeSymbols() {
     }
 }
 
+function GetSymbolXY(symbol) {
+    var isValue = false;
+    var xx = 0;
+    var yy = 0;
+    var xl = 0;
+    var yl = 0;
+    for (let j = 0; j < symbol.length; j++) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0){
+                xx = j;
+                isValue = true;
+                break;
+            }
 
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (var i = 0; i < symbol.length; i++) {
+        var tempSymbol = symbol[i];
+        for (var j = 0; j < symbol.length; j++) {
+            if (tempSymbol[j] != 0) {
+                yy = i;
+                isValue = true;
+                break;
+            }
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (let j = symbol.length -1; j >= 0; j--) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0){
+                xl = j;
+                isValue = true;
+                break;
+            }
+
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+
+    for (var i = symbol.length -1; i >= 0; i--) {
+        var tempSymbol = symbol[i];
+        for (var j = 0; j < symbol.length; j++) {
+            if (tempSymbol[j] != 0) {
+                yl = i;
+                isValue = true;
+                break;
+            }
+        }
+        if (isValue) break;
+    }
+    var indexes = [xx,yy,xl,yl];
+    return indexes;
+}
 function PaintSymbol(x, y, direction) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
     var indexOfLast = 0;
+    var indexes = GetSymbolXY(piece);
     for (let l = piece.length; l >= 0; l--) {
 
         var tempArr = piece[l - 1];
@@ -130,7 +192,7 @@ function PaintSymbol(x, y, direction) {
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x < 0 || x > 9 || y > 19 || x || y + indexOfLast > 20) {
+            if (x < 0 || x > 9 || y > 19 || y + indexOfLast > 20) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
@@ -250,10 +312,10 @@ function Play(stop) {
         paintNextSymbolTwo();
         UpdateGameBoard();
 
-    }, 50);
+    }, 800);
     if (stop == 1) {
         clearInterval(refreshintervalID);
-        nextSymbols=[];
+        nextSymbols = [];
         generateNextThreeSymbols();
         y = 0;
     }
