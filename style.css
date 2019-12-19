@@ -8,6 +8,56 @@ body {
   background-color: black;
 }
 
+#gameContainer{
+  display: inline-flex;
+  text-align:center;
+}
+
+#gameAndControlsContainer{
+  text-align: center;
+}
+
+canvas{
+  margin-left:5px;
+  margin-right:5px;
+  background-color:rgb(226, 226, 226);
+}
+
+#usernameText{
+  display:none;
+  position:absolute
+}
+
+#usernameContainer{
+  /*temporary display none*/
+  display:none;
+  font-family: "Raleway", Arial, sans-serif;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+#usernameContent{
+  text-align:center;
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%; /* Could be more or less, depending on screen size */
+}
+
+input{
+  padding: 17px 30px;
+}
+
+#usernameContent input,button{
+  vertical-align: middle;
+}
+
 /*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
 In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
 Mostof the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
@@ -140,6 +190,7 @@ h1 {
   background-color: black;
   color: red;
 }
+
 
 @media only screen and (min-width: 768px) {
   /* For desktop: */

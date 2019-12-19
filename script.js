@@ -8,11 +8,24 @@ $(document).ready(function () {
 });
 var x = 0;
 var y = 0;
-//var symbol;
+var AtBottom = false;
 var tick = 0;
 var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
+var playerName;
+
+function handleUsernameFromInput() {
+    playerName = $("#usernameInput").val()
+    $("#usernameText").css("display", "block");
+    $("#usernameText").text("Your username is: " + playerName);
+    $("#usernameInput").val("");
+    $("#usernameContainer").css("display", "none");
+    console.log(playerName);
+}
+function SetX(coord) {
+    x = coord;
+}
 
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
 let makePiece = function (type) {
@@ -68,12 +81,21 @@ let makePiece = function (type) {
 };
 
 var Board = [];
+var BoardWithPieces = [];
 function MakeGameBoard() {
     var gameBoard = [];
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
         for (let j = 0; j < 20; j++) {
+
             tempArr[j] = 0;
+            if (Board.length != 0) {
+                if (Board[i][j] == 99) {
+                    tempArr[j] = 99;
+                }
+
+            }
+
         }
         gameBoard.push(tempArr);
     }
@@ -100,9 +122,9 @@ function PaintGameBoard() {
 
 function randomizeSymbol() {
     var symbols = ["t", "o", "l", "j", "s", "z", "i"];
-
     return symbols[Math.floor(Math.random() * 7)]
 }
+
 function generateNextThreeSymbols() {
     while (nextSymbols.length < 3) {
         nextSymbols.push(randomizeSymbol());
@@ -118,7 +140,7 @@ function GetSymbolXY(symbol) {
     for (let j = 0; j < symbol.length; j++) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0){
+            if (tempSymbol[j] != 0) {
                 xx = j;
                 isValue = true;
                 break;
@@ -142,10 +164,10 @@ function GetSymbolXY(symbol) {
     }
     isValue = false;
 
-    for (let j = symbol.length -1; j >= 0; j--) {
+    for (let j = symbol.length - 1; j >= 0; j--) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0){
+            if (tempSymbol[j] != 0) {
                 xl = j;
                 isValue = true;
                 break;
@@ -156,7 +178,7 @@ function GetSymbolXY(symbol) {
     }
     isValue = false;
 
-    for (var i = symbol.length -1; i >= 0; i--) {
+    for (var i = symbol.length - 1; i >= 0; i--) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
@@ -167,54 +189,65 @@ function GetSymbolXY(symbol) {
         }
         if (isValue) break;
     }
-    var indexes = [xx,yy,xl,yl];
+    var indexes = [xx, yy, xl, yl];
     return indexes;
 }
 function PaintSymbol(x, y, direction) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
-    var indexOfLast = 0;
     var indexes = GetSymbolXY(piece);
-    for (let l = piece.length; l >= 0; l--) {
-
-        var tempArr = piece[l - 1];
-        for (let c = 0; c < l; c++) {
-
-            if (tempArr[c] != 0 && indexOfLast == 0) {
-                indexOfLast = l;
-                break;
-            }
-
-
-        }
-        if (indexOfLast != 0) break;
+    var isAtBottom = false;
+    if (y + indexes[3] == 19) { //Block reaches bottom
+        isAtBottom = true;
+        console.log("Stop");
     }
+    if (x + indexes[2] > 9) {
+        SetX(x - 1);
+        return console.log("Too far right");
+    }
+
+    if (x - indexes[0] < 0) {
+        SetX(x + 1);
+        return console.log("Too far right");
+    }
+
+
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x < 0 || x > 9 || y > 19 || y + indexOfLast > 20) {
+            if (x + indexes[0] < 0 || x + indexes[2] > 9) {
                 falseMove = true;
             }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
 
-                    Board[x + j][y + i] = piece[i][j];
-                    if (x < 0 && x > 9 && y > 19) falseMove = true;
                     if (falseMove == false) {
-                        Board[x + j][y + i] = piece[i][j];
+                        if (piece[i][j] != 0) {
+                            Board[x + j][y + i] = piece[i][j];
+                        }
                     }
                 }
 
             }
+            if (isAtBottom) {
+                BoardWithPieces = Board;
+                AtBottom = true;
+                isAtBottom = false;
+                nextSymbols.splice(0, 1);
+            }
             if (falseMove != true) {
                 var canvas = document.getElementById("game");
                 var ctx = canvas.getContext("2d");
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 20; j++) {
                         if (Board[i][j] != 0) {
-                            console.log(Board[i][j] - 1)
+                            if (AtBottom) {
+                                Board[i][j] = 99;
+                            }
                             ctx.fillStyle = colors[Board[i][j] - 1];
                             ctx.fillRect(i * 35, j * 35, 35, 35);
                         }
@@ -236,7 +269,7 @@ function paintNextSymbolOne() {
         for (let j = 0; j < piece.length; j++) {
             if (piece[i][j] != 0) {
                 pieceOneContext.fillStyle = colors[piece[i][j] - 1];
-                pieceOneContext.fillRect(i * 20, j * 20, 20, 20);
+                pieceOneContext.fillRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -251,7 +284,7 @@ function paintNextSymbolTwo() {
         for (let j = 0; j < piece.length; j++) {
             if (piece[i][j] != 0) {
                 pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
-                pieceTwoContext.fillRect(i * 20, j * 20, 20, 20);
+                pieceTwoContext.fillRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -266,7 +299,7 @@ function paintSavedSymbol() {
         for (let j = 0; j < piece.length; j++) {
             if (piece[i][j] != 0) {
                 savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
-                savedSymbolContext.fillRect(i * 20, j * 20, 20, 20);
+                savedSymbolContext.fillRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -294,11 +327,17 @@ function UpdateGameBoard() {
     if (nextSymbols.length < 1) {
         generateNextThreeSymbols();
     }
-    PaintSymbol(x, y, nextSymbols[0], 23);
 
+    if (AtBottom) {
+        PaintSymbol(x, y, 23);
+
+    }
+    else {
+        PaintSymbol(x, y, 23);
+    }
 
     tick++;
-    y++;
+
 
     console.log(x + "    " + y);
 }
@@ -311,6 +350,11 @@ function Play(stop) {
         paintNextSymbolOne();
         paintNextSymbolTwo();
         UpdateGameBoard();
+        if (AtBottom) {
+            y = 0;
+            AtBottom = false;
+        }
+        y++;
 
     }, 800);
     if (stop == 1) {
