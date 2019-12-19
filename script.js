@@ -1,12 +1,12 @@
 $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
-    //document.getElementById("leftArrow").addEventListener("touchstart", LeftMove, false);
-    //document.getElementById("rightArrow").addEventListener("touchstart", RightMove, false);
+    document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
+    document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
     //document.getElementById("directionArrow").addEventListener("touchstart", directionMove, false);
     MakeGameBoard();
 
 });
-var x = 0;
+var x = 4;
 var y = 0;
 var AtBottom = false;
 var tick = 0;
@@ -14,6 +14,8 @@ var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
 var playerName;
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
 function handleUsernameFromInput() {
     playerName = $("#usernameInput").val()
@@ -102,8 +104,6 @@ function MakeGameBoard() {
     Board = gameBoard;
 }
 function PaintGameBoard() {
-    var canvas = document.getElementById("game");
-    var ctx = canvas.getContext("2d");
 
     var x = 0;
     var y = 0;
@@ -237,9 +237,6 @@ function PaintSymbol(x, y, direction) {
                 nextSymbols.splice(0, 1);
             }
             if (falseMove != true) {
-                var canvas = document.getElementById("game");
-                var ctx = canvas.getContext("2d");
-
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 for (let i = 0; i < 10; i++) {
@@ -254,8 +251,9 @@ function PaintSymbol(x, y, direction) {
                     }
                 }
             }
-
+            
             MakeGameBoard();
+           
         }
     }
 }
@@ -330,7 +328,6 @@ function UpdateGameBoard() {
 
     if (AtBottom) {
         PaintSymbol(x, y, 23);
-
     }
     else {
         PaintSymbol(x, y, 23);
@@ -351,6 +348,7 @@ function Play(stop) {
         paintNextSymbolTwo();
         UpdateGameBoard();
         if (AtBottom) {
+            x = 4;
             y = 0;
             AtBottom = false;
         }
@@ -358,6 +356,7 @@ function Play(stop) {
 
     }, 800);
     if (stop == 1) {
+        tick = 0;
         clearInterval(refreshintervalID);
         nextSymbols = [];
         generateNextThreeSymbols();
@@ -403,7 +402,7 @@ function KeyPressed(e) {
     }
     else if (keyCode == 39) {   // Right key
         x++;
-        PaintSymbol(x,y)
+        // PaintSymbol(x,y)
         UpdateGameBoard();
     }
     else if (keyCode == 88) {   //X Key
@@ -416,7 +415,7 @@ function KeyPressed(e) {
 
 //Menu effect
 function barFunction() {
-    var x = document.getElementById("nav");
+    var x = document.getElementById("nav"); // kan ev. uppstå konflikt med koordinat x
     if (x.style.display === "block") {
         x.style.display = "none";
     } else {
@@ -424,4 +423,12 @@ function barFunction() {
     }
 }
 
+function leftMove(){
+    x--;            // moves piece one step left
+    UpdateGameBoard();
+}
+function rightMove(){
+    x++;            // moves piece one step right
+    UpdateGameBoard();
+}
 
