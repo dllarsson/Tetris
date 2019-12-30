@@ -201,6 +201,10 @@ function PaintSymbol(x, y, direction) {
         isAtBottom = true;
         console.log("Stop");
     }
+    if (Board[x + indexes[0]][y + indexes[3]] == 99 || Board[x + indexes[2]][y + indexes[3]] == 99){ // Block connects with other
+        isAtBottom = true;
+        console.log("Stop");
+    }
     if (x + indexes[2] > 9) {
         SetX(x - 1);
         return console.log("Too far right");
@@ -350,6 +354,7 @@ function Play(stop) {
         if (AtBottom) {
             x = 4;
             y = 0;
+            giveScore();
             AtBottom = false;
         }
         y++;
@@ -360,6 +365,7 @@ function Play(stop) {
         clearInterval(refreshintervalID);
         nextSymbols = [];
         generateNextThreeSymbols();
+        points = 0;
         y = 0;
     }
     if (stop == 2) {
@@ -430,5 +436,33 @@ function leftMove(){
 function rightMove(){
     x++;            // moves piece one step right
     UpdateGameBoard();
+}
+
+var points = 0;
+var prevLine = 0;
+function giveScore(){ // needs lots of rework.
+    let newCount = 0;
+    var tempBoardLine = 0;
+    for (let i = 0; i < Board.length; i++){
+        for (let j = newCount; j < Board[i].length; j++){
+            if(Board[i][j] == 99){
+                newCount = j;               
+            }
+            tempBoardLine += Board[i][j];
+            if (j != newCount){
+                tempBoardLine = 0;
+            }
+            if (tempBoardLine == 990){ // if there are blocks on all positions in a row
+                points += 100;
+                prevLine += tempBoardLine; // variable to decide if bonus points are eligible
+                tempBoardLine = 0;      // resets the row
+            }
+        }
+        if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990){
+            points += 100;
+        }
+    }
+    prevLine = 0;
+    document.getElementById("score").innerText = "Score: " + points;
 }
 
