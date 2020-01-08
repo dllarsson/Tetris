@@ -6,6 +6,7 @@
     <title>Tetris game!</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+    <meta charset="UTF-8">
 
 </head>
 
@@ -31,7 +32,6 @@
             <ul class="navul">
                 <li><a href="game.html">PLAY</a></li>
                 <li><a href="">RULES</a></li>
-                </li>
             </ul>
         </div>
 
@@ -42,12 +42,12 @@
         <div id="gameAndControlsContainer">
             <div id="gameContainer">
                 <div id="savedSymbolContainer">
-                    <canvas id="savedSymbol" height="80px" width="80px" style="border: 2px solid black"></canvas>
+                    <canvas id="savedSymbol" height="80" width="80" style="border: 2px solid black"></canvas>
                 </div>
-                <canvas id="game" height="700px" width="350px" style="border: 2px solid black"></canvas>
+                <canvas id="game" height="500" width="250" style="border: 2px solid black"></canvas>
                 <div id="nextSymbolsContainer">
-                    <canvas id="nextSymbolOne" height="80px" width="80px" style="border: 2px solid black"></canvas><br>
-                    <canvas id="nextSymbolTwo" height="80px" width="80px" style="border: 2px solid black"></canvas>
+                    <canvas id="nextSymbolOne" height="80" width="80" style="border: 2px solid black"></canvas><br>
+                    <canvas id="nextSymbolTwo" height="80" width="80" style="border: 2px solid black"></canvas>
                     <p id="counter">0</p>
                 </div>
             </div>
@@ -62,14 +62,14 @@
                     <img src="rightarrow.png" alt="">
                 </div>
             </div>
-                <div>
-                    <button class="btn" onclick="Play();">Play</button>
+            <div>
+                <button class="btn" onclick="Play();">Play</button>
 
-                    <button class="btn" onclick="Play(1);">Reset</button>
-                    <button class="btn" onclick="Play(2);">Rotate</button>
-                </div>
+                <button class="btn" onclick="Play(1);">Reset</button>
+                <button class="btn" onclick="Play(2);">Rotate</button>
+            </div>
         </div>
-        
+
     </div>
     <footer>
         <p>A game made by David Martin Hilda Patrik</p>
