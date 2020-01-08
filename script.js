@@ -1,3 +1,29 @@
+/*Hide and show the rules on the front page through the button*/
+function loadRules() {
+    var x = document.getElementById("rules");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+  
+  /*Load the rules from a textfile to the webpage*/
+  var txtFile = new XMLHttpRequest();
+  var allText = "file not found";
+  txtFile.onreadystatechange = function () {
+      if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+          allText = txtFile.responseText;
+          allText = allText.split("\n").join("<br>");
+      }
+
+      document.getElementById('rules').innerHTML = allText;
+  }
+  txtFile.open("GET", 'rules.txt', true);
+  txtFile.send(null);
+
+
+
 $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
     document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);

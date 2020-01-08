@@ -13,7 +13,7 @@ body {
   text-align:center;
 }
 
-#gameAndControlsContainer{
+.gameAndControlsContainer{
   text-align: center;
 }
 
@@ -68,9 +68,9 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
   grid-area: nav;
 }
 .sidebar {
-  grid-area: leadboard;
+  grid-area: leaderboard;
 }
-.gameContainer {
+.gameAndControlsContainer {
   grid-area: game;
 }
 .footer {
@@ -85,7 +85,7 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
     "game game game game"
     "game game game game"
     "game game game game"
-    "nav nav leadboard leadboard"
+    "nav nav leaderboard leaderboard"
     "footer footer footer footer";
   grid-gap: 5px;
   background-color: rgb(0, 0, 0);
@@ -111,11 +111,11 @@ h1 {
   text-align: center;
   text-transform: uppercase;
   font-weight: 500;
-  padding: 10px 0;
+  padding: 5px 0;
   letter-spacing: 1px;
   background-color: white;
 }
-.nav * {
+.nav *{
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: all 0.35s ease;
@@ -128,7 +128,7 @@ h1 {
   margin: 10px 0;
   padding: 0;
 }
-.nav a {
+.nav #navbtn {
   width: 100px;
   margin: auto;
   display: block;
@@ -138,7 +138,7 @@ h1 {
   background-color: rgba(180, 180, 180, 0.8);
   color: rgba(255, 0, 0, 1);
 }
-.nav a:before {
+.nav #navbtn:before {
   position: absolute;
   content: "";
   -webkit-transition: all 0.35s ease;
@@ -151,16 +151,21 @@ h1 {
   border-left: 1px solid rgb(255, 0, 0);
   border-right: 1px solid rgb(255, 0, 0);
 }
-.nav a:hover,
-.nav a:focus {
+.nav #navbtn:hover,
+.nav #navbtn:focus {
   color: #000000;
 }
 
-.nav a:hover:before,
-.nav a:focus:before {
+.nav #navbtn:hover:before,
+.nav #navbtn:focus:before {
   opacity: 1;
   left: 0;
   right: 0;
+}
+#rules {
+    display: block;
+    font-size: 10px;
+    width: 100%;
 }
 
 /*Used as a leadbord to show current leaders of the tetris game*/
@@ -198,8 +203,8 @@ h1 {
     grid-template-areas:
       "header game game game"
       "nav game game game"
-      " leadboard game game game"
-      ".  game game game"
+      " leaderboard game game game"
+      ". game game game"
       "footer footer footer footer";
   }
 
@@ -207,7 +212,7 @@ h1 {
     display: inline-block;
   }
 
-  .nav a {
+  .nav #navbtn {
     border: none;
     color: rgba(0, 0, 0, 0.5);
   }

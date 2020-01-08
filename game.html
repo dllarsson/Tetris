@@ -26,17 +26,17 @@
 
         <div class="nav">
             <ul class="navul">
-                <li><a href="game.html">PLAY</a></li>
-                <li><a href="">RULES</a></li>
-                </li>
+                <li><button id="navbtn">PLAY</button></li>
+                <li><button onclick="loadRules()" id="navbtn">RULES</button></li>
             </ul>
+            <div><p id="rules"></p></div>
         </div>
 
         <div class="sidebar">
-            <p>Leadboard</p>
+            <p>Leaderboard</p>
         </div>
 
-        <div id="gameAndControlsContainer">
+        <div class="gameAndControlsContainer">
             <div id="gameContainer">
                 <div id="savedSymbolContainer">
                     <canvas id="savedSymbol" height="80px" width="80px" style="border: 2px solid black"></canvas>
@@ -72,6 +72,7 @@
         <p>A game made by David Martin Hilda Patrik</p>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="script.js" type="text/javascript"></script>
+        <script type="text" src="rules.txt"></script>
 
     </footer>
 </body>
