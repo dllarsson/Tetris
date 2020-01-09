@@ -64,6 +64,27 @@ let makePiece = function (type) {
             [0, 5, 0]
         ];
     }
+    else if (type === "t1") {
+        return [
+            [0, 5, 0],
+            [5, 5, 0],
+            [0, 5, 0]
+        ];
+    }
+    else if (type === "t2") {
+        return [
+            [0, 5, 0],
+            [5, 5, 5],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "t3") {
+        return [
+            [0, 5, 0],
+            [0, 5, 5],
+            [0, 5, 0]
+        ];
+    }
     else if (type === "o") {
         return [
             [7, 7],
@@ -77,11 +98,53 @@ let makePiece = function (type) {
             [0, 4, 4]
         ];
     }
+    else if (type === "l1") {
+        return [
+            [0, 0, 0],
+            [4, 4, 4],
+            [4, 0, 0]
+        ];
+    }
+    else if (type === "l2") {
+        return [
+            [4, 4, 0],
+            [0, 4, 0],
+            [0, 4, 0]
+        ];
+    }
+    else if (type === "l3") {
+        return [
+            [0, 0, 4],
+            [4, 4, 4],
+            [0, 0, 0]
+        ];
+    }
     else if (type === "j") {
         return [
             [0, 1, 0],
             [0, 1, 0],
             [1, 1, 0]
+        ];
+    }
+    else if (type === "j1") {
+        return [
+            [1, 0, 0],
+            [1, 1, 1],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "j2") {
+        return [
+            [0, 1, 1],
+            [0, 1, 0],
+            [0, 1, 0]
+        ];
+    }
+    else if (type === "j3") {
+        return [
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 0, 1]
         ];
     }
     else if (type === "i") {
@@ -92,6 +155,14 @@ let makePiece = function (type) {
             [0, 2, 0, 0]
         ];
     }
+    else if (type === "i1") {
+        return [
+            [0, 0, 0, 0],
+            [2, 2, 2, 2],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ];
+    }
     else if (type === "s") {
         return [
             [0, 3, 3],
@@ -99,11 +170,25 @@ let makePiece = function (type) {
             [0, 0, 0]
         ];
     }
+    else if (type === "s1") {
+        return [
+            [3, 0, 0],
+            [3, 3, 0],
+            [0, 3, 0]
+        ];
+    }
     else if (type === "z") {
         return [
             [6, 6, 0],
             [0, 6, 6],
             [0, 0, 0]
+        ];
+    }
+    else if (type === "z1") {
+        return [
+            [0, 0, 6],
+            [0, 6, 6],
+            [0, 6, 0]
         ];
     }
 };
@@ -136,13 +221,13 @@ function PaintGameBoard() {
 
     for (var i = 0; i < 10; i++) {
         if (i % 2 == 0) y = 0;
-        else y = 35;
+        else y = 25;
         for (var j = 0; j < 20; j++) {
             ctx.fillStyle = "#f0f0f0";
-            ctx.fillRect(x, y, 35, 35);
-            y += 70;
+            ctx.fillRect(x, y, 25, 25);
+            y += 50;
         }
-        x += 35;
+        x += 25;
     }
 }
 
@@ -157,7 +242,7 @@ function generateNextThreeSymbols() {
     }
 }
 
-function GetSymbolXY(symbol) {
+function GetSymbolXY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
     var isValue = false;
     var xx = 0;
     var yy = 0;
@@ -167,7 +252,7 @@ function GetSymbolXY(symbol) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
             if (tempSymbol[j] != 0) {
-                xx = j;
+                xx = j;                 //saves where in the tetramino square the first block appears x-wise.
                 isValue = true;
                 break;
             }
@@ -181,7 +266,7 @@ function GetSymbolXY(symbol) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
-                yy = i;
+                yy = i;                 //saves where in the tetramino square the first block appears y-wise.
                 isValue = true;
                 break;
             }
@@ -194,7 +279,7 @@ function GetSymbolXY(symbol) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
             if (tempSymbol[j] != 0) {
-                xl = j;
+                xl = j;                 //saves where in the tetramino square the last block appears x-wise.
                 isValue = true;
                 break;
             }
@@ -208,22 +293,26 @@ function GetSymbolXY(symbol) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
-                yl = i;
+                yl = i;                 //saves where in the tetramino square the last block appears y-wise.
                 isValue = true;
                 break;
             }
         }
         if (isValue) break;
     }
-    var indexes = [xx, yy, xl, yl];
+    var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
     return indexes;
 }
-function PaintSymbol(x, y, direction) {
+function PaintSymbol(x, y) {
     var piece = makePiece(nextSymbols[0]);
     var falseMove = false;
     var indexes = GetSymbolXY(piece);
     var isAtBottom = false;
-    if (y + indexes[3] == 19) { //Block reaches bottom
+    if (y + indexes[3] >= 19) { //Block reaches bottom
+        isAtBottom = true;
+        console.log("Stop");
+    }
+    if (Board[x + indexes[0]][y + indexes[3]] == 99 || Board[x + indexes[2]][y + indexes[3]] == 99) { // Block connects with other
         isAtBottom = true;
         console.log("Stop");
     }
@@ -272,14 +361,14 @@ function PaintSymbol(x, y, direction) {
                                 Board[i][j] = 99;
                             }
                             ctx.fillStyle = colors[Board[i][j] - 1];
-                            ctx.fillRect(i * 35, j * 35, 35, 35);
+                            ctx.fillRect(i * 25, j * 25, 25, 25);
                         }
                     }
                 }
             }
-            
+
             MakeGameBoard();
-           
+
         }
     }
 }
@@ -353,10 +442,10 @@ function UpdateGameBoard() {
     }
 
     if (AtBottom) {
-        PaintSymbol(x, y, 23);
+        PaintSymbol(x, y);
     }
     else {
-        PaintSymbol(x, y, 23);
+        PaintSymbol(x, y);
     }
 
     tick++;
@@ -376,23 +465,92 @@ function Play(stop) {
         if (AtBottom) {
             x = 4;
             y = 0;
+            giveScore();
             AtBottom = false;
         }
         y++;
 
     }, 800);
     if (stop == 1) {
+        resetBoard();
         tick = 0;
         clearInterval(refreshintervalID);
         nextSymbols = [];
         generateNextThreeSymbols();
+        points = 0;
         y = 0;
     }
-    if (stop == 2) {
-        Rotate(symbol, 1);
+    // if (stop == 2) {
+    //     Rotate(symbol, 1);
+    // }
+}
+function resetBoard(){
+    for(let i = 0; i < Board.length; i++){
+        for(let j = 0; j < Board[i].length; j++){
+            Board[i][j] = 0;
+        }
     }
 }
+function Rotate() {
+    switch (nextSymbols[0]) {
+        case "t":
+            nextSymbols[0] = "t1";
+            break;
+        case "t1":
+            nextSymbols[0] = "t2";
+            break;
+        case "t2":
+            nextSymbols[0] = "t3";
+            break;
+        case "t3":
+            nextSymbols[0] = "t";
+            break;
+        case "l":
+            nextSymbols[0] = "l1";
+            break;
+        case "l1":
+            nextSymbols[0] = "l2";
+            break;
+        case "l2":
+            nextSymbols[0] = "l3";
+            break;
+        case "l3":
+            nextSymbols[0] = "l";
+            break;
+        case "j":
+            nextSymbols[0] = "j1";
+            break;
+        case "j1":
+            nextSymbols[0] = "j2";
+            break;
+        case "j2":
+            nextSymbols[0] = "j3";
+            break;
+        case "j3":
+            nextSymbols[0] = "j";
+            break;
+        case "i":
+            nextSymbols[0] = "i1";
+            break;
+        case "i1":
+            nextSymbols[0] = "i";
+            break;
+        case "s":
+            nextSymbols[0] = "s1";
+            break;
+        case "s1":
+            nextSymbols[0] = "s";
+            break;
+        case "z":
+            nextSymbols[0] = "z1";
+            break;
+        case "z1":
+            nextSymbols[0] = "z";
+            break;
 
+
+    }
+}
 // function Rotate(sym, direction){
 //     let rotate=function(sym,direction){
 // 		for(let y=0;y<sym.length;++y){
@@ -434,8 +592,17 @@ function KeyPressed(e) {
     else if (keyCode == 88) {   //X Key
         saveSymbol();
     }
-    else if (keyCode == 90) {   // Down key
-        Move(90);
+    else if (keyCode == 90) {   // Z key
+        // Move(90);
+        Rotate();
+        UpdateGameBoard();
+
+    }
+    else if (keyCode == 40) {
+        if (y + 1 < 19) {
+            y++;
+            UpdateGameBoard();
+        }
     }
 }
 
@@ -449,12 +616,45 @@ function barFunction() {
     }
 }
 
-function leftMove(){
+function leftMove() {
     x--;            // moves piece one step left
     UpdateGameBoard();
 }
-function rightMove(){
+function rightMove() {
     x++;            // moves piece one step right
     UpdateGameBoard();
+}
+
+var points = 0;
+var prevLine = 0;
+function giveScore() { // needs lots of rework.
+    let newCount = 0;
+    var tempBoardLine = 0;
+    for (let i = 0; i < Board.length; i++) {
+        for (let j = newCount; j < Board[i].length; j++) {
+            if (Board[i][j] == 99) {
+                newCount = j;
+            }
+            tempBoardLine += Board[i][j];
+            if (j != newCount) {
+                tempBoardLine = 0;
+            }
+            if (tempBoardLine == 990) { // if there are blocks on all positions in a row
+                points += 100;
+                prevLine += tempBoardLine; // variable to decide if bonus points are eligible
+                for(let rowCount = 0; rowCount < Board.length; rowCount++){
+                    for(let line = newCount; line < Board[rowCount].length; line++){
+                        Board[rowCount][line] = 0; // clears line when full
+                    }
+                }
+                tempBoardLine = 0;      // resets the row
+            }
+        }
+        if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
+            points += 100;
+        }
+    }
+    prevLine = 0;
+    document.getElementById("score").innerText = "Score: " + points;
 }
 
