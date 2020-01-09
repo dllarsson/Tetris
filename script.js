@@ -38,6 +38,27 @@ let makePiece = function (type) {
             [0, 5, 0]
         ];
     }
+    else if (type === "t1") {
+        return [
+            [0, 5, 0],
+            [5, 5, 0],
+            [0, 5, 0]
+        ];
+    }
+    else if (type === "t2") {
+        return [
+            [0, 5, 0],
+            [5, 5, 5],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "t3") {
+        return [
+            [0, 5, 0],
+            [0, 5, 5],
+            [0, 5, 0]
+        ];
+    }
     else if (type === "o") {
         return [
             [7, 7],
@@ -51,11 +72,53 @@ let makePiece = function (type) {
             [0, 4, 4]
         ];
     }
+    else if (type === "l1") {
+        return [
+            [0, 0, 0],
+            [4, 4, 4],
+            [4, 0, 0]
+        ];
+    }
+    else if (type === "l2") {
+        return [
+            [4, 4, 0],
+            [0, 4, 0],
+            [0, 4, 0]
+        ];
+    }
+    else if (type === "l3") {
+        return [
+            [0, 0, 4],
+            [4, 4, 4],
+            [0, 0, 0]
+        ];
+    }
     else if (type === "j") {
         return [
             [0, 1, 0],
             [0, 1, 0],
             [1, 1, 0]
+        ];
+    }
+    else if (type === "j1") {
+        return [
+            [1, 0, 0],
+            [1, 1, 1],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "j2") {
+        return [
+            [0, 1, 1],
+            [0, 1, 0],
+            [0, 1, 0]
+        ];
+    }
+    else if (type === "j3") {
+        return [
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 0, 1]
         ];
     }
     else if (type === "i") {
@@ -66,6 +129,14 @@ let makePiece = function (type) {
             [0, 2, 0, 0]
         ];
     }
+    else if (type === "i1") {
+        return [
+            [0, 0, 0, 0],
+            [2, 2, 2, 2],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
+        ];
+    }
     else if (type === "s") {
         return [
             [0, 3, 3],
@@ -73,11 +144,25 @@ let makePiece = function (type) {
             [0, 0, 0]
         ];
     }
+    else if (type === "s1") {
+        return [
+            [3, 0, 0],
+            [3, 3, 0],
+            [0, 3, 0]
+        ];
+    }
     else if (type === "z") {
         return [
             [6, 6, 0],
             [0, 6, 6],
             [0, 0, 0]
+        ];
+    }
+    else if (type === "z1") {
+        return [
+            [0, 0, 6],
+            [0, 6, 6],
+            [0, 6, 0]
         ];
     }
 };
@@ -361,6 +446,7 @@ function Play(stop) {
 
     }, 800);
     if (stop == 1) {
+        resetBoard();
         tick = 0;
         clearInterval(refreshintervalID);
         nextSymbols = [];
@@ -368,11 +454,77 @@ function Play(stop) {
         points = 0;
         y = 0;
     }
-    if (stop == 2) {
-        Rotate(symbol, 1);
+    // if (stop == 2) {
+    //     Rotate(symbol, 1);
+    // }
+}
+function resetBoard(){
+    for(let i = 0; i < Board.length; i++){
+        for(let j = 0; j < Board[i].length; j++){
+            Board[i][j] = 0;
+        }
     }
 }
+function Rotate() {
+    switch (nextSymbols[0]) {
+        case "t":
+            nextSymbols[0] = "t1";
+            break;
+        case "t1":
+            nextSymbols[0] = "t2";
+            break;
+        case "t2":
+            nextSymbols[0] = "t3";
+            break;
+        case "t3":
+            nextSymbols[0] = "t";
+            break;
+        case "l":
+            nextSymbols[0] = "l1";
+            break;
+        case "l1":
+            nextSymbols[0] = "l2";
+            break;
+        case "l2":
+            nextSymbols[0] = "l3";
+            break;
+        case "l3":
+            nextSymbols[0] = "l";
+            break;
+        case "j":
+            nextSymbols[0] = "j1";
+            break;
+        case "j1":
+            nextSymbols[0] = "j2";
+            break;
+        case "j2":
+            nextSymbols[0] = "j3";
+            break;
+        case "j3":
+            nextSymbols[0] = "j";
+            break;
+        case "i":
+            nextSymbols[0] = "i1";
+            break;
+        case "i1":
+            nextSymbols[0] = "i";
+            break;
+        case "s":
+            nextSymbols[0] = "s1";
+            break;
+        case "s1":
+            nextSymbols[0] = "s";
+            break;
+        case "z":
+            nextSymbols[0] = "z1";
+            break;
+        case "z1":
+            nextSymbols[0] = "z";
+            break;
 
+
+    }
+}
 // function Rotate(sym, direction){
 //     let rotate=function(sym,direction){
 // 		for(let y=0;y<sym.length;++y){
@@ -415,7 +567,10 @@ function KeyPressed(e) {
         saveSymbol();
     }
     else if (keyCode == 90) {   // Z key
-        Move(90);
+        // Move(90);
+        Rotate();
+        UpdateGameBoard();
+
     }
     else if (keyCode == 40) {
         if (y + 1 < 19) {
@@ -461,6 +616,11 @@ function giveScore() { // needs lots of rework.
             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
                 points += 100;
                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
+                for(let rowCount = 0; rowCount < Board.length; rowCount++){
+                    for(let line = newCount; line < Board[rowCount].length; line++){
+                        Board[rowCount][line] = 0; // clears line when full
+                    }
+                }
                 tempBoardLine = 0;      // resets the row
             }
         }
