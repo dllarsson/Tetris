@@ -24,7 +24,7 @@ txtFile.send(null);
 
 
 
-var playerName="";
+var playerName = "";
 $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
     document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
@@ -52,8 +52,8 @@ function handleUsernameFromInput() {
     $("#usernameContainer").css("display", "none");
 }
 
-function showUserNameModal(){
-    $("#usernameContainer").css("display","block");
+function showUserNameModal() {
+    $("#usernameContainer").css("display", "block");
 }
 function SetX(coord) {
     x = coord;
@@ -534,9 +534,9 @@ function Play(stop) {
     //     Rotate(symbol, 1);
     // }
 }
-function resetBoard(jStart){
-    for(let i = 0; i < Board.length; i++){
-        for(let j = jStart; j < Board[i].length; j++){
+function resetBoard(jStart) {
+    for (let i = 0; i < Board.length; i++) {
+        for (let j = jStart; j < Board[i].length; j++) {
             Board[i][j] = 0;
         }
     }
@@ -708,17 +708,24 @@ function giveScore() { // needs lots of rework.
     var tempBoardLine = 0;
     for (let i = 0; i < Board.length; i++) {
         for (let j = newCount; j < Board[i].length; j++) {
-            if (Board[i][j] == 99) {
+            if (Board[i][j] > 10) {
                 newCount = j;
             }
-            tempBoardLine += Board[i][j];
+            tempBoardLine += 99;
             if (j != newCount) {
                 tempBoardLine = 0;
             }
             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
                 points += 100;
                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-                resetBoard(newCount); // clears line when full
+                for (let rowCount = 0; rowCount < Board.length; rowCount++) {
+                    for (let line = newCount; line < Board[rowCount].length; line++) {
+                        console.log(tempBoardLine + "hej3")
+                        Board[rowCount].splice(line, 1);
+                        Board[rowCount].unshift(0); // clears line when full
+                    }
+                }
+                //resetBoard(newCount); // clears line when full
                 tempBoardLine = 0;      // resets the row
             }
         }
