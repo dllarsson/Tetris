@@ -231,7 +231,7 @@ h1 {
     border: none;
     color: rgba(0, 0, 0, 0.5);
   }
-  #leftArrow, #rightArrow, #rotationArrow {
+  .touch-controls {
     display: none;
   }
 }
@@ -245,7 +245,7 @@ h1 {
   display: inline-flex;
 }
 
-#leftArrow, #rightArrow, #rotationArrow {
+.touch-controls {
   opacity: 0.2;
   box-sizing: border-box;
   padding: none;
