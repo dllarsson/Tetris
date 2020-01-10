@@ -2,28 +2,29 @@
 function loadRules() {
     var x = document.getElementById("rules");
     if (x.style.display === "none") {
-      x.style.display = "block";
+        x.style.display = "block";
     } else {
-      x.style.display = "none";
+        x.style.display = "none";
     }
-  }
-  
-  /*Load the rules from a textfile to the webpage*/
-  var txtFile = new XMLHttpRequest();
-  var allText = "file not found";
-  txtFile.onreadystatechange = function () {
-      if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
-          allText = txtFile.responseText;
-          allText = allText.split("\n").join("<br>");
-      }
+}
 
-      document.getElementById('rules').innerHTML = allText;
-  }
-  txtFile.open("GET", 'rules.txt', true);
-  txtFile.send(null);
+/*Load the rules from a textfile to the webpage*/
+var txtFile = new XMLHttpRequest();
+var allText = "file not found";
+txtFile.onreadystatechange = function () {
+    if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+        allText = txtFile.responseText;
+        allText = allText.split("\n").join("<br>");
+    }
+
+    document.getElementById('rules').innerHTML = allText;
+}
+txtFile.open("GET", 'rules.txt', true);
+txtFile.send(null);
 
 
 
+var playerName="";
 $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
     document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
@@ -39,17 +40,20 @@ var tick = 0;
 var SymbolXY = [];
 var nextSymbols = [];
 var savedSymbol = [];
-var playerName;
+var currentlyPlaying = false;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 function handleUsernameFromInput() {
-    playerName = $("#usernameInput").val()
-    $("#usernameText").css("display", "block");
+    playerName = $("#usernameInput").val();
     $("#usernameText").text("Your username is: " + playerName);
     $("#usernameInput").val("");
+    $("#changeUsernameBtn").html("Change username");
     $("#usernameContainer").css("display", "none");
-    console.log(playerName);
+}
+
+function showUserNameModal(){
+    $("#usernameContainer").css("display","block");
 }
 function SetX(coord) {
     x = coord;
@@ -203,8 +207,8 @@ function MakeGameBoard() {
 
             tempArr[j] = 0;
             if (Board.length != 0) {
-                if (Board[i][j] == 99) {
-                    tempArr[j] = 99;
+                if (Board[i][j] > 10) {
+                    tempArr[j] = Board[i][j];
                 }
 
             }
@@ -212,6 +216,7 @@ function MakeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
+    console.log(Board);
     Board = gameBoard;
 }
 function PaintGameBoard() {
@@ -238,7 +243,10 @@ function randomizeSymbol() {
 
 function generateNextThreeSymbols() {
     while (nextSymbols.length < 3) {
-        nextSymbols.push(randomizeSymbol());
+        var nextSymbolToCheck = randomizeSymbol();
+        if (!nextSymbols.includes(nextSymbolToCheck)) {
+            nextSymbols.push(nextSymbolToCheck);
+        }
     }
 }
 
@@ -305,6 +313,15 @@ function GetSymbolXY(symbol) {     //returns an array of the first and last posi
 }
 function PaintSymbol(x, y) {
     var piece = makePiece(nextSymbols[0]);
+    var currentPieceNumber;
+    piece.forEach(function (element) {
+        element.forEach(function (elementInElement) {
+            if (elementInElement != 0) {
+                currentPieceNumber = elementInElement;
+            }
+        });
+    });
+    var pieceToWrite = currentPieceNumber + "" + currentPieceNumber;
     var falseMove = false;
     var indexes = GetSymbolXY(piece);
     var isAtBottom = false;
@@ -312,7 +329,7 @@ function PaintSymbol(x, y) {
         isAtBottom = true;
         console.log("Stop");
     }
-    else if (Board[x + indexes[0]][y + indexes[3]] == 99 || Board[x + indexes[2]][y + indexes[3]] == 99) { // Block connects with other
+    if (Board[x + indexes[0]][y + indexes[3]] > 10 || Board[x + indexes[2]][y + indexes[3]] > 10) { // Block connects with other
         isAtBottom = true;
         console.log("Stop");
     }
@@ -356,11 +373,41 @@ function PaintSymbol(x, y) {
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 20; j++) {
                         if (Board[i][j] != 0) {
-                            if (AtBottom) {
-                                Board[i][j] = 99;
+                            if (AtBottom && Board[i][j] < 10) {
+                                Board[i][j] = parseInt(pieceToWrite);
                             }
-                            ctx.fillStyle = colors[Board[i][j] - 1];
-                            ctx.fillRect(i * 25, j * 25, 25, 25);
+                            if (Board[i][j] == 11) {
+                                ctx.fillStyle = colors[0];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 22) {
+                                ctx.fillStyle = colors[1];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 33) {
+                                ctx.fillStyle = colors[2];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 44) {
+                                ctx.fillStyle = colors[3];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 55) {
+                                ctx.fillStyle = colors[4];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 66) {
+                                ctx.fillStyle = colors[5];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] == 77) {
+                                ctx.fillStyle = colors[6];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
+                            else if (Board[i][j] < 10) {
+                                ctx.fillStyle = colors[Board[i][j] - 1];
+                                ctx.fillRect(i * 25, j * 25, 25, 25);
+                            }
                         }
                     }
                 }
@@ -422,6 +469,7 @@ function saveSymbol() {
         savedSymbol[0] = nextSymbols[0];
         nextSymbols.splice(0, 1);
         y = 0;
+        x = 4;
         paintSavedSymbol();
     }
     else {
@@ -429,6 +477,7 @@ function saveSymbol() {
         savedSymbol[0] = nextSymbols[0];
         nextSymbols[0] = symbolToSwap;
         y = 0;
+        x = 4;
         paintSavedSymbol();
     }
 }
@@ -447,29 +496,31 @@ function UpdateGameBoard() {
         PaintSymbol(x, y);
     }
 
-    tick++;
-
 
     console.log(x + "    " + y);
 }
 
 function Play(stop) {
     MakeGameBoard();
-    var refreshintervalID = setInterval(function () {
-        $("#counter").text(tick);
-        generateNextThreeSymbols();
-        paintNextSymbolOne();
-        paintNextSymbolTwo();
-        UpdateGameBoard();
-        if (AtBottom) {
-            x = 4;
-            y = 0;
-            giveScore();
-            AtBottom = false;
-        }
-        y++;
+    if (stop == 0 && currentlyPlaying == false) {
+        currentlyPlaying = true;
+        var refreshintervalID = setInterval(function () {
+            tick++;
+            $("#counter").text(tick);
+            generateNextThreeSymbols();
+            paintNextSymbolOne();
+            paintNextSymbolTwo();
+            UpdateGameBoard();
+            if (AtBottom) {
+                x = 4;
+                y = 0;
+                giveScore();
+                AtBottom = false;
+            }
+            y++;
 
-    }, 800);
+        }, 800);
+    }
     if (stop == 1) {
         resetBoard(0);
         tick = 0;
@@ -548,6 +599,28 @@ function Rotate() {
             nextSymbols[0] = "z";
             break;
 
+        // function Rotate(sym, direction){
+        //     let rotate=function(sym,direction){
+        // 		for(let y=0;y<sym.length;++y){
+        // 			for(let x=0;x<y;++x){
+        // 				[
+        // 					sym[x][y],
+        // 					sym[y][x]
+        // 				]=[
+        // 					sym[y][x],
+        // 					sym[x][y],
+        // 				]
+        // 			}
+        // 		}
+        // 		if(dir>0){
+        // 			sym.forEach(row=>row.reverse());
+        // 		}
+        // 		else{
+        // 			sym.reverse();
+        // 		}
+        //     };
+        //     return rotate;
+        // }
 
     }
 }
@@ -578,14 +651,18 @@ function Rotate() {
 function KeyPressed(e) {
     var keyCode = e.keyCode;
     if (keyCode == 37) {        // Left key
-        x--;
+        if (x > 0) {
+            x--;
+        }
         UpdateGameBoard();
     }
     else if (keyCode == 38) {   // Up key
         Move(38);
     }
     else if (keyCode == 39) {   // Right key
-        x++;
+        if (x < 10) {
+            x++;
+        }
         // PaintSymbol(x,y)
         UpdateGameBoard();
     }
