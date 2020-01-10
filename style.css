@@ -12,7 +12,6 @@ body {
   display: inline-flex;
   text-align: center;
 }
-
 .gameAndControlsContainer{
   text-align: center;
 }
@@ -23,10 +22,6 @@ canvas {
   background-color: rgb(226, 226, 226);
 }
 
-#usernameText {
-  display: none;
-  position: absolute
-}
 
 #usernameContainer {
   /*temporary display none*/
@@ -209,6 +204,13 @@ h1 {
 .btn:hover {
   background-color: black;
   color: red;
+}
+
+#changeUsernameBtn{
+  
+  padding: 8px 16px;
+  
+  font-size: 14px;
 }
 
 @media only screen and (min-width: 768px) {

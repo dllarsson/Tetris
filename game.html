@@ -22,10 +22,11 @@
     <div class="grid-container">
         <div class="header">
             <h1>Welcome to tetris game</h1>
-            <p id="usernameText"></p>
         </div>
         <div>
-            <p id="score"></p>
+            <p id="usernameText">No username selected</p>
+            <p id="score">Score: 0</p> <br>
+            <button onclick="showUserNameModal()" class="btn" id="changeUsernameBtn">Enter username</button>
         </div>
 
         <div class="nav">
@@ -64,7 +65,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn" onclick="Play();">Play</button>
+                <button class="btn" onclick="Play(0);">Play</button>
 
                 <button class="btn" onclick="Play(1);">Reset</button>
                 <button class="btn" onclick="Rotate();">Rotate</button>
