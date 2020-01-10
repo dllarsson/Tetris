@@ -216,7 +216,6 @@ function MakeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
-    console.log(Board);
     Board = gameBoard;
 }
 function PaintGameBoard() {
