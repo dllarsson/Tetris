@@ -312,18 +312,21 @@ function PaintSymbol(x, y) {
         isAtBottom = true;
         console.log("Stop");
     }
-    if (Board[x + indexes[0]][y + indexes[3]] == 99 || Board[x + indexes[2]][y + indexes[3]] == 99) { // Block connects with other
+    else if (Board[x + indexes[0]][y + indexes[3]] == 99 || Board[x + indexes[2]][y + indexes[3]] == 99) { // Block connects with other
         isAtBottom = true;
         console.log("Stop");
     }
-    if (x + indexes[2] > 9) {
+    else if (x + indexes[2] > 9) {
         SetX(x - 1);
         return console.log("Too far right");
     }
+    else if(x < 0 && indexes[0] == 1){
+        SetX(x);
+    }
 
-    if (x - indexes[0] < 0) {
+    else if (x - indexes[0] < 0) {
         SetX(x + 1);
-        return console.log("Too far right");
+        return console.log("Too far left");
     }
 
 
@@ -472,21 +475,22 @@ function Play(stop) {
 
     }, 800);
     if (stop == 1) {
-        resetBoard();
+        resetBoard(0);
         tick = 0;
         clearInterval(refreshintervalID);
         nextSymbols = [];
         generateNextThreeSymbols();
         points = 0;
+        x = 4;
         y = 0;
     }
     // if (stop == 2) {
     //     Rotate(symbol, 1);
     // }
 }
-function resetBoard(){
+function resetBoard(jStart){
     for(let i = 0; i < Board.length; i++){
-        for(let j = 0; j < Board[i].length; j++){
+        for(let j = jStart; j < Board[i].length; j++){
             Board[i][j] = 0;
         }
     }
@@ -642,11 +646,7 @@ function giveScore() { // needs lots of rework.
             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
                 points += 100;
                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-                for(let rowCount = 0; rowCount < Board.length; rowCount++){
-                    for(let line = newCount; line < Board[rowCount].length; line++){
-                        Board[rowCount][line] = 0; // clears line when full
-                    }
-                }
+                resetBoard(newCount); // clears line when full
                 tempBoardLine = 0;      // resets the row
             }
         }
