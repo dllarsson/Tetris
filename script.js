@@ -28,7 +28,7 @@ $(document).ready(function () {
     window.addEventListener("keydown", KeyPressed, false);
     document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
     document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
-    //document.getElementById("directionArrow").addEventListener("touchstart", directionMove, false);
+    document.getElementById("rotationArrow").addEventListener("touchstart", Rotate, false);
     MakeGameBoard();
 
 });
@@ -320,10 +320,6 @@ function PaintSymbol(x, y) {
         SetX(x - 1);
         return console.log("Too far right");
     }
-    else if(x < 0 && indexes[0] == 1){
-        SetX(x);
-    }
-
     else if (x - indexes[0] < 0) {
         SetX(x + 1);
         return console.log("Too far left");
