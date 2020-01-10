@@ -8,69 +8,84 @@ body {
   background-color: black;
 }
 
-#gameContainer{
+#gameContainer {
   display: inline-flex;
-  text-align:center;
-}
-
-#gameAndControlsContainer{
   text-align: center;
 }
 
-canvas{
-  margin-left:5px;
-  margin-right:5px;
-  background-color:rgb(226, 226, 226);
+.gameAndControlsContainer{
+  text-align: center;
 }
 
-#usernameText{
-  display:none;
-  position:absolute
+canvas {
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: rgb(226, 226, 226);
 }
 
-#usernameContainer{
+#usernameText {
+  display: none;
+  position: absolute
+}
+
+#usernameContainer {
+  /*temporary display none*/
+  display: none;
   font-family: "Raleway", Arial, sans-serif;
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-#usernameContent{
-  text-align:center;
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 40%; /* Could be more or less, depending on screen size */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
-input{
+#usernameContent {
+  text-align: center;
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+  /* Could be more or less, depending on screen size */
+}
+
+input {
   padding: 17px 30px;
 }
 
-#usernameContent input,button{
+#usernameContent input, button {
   vertical-align: middle;
 }
 
 /*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
 In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
 Mostof the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
+
 .header {
   grid-area: header;
 }
+
 .nav {
   grid-area: nav;
 }
+
 .sidebar {
-  grid-area: leadboard;
+  grid-area: leaderboard;
 }
-.gameContainer {
+.gameAndControlsContainer {
   grid-area: game;
 }
+
 .footer {
   grid-area: footer;
 }
@@ -83,14 +98,14 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
     "game game game game"
     "game game game game"
     "game game game game"
-    "nav nav leadboard leadboard"
+    "nav nav leaderboard leaderboard"
     "footer footer footer footer";
   grid-gap: 5px;
   background-color: rgb(0, 0, 0);
   padding: 10px;
 }
 
-.grid-container > div {
+.grid-container>div {
   background-color: rgba(180, 180, 180, 0.8);
   text-align: center;
   padding: 5px 0;
@@ -104,16 +119,17 @@ h1 {
 }
 
 /*CSS for navbar animation links*/
+
 .nav {
   font-family: "Raleway", Arial, sans-serif;
   text-align: center;
   text-transform: uppercase;
   font-weight: 500;
-  padding: 10px 0;
+  padding: 5px 0;
   letter-spacing: 1px;
   background-color: white;
 }
-.nav * {
+.nav *{
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: all 0.35s ease;
@@ -126,7 +142,7 @@ h1 {
   margin: 10px 0;
   padding: 0;
 }
-.nav a {
+.nav #navbtn {
   width: 100px;
   margin: auto;
   display: block;
@@ -136,7 +152,7 @@ h1 {
   background-color: rgba(180, 180, 180, 0.8);
   color: rgba(255, 0, 0, 1);
 }
-.nav a:before {
+.nav #navbtn:before {
   position: absolute;
   content: "";
   -webkit-transition: all 0.35s ease;
@@ -149,19 +165,25 @@ h1 {
   border-left: 1px solid rgb(255, 0, 0);
   border-right: 1px solid rgb(255, 0, 0);
 }
-.nav a:hover,
-.nav a:focus {
+.nav #navbtn:hover,
+.nav #navbtn:focus {
   color: #000000;
 }
 
-.nav a:hover:before,
-.nav a:focus:before {
+.nav #navbtn:hover:before,
+.nav #navbtn:focus:before {
   opacity: 1;
   left: 0;
   right: 0;
 }
+#rules {
+    display: block;
+    font-size: 10px;
+    width: 100%;
+}
 
 /*Used as a leadbord to show current leaders of the tetris game*/
+
 /*.sidebar {
 }*/
 
@@ -195,37 +217,41 @@ h1 {
     grid-template-areas:
       "header game game game"
       "nav game game game"
-      " leadboard game game game"
-      ".  game game game"
+      " leaderboard game game game"
+      ". game game game"
       "footer footer footer footer";
   }
   .nav li {
     display: inline-block;
   }
 
-  .nav a {
+  .nav #navbtn {
     border: none;
     color: rgba(0, 0, 0, 0.5);
   }
+  #leftArrow, #rightArrow, #rotationArrow {
+    display: none;
+  }
 }
 
-#counter{
-    font-size: 75px;
-    padding: 20px;
+#counter {
+  font-size: 75px;
+  padding: 20px;
 }
 
-#touchCtrl{
-    display: inline-flex;
+#touchCtrl {
+  display: inline-flex;
 }
 
-#leftArrow, #rightArrow, #rotationArrow{
-    opacity: 0.2;
-    box-sizing: border-box;
-    padding: none;
+#leftArrow, #rightArrow, #rotationArrow {
+  opacity: 0.2;
+  box-sizing: border-box;
+  padding: none;
+  margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #rotationArrow img{
-    width: auto;
-    height: auto;
-    max-width: 60px;
+#leftArrow img, #rightArrow img, #rotationArrow img {
+  width: auto;
+  height: auto;
+  max-width: 60px;
 }

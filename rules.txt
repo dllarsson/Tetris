@@ -1,0 +1,20 @@
+1. Start the game on the lowest level.
+As you play the game levels will go up, 
+but you need to start at a low level to
+help you practice.
+
+2. Move the tetrominoes left and right with
+the arrow keys or buttons.
+Try to move the tetrominoes to get them to
+move together.
+
+3. Use the action button to rotate the
+tetrominoes to fit holes.
+
+4. Complete lines to gain points and
+raise the level. The more lines completed
+at once, the more points gained.    
+
+5. Check upcoming pieces and plan for them.
+This will become easier the more you play,
+don't rush yourself.
