@@ -172,7 +172,7 @@ h1 {
   right: 0;
 }
 #rules {
-    display: block;
+    display: none;
     font-size: 10px;
     width: 100%;
 }
@@ -252,7 +252,7 @@ h1 {
   margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #rotationArrow img {
+#leftArrow img, #rightArrow img, #rotationArrow img, #downArrow img {
   width: auto;
   height: auto;
   max-width: 60px;
