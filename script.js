@@ -542,6 +542,7 @@ function resetGame() {
     nextSymbols = [];
     savedSymbol = [];
     points = 0;
+    document.getElementById("score").innerText = "Score: " + points;
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
