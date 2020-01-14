@@ -172,7 +172,7 @@ h1 {
   right: 0;
 }
 #rules {
-    display: block;
+    display: none;
     font-size: 10px;
     width: 100%;
 }
@@ -231,7 +231,7 @@ h1 {
     border: none;
     color: rgba(0, 0, 0, 0.5);
   }
-  #leftArrow, #rightArrow, #rotationArrow {
+  .touch-controls {
     display: none;
   }
 }
@@ -245,14 +245,14 @@ h1 {
   display: inline-flex;
 }
 
-#leftArrow, #rightArrow, #rotationArrow {
+.touch-controls {
   opacity: 0.2;
   box-sizing: border-box;
   padding: none;
   margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #rotationArrow img {
+#leftArrow img, #rightArrow img, #rotationArrow img, #downArrow img {
   width: auto;
   height: auto;
   max-width: 60px;
