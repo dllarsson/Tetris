@@ -1,11 +1,12 @@
 var x = 4;
 var y = 0;
-var atbottom = false;
+var atBottom = false;
 var tick = 0;
 var playerName = "";
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
+var gameplayLoopID;
 const gameBoardCanvas = document.getElementById("game");
 const gameBoardContext = gameBoardCanvas.getContext("2d");
 const pieceOneCanvas = document.getElementById("nextSymbolOne");
@@ -330,6 +331,7 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     return indexes;
 }
 function paintSymbol(x, y) {
+    checkIfGameOver();
     var piece = makePiece(nextSymbols[0]);
     var currentPieceNumber;
     piece.forEach(function (element) {
@@ -380,7 +382,7 @@ function paintSymbol(x, y) {
             }
             if (isAtBottom) {
                 boardWithPieces = board;
-                atbottom = true;
+                atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
             }
@@ -390,7 +392,7 @@ function paintSymbol(x, y) {
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 20; j++) {
                         if (board[i][j] != 0) {
-                            if (atbottom && board[i][j] < 10) {
+                            if (atBottom && board[i][j] < 10) {
                                 board[i][j] = parseInt(pieceToWrite);
                             }
                             if (board[i][j] == 11) {
@@ -503,7 +505,7 @@ function updateGameBoard() {
         generateNextThreeSymbols();
     }
 
-    if (atbottom) {
+    if (atBottom) {
         paintSymbol(x, y);
     }
     else {
@@ -512,9 +514,25 @@ function updateGameBoard() {
     //console.log(x + "    " + y);
 }
 
-var gameplayLoopID;
+function checkIfGameOver() {
+    if (x - 1 > 0 && board[x - 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+    else if (board[x][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+
+    else if (x + 1 < 10 && board[x + 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+}
+
 
 function play() {
+    resetGame();
     gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
 function startGameplayLoop() {
@@ -525,11 +543,11 @@ function startGameplayLoop() {
     paintNextSymbolOne();
     paintNextSymbolTwo();
     updateGameBoard();
-    if (atbottom) {
+    if (atBottom) {
         x = 4;
         y = 0;
         giveScore();
-        atbottom = false;
+        atBottom = false;
     }
     y++;
 }
@@ -559,11 +577,11 @@ function startGameplayLoop() {
     paintNextSymbolOne();
     paintNextSymbolTwo();
     updateGameBoard();
-    if (atbottom) {
+    if (atBottom) {
         x = 4;
         y = 0;
         giveScore();
-        atbottom = false;
+        atBottom = false;
     }
     y++;
 }
