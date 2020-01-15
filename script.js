@@ -384,6 +384,7 @@ function drawSymbol(pieceToDraw) {
     }
 }
 function paintSymbol(/*x, y*/) {
+    checkIfGameOver();
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
