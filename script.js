@@ -215,10 +215,11 @@ function makePiece(type) {
 };
 
 var board = [];
-var boardWithPieces = [];
+var firstBlock = true;
 /* Sets the game board state when a piece has stopped moving (?) */
 function makeGameBoard() {
     var gameBoard = [];
+
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
         for (let j = 0; j < 20; j++) {
@@ -233,6 +234,10 @@ function makeGameBoard() {
 
         }
         gameBoard.push(tempArr);
+    }
+    if (firstBlock == true){
+        collitionBoard = gameBoard;
+        firstBlock = false;
     }
     board = gameBoard;
 }
@@ -343,6 +348,10 @@ function drawSymbol(pieceToDraw) {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
+                if (board[i][j]<10 && board[i][j+1] > 10){
+                    console.log("collition");
+                    atBottom = true;
+                }
                 if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
                 }
@@ -377,11 +386,17 @@ function drawSymbol(pieceToDraw) {
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    
                     setCurrentBlockCoords(i,j);
                 }
+
             }
         }
     }
+
+    gameBoardContext.fillStyle = colors[6];
+    gameBoardContext.fillRect(9 * 25, 19 * 25, 25, 25);
+
 }
 function paintSymbol(/*x, y*/) {
     checkIfGameOver();
@@ -430,7 +445,6 @@ function paintSymbol(/*x, y*/) {
 
             }
             if (isAtBottom) {
-                boardWithPieces = board;
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
@@ -544,6 +558,8 @@ function play() {
     resetGame();
     gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
+
+
 function startGameplayLoop() {
     makeGameBoard();
     tick++;
@@ -642,29 +658,6 @@ function rotate() {
         case "z1":
             nextSymbols[0] = "z";
             break;
-
-        // function rotate(sym, direction){
-        //     let rotate=function(sym,direction){
-        // 		for(let y=0;y<sym.length;++y){
-        // 			for(let x=0;x<y;++x){
-        // 				[
-        // 					sym[x][y],
-        // 					sym[y][x]
-        // 				]=[
-        // 					sym[y][x],
-        // 					sym[x][y],
-        // 				]
-        // 			}
-        // 		}
-        // 		if(dir>0){
-        // 			sym.forEach(row=>row.reverse());
-        // 		}
-        // 		else{
-        // 			sym.reverse();
-        // 		}
-        //     };
-        //     return rotate;
-        // }
 
     }
     updateGameBoard();
