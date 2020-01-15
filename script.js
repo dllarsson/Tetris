@@ -19,10 +19,10 @@ $(document).ready(function () {
     var rulesText = document.getElementById("rules");
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
-    document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
-    document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
-    document.getElementById("downArrow").addEventListener("touchstart", downMove, false);
-    document.getElementById("rotationArrow").addEventListener("touchstart", rotate, false);
+    $("#leftArrow").on("touchstart", leftMove);
+    $("#rightArrow").on("touchstart", rightMove);
+    $("#downArrow").on("touchstart", downMove);
+    $("#rotationArrow").on("touchstart", rotate);
     makeGameBoard();
 
 });
@@ -215,6 +215,7 @@ function makePiece(type) {
 
 var board = [];
 var boardWithPieces = [];
+/* Sets the game board state when a piece has stopped moving (?) */
 function makeGameBoard() {
     var gameBoard = [];
     for (let i = 0; i < 10; i++) {
@@ -314,17 +315,76 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     return indexes;
 }
 var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
-function paintSymbol(x, y) {
-    var piece = makePiece(nextSymbols[0]);
+function setCurrentBlockCoords(xCoord, yCoord){
+    currentBlock.blockX.unshift(xCoord);
+    currentBlock.blockY.unshift(yCoord);
+}
+function resetCurrentBlockCoords(){
+    currentBlock.blockX = [];
+    currentBlock.blockY = [];
+}
+/*extracts color for a block and returns color stop code */
+function extractingColorNumber(pieceToCheck) {
     var currentPieceNumber;
-    piece.forEach(function (element) {
+    pieceToCheck.forEach(function (element) {
         element.forEach(function (elementInElement) {
             if (elementInElement != 0) {
                 currentPieceNumber = elementInElement;
             }
         });
     });
-    var pieceToWrite = currentPieceNumber + "" + currentPieceNumber;
+    var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
+    return stoppedColor;
+}
+/* Sets the correct color for each piece. A number <10 defines a color for a moving block.
+                 A number >10 defines a color for an existing block. */
+function drawSymbol(pieceToDraw) {
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 20; j++) {
+            if (board[i][j] != 0) {
+                if (atbottom && board[i][j] < 10) {
+                    board[i][j] = parseInt(pieceToDraw);
+                }
+                if (board[i][j] == 11) {
+                    gameBoardContext.fillStyle = colors[0];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 22) {
+                    gameBoardContext.fillStyle = colors[1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 33) {
+                    gameBoardContext.fillStyle = colors[2];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 44) {
+                    gameBoardContext.fillStyle = colors[3];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 55) {
+                    gameBoardContext.fillStyle = colors[4];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 66) {
+                    gameBoardContext.fillStyle = colors[5];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 77) {
+                    gameBoardContext.fillStyle = colors[6];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] < 10) {
+                    gameBoardContext.fillStyle = colors[board[i][j] - 1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    setCurrentBlockCoords(i,j);
+                }
+            }
+        }
+    }
+}
+function paintSymbol(/*x, y*/) {
+    var piece = makePiece(nextSymbols[0]);
+    var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
     var indexes = getSymbolXY(piece);
     var isAtBottom = false;
@@ -339,7 +399,7 @@ function paintSymbol(x, y) {
             console.log("Stop");
         }
     }
-    else if (x + indexes[2] > 9) {
+    else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
         x = x - 1;
         return console.log("Too far right");
     }
@@ -375,52 +435,8 @@ function paintSymbol(x, y) {
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
-                currentBlock.blockX = [];
-                currentBlock.blockY = [];
-                //sets the correct color for each piece
-                for (let i = 0; i < 10; i++) {
-                    for (let j = 0; j < 20; j++) {
-                        if (board[i][j] != 0) {
-                            if (atbottom && board[i][j] < 10) {
-                                board[i][j] = parseInt(pieceToWrite);
-                            }
-                            if (board[i][j] == 11) {
-                                gameBoardContext.fillStyle = colors[0];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 22) {
-                                gameBoardContext.fillStyle = colors[1];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 33) {
-                                gameBoardContext.fillStyle = colors[2];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 44) {
-                                gameBoardContext.fillStyle = colors[3];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 55) {
-                                gameBoardContext.fillStyle = colors[4];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 66) {
-                                gameBoardContext.fillStyle = colors[5];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 77) {
-                                gameBoardContext.fillStyle = colors[6];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] < 10) {
-                                gameBoardContext.fillStyle = colors[board[i][j] - 1];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                                currentBlock.blockX.unshift(i);
-                                currentBlock.blockY.unshift(j);
-                            }
-                        }
-                    }
-                }
+                resetCurrentBlockCoords();
+                drawSymbol(pieceToWrite);
             }
             makeGameBoard();
         }
@@ -497,10 +513,10 @@ function updateGameBoard() {
     }
 
     if (atbottom) {
-        paintSymbol(x, y);
+        paintSymbol(/*x, y*/);
     }
     else {
-        paintSymbol(x, y);
+        paintSymbol(/*x, y*/);
     }
     //console.log(x + "    " + y);
 }
@@ -535,7 +551,7 @@ function resetGame() {
     nextSymbols = [];
     savedSymbol = [];
     points = 0;
-    document.getElementById("score").innerText = "Score: " + points;
+    $("#score").text("Score: " + points);
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -551,18 +567,6 @@ function resetBoard(jStart) {
         }
     }
 }
-// function gameOver(){
-//     var currentSymbol = getSymbolXY(nextSymbols[0]);
-//     for(let i = 0; i < board.length; i++){
-//         for(let j = 0; j < board[i].length; j++){
-
-//         }
-
-//         if(currentSymbol[3] )
-//     }
-
-// clearInterval(gameplayLoopID);
-// }
 
 function rotate() {
     switch (nextSymbols[0]) {
@@ -687,7 +691,15 @@ function downMove() { // moves piece one step down
     }
     updateGameBoard();
 }
-
+/* Clears a line*/
+function clearLine(lineCount){
+    for (let rowCount = 0; rowCount < board.length; rowCount++) {
+        for (let line = lineCount; line < board[rowCount].length; line++) {
+            board[rowCount].splice(line, 1);
+            board[rowCount].unshift(0); // adds a new line to the board.
+        }
+    }
+}
 var points = 0;
 var prevLine = 0;
 function giveScore() { // needs lots of rework.
@@ -697,21 +709,15 @@ function giveScore() { // needs lots of rework.
         for (let j = newCount; j < board[i].length; j++) {
             if (board[i][j] > 10) {
                 newCount = j;
+                tempBoardLine += 99;
             }
-            tempBoardLine += 99;
             if (j != newCount) {
                 tempBoardLine = 0;
             }
             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
                 points += 100;
                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-                for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                    for (let line = newCount; line < board[rowCount].length; line++) {
-                        board[rowCount].splice(line, 1);
-                        board[rowCount].unshift(0); // clears line when full
-                    }
-                }
-                //resetBoard(newCount);
+                clearLine(newCount);
                 tempBoardLine = 0;      // resets the row
             }
         }
@@ -720,5 +726,5 @@ function giveScore() { // needs lots of rework.
         }
     }
     prevLine = 0;
-    document.getElementById("score").innerText = "Score: " + points;
+    $("#score").text("Score: " + points);
 }
