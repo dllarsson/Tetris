@@ -234,23 +234,7 @@ function makeGameBoard() {
     }
     board = gameBoard;
 }
-/*
-ska bort?
-function paintGameBoard() {
-    var x = 0;
-    var y = 0;
 
-    for (var i = 0; i < 10; i++) {
-        if (i % 2 == 0) y = 0;
-        else y = 25;
-        for (var j = 0; j < 20; j++) {
-            gameBoardContext.fillStyle = "#f0f0f0";
-            gameBoardContext.fillRect(x, y, 25, 25);
-            y += 50;
-        }
-        x += 25;
-    }
-}*/
 
 //randomizes a symbol (used in generateNextThreeSymbols())
 function randomizeSymbol() {
@@ -329,6 +313,7 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
     return indexes;
 }
+var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
 function paintSymbol(x, y) {
     var piece = makePiece(nextSymbols[0]);
     var currentPieceNumber;
@@ -347,9 +332,12 @@ function paintSymbol(x, y) {
         isAtBottom = true;
         console.log("Stop");
     }
-    if (board[x + indexes[0]][y + indexes[3]] > 10 || board[x + indexes[2]][y + indexes[3]] > 10) { // Block connects with other
-        isAtBottom = true;
-        console.log("Stop");
+    // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
+    if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
+        if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
+            isAtBottom = true;
+            console.log("Stop");
+        }
     }
     else if (x + indexes[2] > 9) {
         x = x - 1;
@@ -359,6 +347,7 @@ function paintSymbol(x, y) {
         x = x + 1;
         return console.log("Too far left");
     }
+
 
     for (let i = 0; i < piece.length; i++) {
 
@@ -386,6 +375,8 @@ function paintSymbol(x, y) {
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
+                currentBlock.blockX = [];
+                currentBlock.blockY = [];
                 //sets the correct color for each piece
                 for (let i = 0; i < 10; i++) {
                     for (let j = 0; j < 20; j++) {
@@ -424,6 +415,8 @@ function paintSymbol(x, y) {
                             else if (board[i][j] < 10) {
                                 gameBoardContext.fillStyle = colors[board[i][j] - 1];
                                 gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                                currentBlock.blockX.unshift(i);
+                                currentBlock.blockY.unshift(j);
                             }
                         }
                     }
@@ -551,22 +544,6 @@ function resetGame() {
     savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
 }
 
-function startGameplayLoop() {
-    makeGameBoard();
-    tick++;
-    $("#counter").text(tick);
-    generateNextThreeSymbols();
-    paintNextSymbolOne();
-    paintNextSymbolTwo();
-    updateGameBoard();
-    if (atbottom) {
-        x = 4;
-        y = 0;
-        giveScore();
-        atbottom = false;
-    }
-    y++;
-}
 function resetBoard(jStart) {
     for (let i = 0; i < board.length; i++) {
         for (let j = jStart; j < board[i].length; j++) {
@@ -574,6 +551,18 @@ function resetBoard(jStart) {
         }
     }
 }
+// function gameOver(){
+//     var currentSymbol = getSymbolXY(nextSymbols[0]);
+//     for(let i = 0; i < board.length; i++){
+//         for(let j = 0; j < board[i].length; j++){
+
+//         }
+
+//         if(currentSymbol[3] )
+//     }
+
+// clearInterval(gameplayLoopID);
+// }
 
 function rotate() {
     switch (nextSymbols[0]) {
