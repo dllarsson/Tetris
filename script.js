@@ -1,11 +1,12 @@
 var x = 4;
 var y = 0;
-var atbottom = false;
+var atBottom = false;
 var tick = 0;
 var playerName = "";
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
+var gameplayLoopID;
 const gameBoardCanvas = document.getElementById("game");
 const gameBoardContext = gameBoardCanvas.getContext("2d");
 const pieceOneCanvas = document.getElementById("nextSymbolOne");
@@ -429,7 +430,7 @@ function paintSymbol(/*x, y*/) {
             }
             if (isAtBottom) {
                 boardWithPieces = board;
-                atbottom = true;
+                atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
             }
@@ -521,9 +522,25 @@ function updateGameBoard() {
     //console.log(x + "    " + y);
 }
 
-var gameplayLoopID;
+function checkIfGameOver() {
+    if (x - 1 > 0 && board[x - 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+    else if (board[x][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+
+    else if (x + 1 < 10 && board[x + 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+}
+
 
 function play() {
+    resetGame();
     gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
 function startGameplayLoop() {
@@ -534,11 +551,11 @@ function startGameplayLoop() {
     paintNextSymbolOne();
     paintNextSymbolTwo();
     updateGameBoard();
-    if (atbottom) {
+    if (atBottom) {
         x = 4;
         y = 0;
         giveScore();
-        atbottom = false;
+        atBottom = false;
     }
     y++;
 }
