@@ -343,7 +343,7 @@ function drawSymbol(pieceToDraw) {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
-                if (atbottom && board[i][j] < 10) {
+                if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
                 }
                 if (board[i][j] == 11) {
@@ -514,7 +514,7 @@ function updateGameBoard() {
         generateNextThreeSymbols();
     }
 
-    if (atbottom) {
+    if (atBottom) {
         paintSymbol(/*x, y*/);
     }
     else {
@@ -530,7 +530,7 @@ function checkIfGameOver() {
     }
     else if (board[x][1] != 0) {
         console.log("gameoverman");
-        clearInterval(gameplayLoopID);
+        clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
@@ -562,7 +562,7 @@ function startGameplayLoop() {
 }
 
 function resetGame() {
-    resetBoard(0);
+    resetBoard();
     tick = 0;
     $("#counter").text(tick);
     clearInterval(gameplayLoopID);
@@ -578,9 +578,9 @@ function resetGame() {
     savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
 }
 
-function resetBoard(jStart) {
+function resetBoard() {
     for (let i = 0; i < board.length; i++) {
-        for (let j = jStart; j < board[i].length; j++) {
+        for (let j = 0; j < board[i].length; j++) {
             board[i][j] = 0;
         }
     }
