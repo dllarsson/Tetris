@@ -351,6 +351,7 @@ function drawSymbol(pieceToDraw) {
                 if (board[i][j]<10 && board[i][j+1] > 10){
                     console.log("collition");
                     atBottom = true;
+                    isAtBottom = true;
                 }
                 if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
