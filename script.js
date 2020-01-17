@@ -20,6 +20,7 @@ $(document).ready(function () {
     var rulesText = document.getElementById("rules");
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
+    $("#rules").css("display", "none");
     $("#leftArrow").on("touchstart", leftMove);
     $("#rightArrow").on("touchstart", rightMove);
     $("#downArrow").on("touchstart", downMove);
@@ -235,7 +236,7 @@ function makeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
-    if (firstBlock == true){
+    if (firstBlock == true) {
         collitionBoard = gameBoard;
         firstBlock = false;
     }
@@ -321,11 +322,11 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     return indexes;
 }
 var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
-function setCurrentBlockCoords(xCoord, yCoord){
+function setCurrentBlockCoords(xCoord, yCoord) {
     currentBlock.blockX.unshift(xCoord);
     currentBlock.blockY.unshift(yCoord);
 }
-function resetCurrentBlockCoords(){
+function resetCurrentBlockCoords() {
     currentBlock.blockX = [];
     currentBlock.blockY = [];
 }
@@ -348,7 +349,7 @@ function drawSymbol(pieceToDraw) {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
-                if (board[i][j]<10 && board[i][j+1] > 10){
+                if (board[i][j] < 10 && board[i][j + 1] > 10) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
@@ -387,8 +388,8 @@ function drawSymbol(pieceToDraw) {
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                    
-                    setCurrentBlockCoords(i,j);
+
+                    setCurrentBlockCoords(i, j);
                 }
 
             }
@@ -704,7 +705,7 @@ function downMove() { // moves piece one step down
     updateGameBoard();
 }
 /* Clears a line*/
-function clearLine(lineCount){
+function clearLine(lineCount) {
     for (let rowCount = 0; rowCount < board.length; rowCount++) {
         for (let line = lineCount; line < board[rowCount].length; line++) {
             board[rowCount].splice(line, 1);
