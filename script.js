@@ -547,9 +547,16 @@ function updateGameBoard() {
 
     paintSymbol();
     if (hasCollided || atBottom) {
+        y = 0;
+        x = 4;
         nextSymbols.splice(0,1);
         CheckLines();
+        if(hasCollided){
         hasCollided = false;
+        }
+        if(atBottom){
+        atBottom = false;
+    }
     }
 
 }
