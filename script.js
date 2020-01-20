@@ -1,8 +1,12 @@
+
+
 var x = 4;
 var y = 0;
 var atBottom = false;
 var tick = 0;
 var playerName = "";
+var topScore = document.getElementById("highScore");
+var highScore = [];
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
@@ -52,7 +56,23 @@ function loadRules() {
     } else {
         rulesText.style.display = "none";
     }
-}
+  }
+  
+  /*Load the rules from a textfile to the webpage*/
+  var txtFile = new XMLHttpRequest();
+  var allText = "file not found";
+  txtFile.onreadystatechange = function () {
+      if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+          allText = txtFile.responseText;
+          allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/ 
+      }
+
+      document.getElementById('rules').innerHTML = allText;
+  }
+  txtFile.open("GET", 'rules.txt', true);
+  txtFile.send(null);
+
+
 
 /*Load the rules from a textfile to the webpage*/
 var txtFile = new XMLHttpRequest();
@@ -82,6 +102,8 @@ function handleUsernameFromInput() {
 function showUserNameModal() {
     $("#usernameContainer").css("display", "block");
 }
+
+
 
 function makePiece(type) {
     if (type === "t") {
@@ -829,3 +851,34 @@ function CheckLines() {   //Check lines after a block lands.
 //     prevLine = 0;
 //     $("#score").text("Score: " + points);
 // }
+function giveScore(){
+    prevLine = 0;
+    $("#score").text("Score: " + points);
+}
+
+/*Higscore list*/
+function HighScore() {
+    
+    highScore.sort(function (a, b) {
+        return a.points - b.points;
+    })
+    for (var i = 0; i < 5; i++){
+        var något = document.createElement('li');
+        var score = {user: name, score: points};
+        highScore.push(score);
+        topScore.appendChild(score);
+
+        if(i >= highScore.length-1)
+        {
+            break;
+        }
+    }}
+    /*let highscore = JSON.parse(window.localStorage.getItem('score'))
+    if (highscore == null) {
+        highscore = []
+    }
+    let score = { user: playerName, score: points};
+
+    highscore.push(score);
+    highscore.*/
+
