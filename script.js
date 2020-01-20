@@ -235,7 +235,7 @@ function makeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
-    if (firstBlock == true){
+    if (firstBlock == true) {
         collitionBoard = gameBoard;
         firstBlock = false;
     }
@@ -321,13 +321,27 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     return indexes;
 }
 var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
-function setCurrentBlockCoords(xCoord, yCoord){
+function setCurrentBlockCoords(xCoord, yCoord) {
     currentBlock.blockX.unshift(xCoord);
     currentBlock.blockY.unshift(yCoord);
 }
-function resetCurrentBlockCoords(){
+function resetCurrentBlockCoords() {
     currentBlock.blockX = [];
     currentBlock.blockY = [];
+}
+
+function checkSides() {
+    if (currentBlock.blockX != 0) {
+        for (let i = 0; i < currentBlock.blockX.length; i++) {
+                if(currentBlock.blockX[i] == 0){
+                    return 0;
+                }
+                else if(currentBlock.blockX[i] == 9){
+                    return 1;
+                }
+
+        }
+    }
 }
 /*extracts color for a block and returns color stop code */
 function extractingColorNumber(pieceToCheck) {
@@ -348,7 +362,7 @@ function drawSymbol(pieceToDraw) {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
-                if (board[i][j]<10 && board[i][j+1] > 10){
+                if (board[i][j] < 10 && board[i][j + 1] > 10) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
@@ -387,8 +401,8 @@ function drawSymbol(pieceToDraw) {
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                    
-                    setCurrentBlockCoords(i,j);
+
+                    setCurrentBlockCoords(i, j);
                 }
 
             }
@@ -410,29 +424,29 @@ function paintSymbol(/*x, y*/) {
         isAtBottom = true;
         console.log("Stop");
     }
-    // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
-    if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
-        if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
-            isAtBottom = true;
-            console.log("Stop");
-        }
-    }
-    else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
-        x = x - 1;
-        return console.log("Too far right");
-    }
-    else if (x - indexes[0] < 0) {
-        x = x + 1;
-        return console.log("Too far left");
-    }
+    // // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
+    // if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
+    //     if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
+    //         isAtBottom = true;
+    //         console.log("Stop");
+    //     }
+    // }
+    // else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
+    //     x = x - 1;
+    //     return console.log("Too far right");
+    // }
+    // else if (x - indexes[0] < 0) {
+    //     x = x + 1;
+    //     return console.log("Too far left");
+    // }
 
 
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x + indexes[0] < 0 || x + indexes[2] > 9) {
-                falseMove = true;
-            }
+            // if (x + indexes[0] < 0 || x + indexes[2] > 9) {
+            //     falseMove = true;
+            // }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
@@ -685,26 +699,26 @@ function keyPressed(e) {
 
 
 function leftMove() { // moves piece one step left
-    if (x > 0) {
+    if (checkSides() != 0) {
         x--;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
 function rightMove() { // moves piece one step right
-    if (x < 10) {
+    if (checkSides() != 1) {
         x++;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
 
 function downMove() { // moves piece one step down
     if (y + 1 < 19) {
         y++;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
 /* Clears a line*/
-function clearLine(lineCount){
+function clearLine(lineCount) {
     for (let rowCount = 0; rowCount < board.length; rowCount++) {
         for (let line = lineCount; line < board[rowCount].length; line++) {
             board[rowCount].splice(line, 1);
