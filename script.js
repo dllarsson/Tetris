@@ -6,8 +6,8 @@ var atBottom = false;
 var tick = 0;
 var points = 0;
 var playerName = "";
-var topScore = document.getElementById("highScore");
-var highScore = [];
+var setUsernameBeforeStartingGame = false;
+var highScore;
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
@@ -37,7 +37,7 @@ $(document).ready(function () {
     $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
     $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
     makeGameBoard();
-
+    printHighScore();
 });
 
 //Menu effect
@@ -58,21 +58,21 @@ function loadRules() {
     } else {
         rulesText.style.display = "none";
     }
-  }
-  
-  /*Load the rules from a textfile to the webpage*/
-  var txtFile = new XMLHttpRequest();
-  var allText = "file not found";
-  txtFile.onreadystatechange = function () {
-      if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
-          allText = txtFile.responseText;
-          allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/ 
-      }
+}
 
-      document.getElementById('rules').innerHTML = allText;
-  }
-  txtFile.open("GET", 'rules.txt', true);
-  txtFile.send(null);
+/*Load the rules from a textfile to the webpage*/
+var txtFile = new XMLHttpRequest();
+var allText = "file not found";
+txtFile.onreadystatechange = function () {
+    if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+        allText = txtFile.responseText;
+        allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/
+    }
+
+    document.getElementById('rules').innerHTML = allText;
+}
+txtFile.open("GET", 'rules.txt', true);
+txtFile.send(null);
 
 
 
@@ -94,10 +94,22 @@ txtFile.send(null);
 //gets the username from the input field in the username modal
 function handleUsernameFromInput() {
     playerName = $("#usernameInput").val();
-    $("#usernameText").text("Your username is: " + playerName);
-    $("#usernameInput").val("");
-    $("#changeUsernameBtn").html("Change username");
-    $("#usernameContainer").css("display", "none");
+    if (playerName.length >= 3 && playerName.length <= 20) {
+        $("#usernameContainer").css("display", "none");
+        $("#usernameText").text("Your username is: " + playerName);
+        $("#usernameInput").val("");
+        $("#changeUsernameBtn").html("Change username");
+        if (setUsernameBeforeStartingGame) {
+            play();
+        }
+    }
+
+    else {
+        $("#invalidUsername").css("display", "block");
+        $("#invalidUsername").fadeOut(3000, function () {
+            $("#invalidUsername").css('display', "none");
+        });
+    }
 }
 
 //displays the modal where you enter your username
@@ -266,7 +278,8 @@ function makeGameBoard() {
         gameBoard.push(tempArr);
     }
     if (firstBlock == true) {
-        collitionBoard = gameBoard;
+        //vad är collisionBoard?
+        collisionBoard = gameBoard;
         firstBlock = false;
     }
     board = gameBoard;
@@ -395,15 +408,15 @@ function drawSymbol(pieceToDraw) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
                 if (board[i][j] < 10 && board[i][j + 1] > 10) { // checks if the moving block collides with a fix block.
-                    console.log("collition");
+                    console.log("collision");
                     atBottom = true;
                     isAtBottom = true;
                     hasCollided = true;
-                    
+
 
                 }
                 if (i > 0) {
-                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {// checks if the moving block has a fixed block to the left
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {// checks if the moving block has a fixed block to the left
                         cantMoveLeft = true; // bool for movement
                     }
                 }
@@ -500,12 +513,12 @@ function paintSymbol(/*x, y*/) {
 
             }
             if (isAtBottom || hasCollided) {
-                
+
                 atBottom = true;
                 isAtBottom = false;
                 //nextSymbols.splice(0, 1);
                 hasCollided = false;
-                
+
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -588,15 +601,12 @@ function saveSymbol() {
 
 
 function updateGameBoard() {
-    
-
-   
-        paintSymbol();
-        if (hasCollided ||atBottom){
-            nextSymbols.splice(0,1);
-            CheckLines();
-            hasCollided = false;
-        }
+    paintSymbol();
+    if (hasCollided || atBottom) {
+        nextSymbols.splice(0, 1);
+        checkLines();
+        hasCollided = false;
+    }
 
 }
 
@@ -623,13 +633,20 @@ function checkIfGameOver() {
 
     if (gameOver) {
         $("#gameOverText").css("display", "block");
+        addHighScore();
     }
 }
 
 
 function play() {
-    resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    if (playerName == "") {
+        showUserNameModal();
+        setUsernameBeforeStartingGame = true;
+    }
+    else {
+        resetGame();
+        gameplayLoopID = setInterval(startGameplayLoop, 800);
+    }
 }
 
 
@@ -798,7 +815,7 @@ function downMove() { // moves piece one step down
 
 
 
-function CheckLines() {   //Check lines after a block lands.
+function checkLines() {   //Check lines after a block lands.
     let counter = 0;
     let linesCleared = 0;
     for (let i = 19; i >= 0; i--) {
@@ -809,12 +826,12 @@ function CheckLines() {   //Check lines after a block lands.
                     linesCleared++;
                     giveScore(linesCleared);
                     for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                        
-                            board[rowCount].splice(i, 1);
-                            board[rowCount].unshift(0); // adds a new line to the board.
 
-                            // Give score here!
-                        
+                        board[rowCount].splice(i, 1);
+                        board[rowCount].unshift(0); // adds a new line to the board.
+
+                        // Give score here!
+
                     }
                     counter = 0;
                     i++;
@@ -825,18 +842,18 @@ function CheckLines() {   //Check lines after a block lands.
     }
     linesCleared = 0;
 }
-function giveScore(bonus){
+function giveScore(bonus) {
+    points += 100;
+    if (bonus == 2) {
         points += 100;
-        if(bonus == 2){
-            points += 100;
-        }
-        else if(bonus == 3){
-            points += 200;
-        }
-        else if(bonus == 4){
-            points += 300;
-        }
-        $("#score").text("Score: " + points);
+    }
+    else if (bonus == 3) {
+        points += 200;
+    }
+    else if (bonus == 4) {
+        points += 300;
+    }
+    $("#score").text("Score: " + points);
 }
 /* Clears a line*/
 
@@ -863,33 +880,99 @@ function giveScore(bonus){
 //             points += 100;
 //         }
 //     }
-//     prevLine = 0;
+//     prevLine = 0;""
 //     $("#score").text("Score: " + points);
 // }
 
 /*Higscore list*/
-function HighScore() {
-    
-    highScore.sort(function (a, b) {
-        return a.points - b.points;
-    })
-    for (var i = 0; i < 5; i++){
-        var något = document.createElement('li');
-        var score = {user: name, score: points};
-        highScore.push(score);
-        topScore.appendChild(score);
-
-        if(i >= highScore.length-1)
-        {
-            break;
-        }
-    }}
-    /*let highscore = JSON.parse(window.localStorage.getItem('score'))
-    if (highscore == null) {
-        highscore = []
+function printHighScore() {
+    var scoreToPrint;
+    var leaderBoardDiv = $("#leaderBoardContainer");
+    if (localStorage.getItem("score") === null) {
+        scoreToPrint = [];
     }
-    let score = { user: playerName, score: points};
+    else {
+        scoreToPrint = JSON.parse(localStorage.getItem("score"));
+    }
 
-    highscore.push(score);
-    highscore.*/
+    if (scoreToPrint.length > 0) {
+        if ($("#leaderBoardList") !== null) {
+            $("#leaderBoardList").remove();
+        }
+        var listOfScores = document.createElement("ol");
+        listOfScores.setAttribute("id", "leaderBoardList");
+        $("#leaderBoardContainer").append(listOfScores);
+        for (var i = 0; i < scoreToPrint.length; i++) {
+            if ($("#emptyHighScoreList") !== null) {
+                $("#emptyHighScoreList").remove();
+            }
+            var nextScoreToPrint = document.createElement("li");
+            nextScoreToPrint.innerText = scoreToPrint[i].player + " - " + scoreToPrint[i].numberOfPoints + "p";
+            $("#leaderBoardList").append(nextScoreToPrint);
+        }
+    }
+
+    else {
+        var textElement = document.createElement("p");
+        textElement.setAttribute("id", "emptyHighScoreList");
+        textElement.innerText = "No available highscores";
+        leaderBoardDiv.append(textElement);
+    }
+}
+
+function addHighScore() {
+    var listOfScores;
+    if (localStorage.getItem("score") == null) {
+        listOfScores = [];
+    }
+
+    else {
+        listOfScores = JSON.parse(localStorage.getItem("score"));
+    }
+    var objectToStore = {
+        player: playerName,
+        numberOfPoints: points
+    }
+    if (listOfScores.length < 5) {
+        listOfScores.push(objectToStore);
+        listOfScores.sort(function (a, b) {
+            return b.numberOfPoints - a.numberOfPoints;
+        });
+        localStorage.setItem("score", JSON.stringify(listOfScores));
+    }
+
+    else {
+        listOfScores.push(objectToStore);
+        listOfScores.sort(function (a, b) {
+            return b.numberOfPoints - a.numberOfPoints;
+        });
+        listOfScores.splice(listOfScores.length - 1, 1);
+        localStorage.setItem("score", JSON.stringify(listOfScores));
+    }
+
+    printHighScore();
+}
+    // var currentUserAndScore = { user: playerName, score: points };
+    // highScore.sort(function (a, b) {
+    //     return a.points - b.points;
+    // })
+    // for (var i = 0; i < 5; i++) {
+    //     var något = document.createElement('li');
+    //     var score = { user: name, score: points };
+    //     //highScore.push(score);
+    //     topScore.appendChild(score);
+
+    //     if (i >= highScore.length - 1) {
+    //         break;
+    //     }
+    // }
+
+//     /*let highscore = JSON.parse(window.localStorage.getItem('score'))
+// if (highscore == null) {
+// highscore = []
+// }
+// let score = { user: playerName, score: points};
+
+// highscore.push(score);
+// highscore.*/
 
