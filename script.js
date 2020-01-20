@@ -1,23 +1,55 @@
-/*Higscore list*/
-function HighScore() {
-    var board = document.getElementsByClassName("leaderboard");
-    let highscore = JSON.parse(window.localStorage.getItem('highscore'))
-    if (highscore == null) {
-        highscore = []
-    }
-    let score ={ user: user, score: score};
 
-    highscore.push(score);
-    highscore.sort
+
+var x = 4;
+var y = 0;
+var atBottom = false;
+var tick = 0;
+var playerName = "";
+var topScore = document.getElementById("highScore");
+var highScore = [];
+var nextSymbols = [];
+var savedSymbol = [];
+var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
+var gameplayLoopID;
+const gameBoardCanvas = document.getElementById("game");
+const gameBoardContext = gameBoardCanvas.getContext("2d");
+const pieceOneCanvas = document.getElementById("nextSymbolOne");
+const pieceOneContext = pieceOneCanvas.getContext("2d");
+const pieceTwoCanvas = document.getElementById("nextSymbolTwo");
+const pieceTwoContext = pieceTwoCanvas.getContext("2d");
+const savedSymbolCanvas = document.getElementById("savedSymbol");
+const savedSymbolContext = savedSymbolCanvas.getContext("2d");
+
+$(document).ready(function () {
+    var rulesText = document.getElementById("rules");
+    rulesText.style.display = "none";
+    window.addEventListener("keydown", keyPressed, false);
+    $("#rules").css("display", "none");
+    $("#leftArrow").on("touchstart", leftMove);
+    $("#rightArrow").on("touchstart", rightMove);
+    $("#downArrow").on("touchstart", downMove);
+    $("#rotationArrow").on("touchstart", rotate);
+    makeGameBoard();
+
+});
+
+//Menu effect
+function barFunction() {
+    var navForRules = document.getElementById("nav");
+    if (navForRules.style.display === "block") {
+        navForRules.style.display = "none";
+    } else {
+        navForRules.style.display = "block";
+    }
 }
 
 /*Hide and show the rules on the front page through the button*/
 function loadRules() {
-    var x = document.getElementById("rules");
-    if (x.style.display === "none") {
-      x.style.display = "block";
+    var rulesText = document.getElementById("rules");
+    if (rulesText.style.display === "none") {
+        rulesText.style.display = "block";
     } else {
-      x.style.display = "none";
+        rulesText.style.display = "none";
     }
   }
   
@@ -37,44 +69,64 @@ function loadRules() {
 
 
 
-$(document).ready(function () {
-    window.addEventListener("keydown", KeyPressed, false);
-    document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
-    document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
-    //document.getElementById("directionArrow").addEventListener("touchstart", directionMove, false);
-    MakeGameBoard();
+/*Load the rules from a textfile to the webpage*/
+var txtFile = new XMLHttpRequest();
+var allText = "file not found";
+txtFile.onreadystatechange = function () {
+    if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+        allText = txtFile.responseText;
+        allText = allText.split("\n").join("<br>");
+    }
 
-});
-var x = 4;
-var y = 0;
-var AtBottom = false;
-var tick = 0;
-var SymbolXY = [];
-var nextSymbols = [];
-var savedSymbol = [];
-var playerName;
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+    document.getElementById('rules').innerHTML = allText;
+}
+txtFile.open("GET", 'rules.txt', true);
+txtFile.send(null);
 
+
+//gets the username from the input field in the username modal
 function handleUsernameFromInput() {
-    playerName = $("#usernameInput").val()
-    $("#usernameText").css("display", "block");
+    playerName = $("#usernameInput").val();
     $("#usernameText").text("Your username is: " + playerName);
     $("#usernameInput").val("");
+    $("#changeUsernameBtn").html("Change username");
     $("#usernameContainer").css("display", "none");
-    console.log(playerName);
-}
-function SetX(coord) {
-    x = coord;
 }
 
-var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
-let makePiece = function (type) {
+//displays the modal where you enter your username
+function showUserNameModal() {
+    $("#usernameContainer").css("display", "block");
+}
+
+
+
+function makePiece(type) {
     if (type === "t") {
         return [
             [0, 0, 0],
             [5, 5, 5],
             [0, 5, 0]
+        ];
+    }
+    else if (type === "t1") {
+        return [
+            [0, 5, 0],
+            [5, 5, 0],
+            [0, 5, 0]
+        ];
+    }
+    else if (type === "t2") {
+        return [
+            [0, 5, 0],
+            [5, 5, 5],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "t3") {
+        return [
+            [5, 0, 0],
+            [5, 5, 0],
+            [5, 0, 0]
         ];
     }
     else if (type === "o") {
@@ -85,9 +137,30 @@ let makePiece = function (type) {
     }
     else if (type === "l") {
         return [
+            [4, 0, 0],
+            [4, 0, 0],
+            [4, 4, 0]
+        ];
+    }
+    else if (type === "l1") {
+        return [
+            [0, 0, 0],
+            [4, 4, 4],
+            [4, 0, 0]
+        ];
+    }
+    else if (type === "l2") {
+        return [
+            [4, 4, 0],
             [0, 4, 0],
-            [0, 4, 0],
-            [0, 4, 4]
+            [0, 4, 0]
+        ];
+    }
+    else if (type === "l3") {
+        return [
+            [0, 0, 4],
+            [4, 4, 4],
+            [0, 0, 0]
         ];
     }
     else if (type === "j") {
@@ -97,12 +170,41 @@ let makePiece = function (type) {
             [1, 1, 0]
         ];
     }
+    else if (type === "j1") {
+        return [
+            [1, 0, 0],
+            [1, 1, 1],
+            [0, 0, 0]
+        ];
+    }
+    else if (type === "j2") {
+        return [
+            [1, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0]
+        ];
+    }
+    else if (type === "j3") {
+        return [
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 0, 1]
+        ];
+    }
     else if (type === "i") {
         return [
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0]
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0]
+        ];
+    }
+    else if (type === "i1") {
+        return [
+            [0, 0, 0, 0],
+            [2, 2, 2, 2],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]
         ];
     }
     else if (type === "s") {
@@ -112,6 +214,13 @@ let makePiece = function (type) {
             [0, 0, 0]
         ];
     }
+    else if (type === "s1") {
+        return [
+            [3, 0, 0],
+            [3, 3, 0],
+            [0, 3, 0]
+        ];
+    }
     else if (type === "z") {
         return [
             [6, 6, 0],
@@ -119,20 +228,29 @@ let makePiece = function (type) {
             [0, 0, 0]
         ];
     }
+    else if (type === "z1") {
+        return [
+            [0, 6, 0],
+            [6, 6, 0],
+            [6, 0, 0]
+        ];
+    }
 };
 
-var Board = [];
-var BoardWithPieces = [];
-function MakeGameBoard() {
+var board = [];
+var firstBlock = true;
+/* Sets the game board state when a piece has stopped moving (?) */
+function makeGameBoard() {
     var gameBoard = [];
+
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
         for (let j = 0; j < 20; j++) {
 
             tempArr[j] = 0;
-            if (Board.length != 0) {
-                if (Board[i][j] == 99) {
-                    tempArr[j] = 99;
+            if (board.length != 0) {
+                if (board[i][j] > 10) {
+                    tempArr[j] = board[i][j];
                 }
 
             }
@@ -140,37 +258,31 @@ function MakeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
-    Board = gameBoard;
-}
-function PaintGameBoard() {
-
-    var x = 0;
-    var y = 0;
-
-    for (var i = 0; i < 10; i++) {
-        if (i % 2 == 0) y = 0;
-        else y = 35;
-        for (var j = 0; j < 20; j++) {
-            ctx.fillStyle = "#f0f0f0";
-            ctx.fillRect(x, y, 35, 35);
-            y += 70;
-        }
-        x += 35;
+    if (firstBlock == true) {
+        collitionBoard = gameBoard;
+        firstBlock = false;
     }
+    board = gameBoard;
 }
 
+
+//randomizes a symbol (used in generateNextThreeSymbols())
 function randomizeSymbol() {
     var symbols = ["t", "o", "l", "j", "s", "z", "i"];
     return symbols[Math.floor(Math.random() * 7)]
 }
 
+//generates an array of three unique symbols, the current one being played and the next two that will be played
 function generateNextThreeSymbols() {
     while (nextSymbols.length < 3) {
-        nextSymbols.push(randomizeSymbol());
+        var nextSymbolToCheck = randomizeSymbol();
+        if (!nextSymbols.includes(nextSymbolToCheck)) {
+            nextSymbols.push(nextSymbolToCheck);
+        }
     }
 }
 
-function GetSymbolXY(symbol) {
+function getSymbolXY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
     var isValue = false;
     var xx = 0;
     var yy = 0;
@@ -180,7 +292,7 @@ function GetSymbolXY(symbol) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
             if (tempSymbol[j] != 0) {
-                xx = j;
+                xx = j;                 //saves where in the tetramino square the first block appears x-wise.
                 isValue = true;
                 break;
             }
@@ -194,7 +306,7 @@ function GetSymbolXY(symbol) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
-                yy = i;
+                yy = i;                 //saves where in the tetramino square the first block appears y-wise.
                 isValue = true;
                 break;
             }
@@ -207,7 +319,7 @@ function GetSymbolXY(symbol) {
         for (let i = 0; i < symbol.length; i++) {
             var tempSymbol = symbol[i];
             if (tempSymbol[j] != 0) {
-                xl = j;
+                xl = j;                 //saves where in the tetramino square the last block appears x-wise.
                 isValue = true;
                 break;
             }
@@ -221,86 +333,173 @@ function GetSymbolXY(symbol) {
         var tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
-                yl = i;
+                yl = i;                 //saves where in the tetramino square the last block appears y-wise.
                 isValue = true;
                 break;
             }
         }
         if (isValue) break;
     }
-    var indexes = [xx, yy, xl, yl];
+    var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
     return indexes;
 }
-function PaintSymbol(x, y, direction) {
+var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
+function setCurrentBlockCoords(xCoord, yCoord) {
+    currentBlock.blockX.unshift(xCoord);
+    currentBlock.blockY.unshift(yCoord);
+}
+function resetCurrentBlockCoords() {
+    currentBlock.blockX = [];
+    currentBlock.blockY = [];
+}
+
+function checkSides() {
+    if (currentBlock.blockX != 0) {
+        for (let i = 0; i < currentBlock.blockX.length; i++) {
+                if(currentBlock.blockX[i] == 0){
+                    return 0;
+                }
+                else if(currentBlock.blockX[i] == 9){
+                    return 1;
+                }
+
+        }
+    }
+}
+/*extracts color for a block and returns color stop code */
+function extractingColorNumber(pieceToCheck) {
+    var currentPieceNumber;
+    pieceToCheck.forEach(function (element) {
+        element.forEach(function (elementInElement) {
+            if (elementInElement != 0) {
+                currentPieceNumber = elementInElement;
+            }
+        });
+    });
+    var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
+    return stoppedColor;
+}
+/* Sets the correct color for each piece. A number <10 defines a color for a moving block.
+                 A number >10 defines a color for an existing block. */
+function drawSymbol(pieceToDraw) {
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 20; j++) {
+            if (board[i][j] != 0) {
+                if (board[i][j] < 10 && board[i][j + 1] > 10) {
+                    console.log("collition");
+                    atBottom = true;
+                    isAtBottom = true;
+                }
+                if (atBottom && board[i][j] < 10) {
+                    board[i][j] = parseInt(pieceToDraw);
+                }
+                if (board[i][j] == 11) {
+                    gameBoardContext.fillStyle = colors[0];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 22) {
+                    gameBoardContext.fillStyle = colors[1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 33) {
+                    gameBoardContext.fillStyle = colors[2];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 44) {
+                    gameBoardContext.fillStyle = colors[3];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 55) {
+                    gameBoardContext.fillStyle = colors[4];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 66) {
+                    gameBoardContext.fillStyle = colors[5];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 77) {
+                    gameBoardContext.fillStyle = colors[6];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] < 10) {
+                    gameBoardContext.fillStyle = colors[board[i][j] - 1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+
+                    setCurrentBlockCoords(i, j);
+                }
+
+            }
+        }
+    }
+
+    gameBoardContext.fillStyle = colors[6];
+    gameBoardContext.fillRect(9 * 25, 19 * 25, 25, 25);
+
+}
+function paintSymbol(/*x, y*/) {
+    checkIfGameOver();
     var piece = makePiece(nextSymbols[0]);
+    var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
-    var indexes = GetSymbolXY(piece);
+    var indexes = getSymbolXY(piece);
     var isAtBottom = false;
-    if (y + indexes[3] == 19) { //Block reaches bottom
+    if (y + indexes[3] >= 19) { //Block reaches bottom
         isAtBottom = true;
         console.log("Stop");
     }
-    if (x + indexes[2] > 9) {
-        SetX(x - 1);
-        return console.log("Too far right");
-    }
-
-    if (x - indexes[0] < 0) {
-        SetX(x + 1);
-        return console.log("Too far right");
-    }
+    // // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
+    // if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
+    //     if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
+    //         isAtBottom = true;
+    //         console.log("Stop");
+    //     }
+    // }
+    // else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
+    //     x = x - 1;
+    //     return console.log("Too far right");
+    // }
+    // else if (x - indexes[0] < 0) {
+    //     x = x + 1;
+    //     return console.log("Too far left");
+    // }
 
 
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x + indexes[0] < 0 || x + indexes[2] > 9) {
-                falseMove = true;
-            }
+            // if (x + indexes[0] < 0 || x + indexes[2] > 9) {
+            //     falseMove = true;
+            // }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
 
                     if (falseMove == false) {
                         if (piece[i][j] != 0) {
-                            Board[x + j][y + i] = piece[i][j];
+                            board[x + j][y + i] = piece[i][j];
                         }
                     }
                 }
 
             }
             if (isAtBottom) {
-                BoardWithPieces = Board;
-                AtBottom = true;
+                atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
             }
             if (falseMove != true) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                for (let i = 0; i < 10; i++) {
-                    for (let j = 0; j < 20; j++) {
-                        if (Board[i][j] != 0) {
-                            if (AtBottom) {
-                                Board[i][j] = 99;
-                            }
-                            ctx.fillStyle = colors[Board[i][j] - 1];
-                            ctx.fillRect(i * 35, j * 35, 35, 35);
-                        }
-                    }
-                }
+                gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
+                resetCurrentBlockCoords();
+                drawSymbol(pieceToWrite);
             }
-            
-            MakeGameBoard();
-           
+            makeGameBoard();
         }
     }
 }
 
+//gets the second symbol in the nextSymbols array and paints it in the top canvas to the right of the game board
 function paintNextSymbolOne() {
     var piece = makePiece(nextSymbols[1]);
-    var pieceOneCanvas = document.getElementById("nextSymbolOne");
-    var pieceOneContext = pieceOneCanvas.getContext("2d");
     pieceOneContext.clearRect(0, 0, pieceOneCanvas.width, pieceOneCanvas.height);
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
@@ -312,10 +511,9 @@ function paintNextSymbolOne() {
     }
 }
 
+//gets the third symbol in the nextSymbols array and paints it in the bottom canvas to the right of the game board
 function paintNextSymbolTwo() {
     var piece = makePiece(nextSymbols[2]);
-    var pieceTwoCanvas = document.getElementById("nextSymbolTwo");
-    var pieceTwoContext = pieceTwoCanvas.getContext("2d");
     pieceTwoContext.clearRect(0, 0, pieceTwoCanvas.width, pieceTwoCanvas.height);
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
@@ -327,10 +525,9 @@ function paintNextSymbolTwo() {
     }
 }
 
+//gets the symbol in the savedSymbol array and paints it in the canvas to the left of the game board
 function paintSavedSymbol() {
     var piece = makePiece(savedSymbol[0]);
-    var savedSymbolCanvas = document.getElementById("savedSymbol");
-    var savedSymbolContext = savedSymbolCanvas.getContext("2d");
     savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece.length; j++) {
@@ -342,11 +539,14 @@ function paintSavedSymbol() {
     }
 }
 
+//saves the symbol currently being played and removes it from the nextSymbols array. If called again with a piece already saved
+//it will swap the saved one for the one being played
 function saveSymbol() {
     if (savedSymbol.length < 1) {
         savedSymbol[0] = nextSymbols[0];
         nextSymbols.splice(0, 1);
         y = 0;
+        x = 4;
         paintSavedSymbol();
     }
     else {
@@ -354,120 +554,253 @@ function saveSymbol() {
         savedSymbol[0] = nextSymbols[0];
         nextSymbols[0] = symbolToSwap;
         y = 0;
+        x = 4;
         paintSavedSymbol();
     }
 }
 
 
 
-function UpdateGameBoard() {
+function updateGameBoard() {
     if (nextSymbols.length < 1) {
         generateNextThreeSymbols();
     }
 
-    if (AtBottom) {
-        PaintSymbol(x, y, 23);
+    if (atBottom) {
+        paintSymbol(/*x, y*/);
     }
     else {
-        PaintSymbol(x, y, 23);
+        paintSymbol(/*x, y*/);
+    }
+    //console.log(x + "    " + y);
+}
+
+function checkIfGameOver() {
+    if (x - 1 > 0 && board[x - 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+    else if (board[x][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
 
+    else if (x + 1 < 10 && board[x + 1][1] != 0) {
+        console.log("gameoverman");
+        clearInterval(gameplayLoopID);
+    }
+}
+
+
+function play() {
+    resetGame();
+    gameplayLoopID = setInterval(startGameplayLoop, 800);
+}
+
+
+function startGameplayLoop() {
+    makeGameBoard();
     tick++;
-
-
-    console.log(x + "    " + y);
-}
-
-function Play(stop) {
-    MakeGameBoard();
-    var refreshintervalID = setInterval(function () {
-        $("#counter").text(tick);
-        generateNextThreeSymbols();
-        paintNextSymbolOne();
-        paintNextSymbolTwo();
-        UpdateGameBoard();
-        if (AtBottom) {
-            x = 4;
-            y = 0;
-            AtBottom = false;
-        }
-        y++;
-
-    }, 800);
-    if (stop == 1) {
-        tick = 0;
-        clearInterval(refreshintervalID);
-        nextSymbols = [];
-        generateNextThreeSymbols();
+    $("#counter").text(tick);
+    generateNextThreeSymbols();
+    paintNextSymbolOne();
+    paintNextSymbolTwo();
+    updateGameBoard();
+    if (atBottom) {
+        x = 4;
         y = 0;
+        giveScore();
+        atBottom = false;
     }
-    if (stop == 2) {
-        Rotate(symbol, 1);
+    y++;
+}
+
+function resetGame() {
+    resetBoard();
+    tick = 0;
+    $("#counter").text(tick);
+    clearInterval(gameplayLoopID);
+    nextSymbols = [];
+    savedSymbol = [];
+    points = 0;
+    $("#score").text("Score: " + points);
+    x = 4;
+    y = 0;
+    gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
+    pieceOneContext.clearRect(0, 0, pieceOneCanvas.width, pieceOneCanvas.height);
+    pieceTwoContext.clearRect(0, 0, pieceTwoCanvas.width, pieceTwoCanvas.height);
+    savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
+}
+
+function resetBoard() {
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            board[i][j] = 0;
+        }
     }
 }
 
-// function Rotate(sym, direction){
-//     let rotate=function(sym,direction){
-// 		for(let y=0;y<sym.length;++y){
-// 			for(let x=0;x<y;++x){
-// 				[
-// 					sym[x][y],
-// 					sym[y][x]
-// 				]=[
-// 					sym[y][x],
-// 					sym[x][y],
-// 				]
-// 			}
-// 		}
-// 		if(dir>0){
-// 			sym.forEach(row=>row.reverse());
-// 		}
-// 		else{
-// 			sym.reverse();
-// 		}
-//     };
-//     return rotate;
-// }
+function rotate() {
+    switch (nextSymbols[0]) {
+        case "t":
+            nextSymbols[0] = "t1";
+            break;
+        case "t1":
+            nextSymbols[0] = "t2";
+            break;
+        case "t2":
+            nextSymbols[0] = "t3";
+            break;
+        case "t3":
+            nextSymbols[0] = "t";
+            break;
+        case "l":
+            nextSymbols[0] = "l1";
+            break;
+        case "l1":
+            nextSymbols[0] = "l2";
+            break;
+        case "l2":
+            nextSymbols[0] = "l3";
+            break;
+        case "l3":
+            nextSymbols[0] = "l";
+            break;
+        case "j":
+            nextSymbols[0] = "j1";
+            break;
+        case "j1":
+            nextSymbols[0] = "j2";
+            break;
+        case "j2":
+            nextSymbols[0] = "j3";
+            break;
+        case "j3":
+            nextSymbols[0] = "j";
+            break;
+        case "i":
+            nextSymbols[0] = "i1";
+            break;
+        case "i1":
+            nextSymbols[0] = "i";
+            break;
+        case "s":
+            nextSymbols[0] = "s1";
+            break;
+        case "s1":
+            nextSymbols[0] = "s";
+            break;
+        case "z":
+            nextSymbols[0] = "z1";
+            break;
+        case "z1":
+            nextSymbols[0] = "z";
+            break;
 
+    }
+    updateGameBoard();
+}
 
-function KeyPressed(e) {
+function keyPressed(e) {
     var keyCode = e.keyCode;
     if (keyCode == 37) {        // Left key
-        x--;
-        UpdateGameBoard();
-    }
-    else if (keyCode == 38) {   // Up key
-        Move(38);
+        leftMove();
     }
     else if (keyCode == 39) {   // Right key
-        x++;
-        // PaintSymbol(x,y)
-        UpdateGameBoard();
+        rightMove();
     }
-    else if (keyCode == 88) {   //X Key
+    else if (keyCode == 40) {   // Down key
+        downMove();
+    }
+    else if (keyCode == 88) {   // X Key
         saveSymbol();
     }
-    else if (keyCode == 90) {   // Down key
-        Move(90);
+    else if (keyCode == 90) {   // Z key
+        rotate();
     }
 }
 
-//Menu effect
-function barFunction() {
-    var x = document.getElementById("nav"); // kan ev. uppstå konflikt med koordinat x
-    if (x.style.display === "block") {
-        x.style.display = "none";
-    } else {
-        x.style.display = "block";
+
+function leftMove() { // moves piece one step left
+    if (checkSides() != 0) {
+        x--;
+        updateGameBoard();
+    }
+}
+function rightMove() { // moves piece one step right
+    if (checkSides() != 1) {
+        x++;
+        updateGameBoard();
     }
 }
 
-function leftMove(){
-    x--;            // moves piece one step left
-    UpdateGameBoard();
+function downMove() { // moves piece one step down
+    if (y + 1 < 19) {
+        y++;
+        updateGameBoard();
+    }
 }
-function rightMove(){
-    x++;            // moves piece one step right
-    UpdateGameBoard();
+/* Clears a line*/
+function clearLine(lineCount) {
+    for (let rowCount = 0; rowCount < board.length; rowCount++) {
+        for (let line = lineCount; line < board[rowCount].length; line++) {
+            board[rowCount].splice(line, 1);
+            board[rowCount].unshift(0); // adds a new line to the board.
+        }
+    }
 }
+var points = 0;
+var prevLine = 0;
+function giveScore() { // needs lots of rework.
+    let newCount = 0;
+    var tempBoardLine = 0;
+    for (let i = 0; i < board.length; i++) {
+        for (let j = newCount; j < board[i].length; j++) {
+            if (board[i][j] > 10) {
+                newCount = j;
+                tempBoardLine += 99;
+            }
+            if (j != newCount) {
+                tempBoardLine = 0;
+            }
+            if (tempBoardLine == 990) { // if there are blocks on all positions in a row
+                points += 100;
+                prevLine += tempBoardLine; // variable to decide if bonus points are eligible
+                clearLine(newCount);
+                tempBoardLine = 0;      // resets the row
+            }
+        }
+        if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
+            points += 100;
+        }
+    }
+    prevLine = 0;
+    $("#score").text("Score: " + points);
+}
+
+/*Higscore list*/
+function HighScore() {
+    
+    highScore.sort(function (a, b) {
+        return a.points - b.points
+    })
+    for (var i = 0; i < 5; i++){
+        topScore = document.createElement('li')
+        var score = {user: name, score: points}
+        highScore.push(score)
+        topScore.appendChild(score)
+
+        if(i >= highScore.length-1)
+        {
+            break;
+        }
+    }}
+    /*let highscore = JSON.parse(window.localStorage.getItem('score'))
+    if (highscore == null) {
+        highscore = []
+    }
+    let score = { user: playerName, score: points};
+
+    highscore.push(score);
+    highscore.*/
 

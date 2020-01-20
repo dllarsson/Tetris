@@ -8,71 +8,79 @@ body {
   background-color: black;
 }
 
-#gameContainer{
+#gameContainer {
   display: inline-flex;
-  text-align:center;
+  text-align: center;
 }
-
 .gameAndControlsContainer{
   text-align: center;
 }
 
-canvas{
-  margin-left:5px;
-  margin-right:5px;
-  background-color:rgb(226, 226, 226);
+canvas {
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: rgb(226, 226, 226);
 }
 
-#usernameText{
-  display:none;
-  position:absolute
-}
 
-#usernameContainer{
+#usernameContainer {
   /*temporary display none*/
-  display:none;
+  display: none;
   font-family: "Raleway", Arial, sans-serif;
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-#usernameContent{
-  text-align:center;
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 40%; /* Could be more or less, depending on screen size */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
-input{
+#usernameContent {
+  text-align: center;
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+  /* Could be more or less, depending on screen size */
+}
+
+input {
   padding: 17px 30px;
 }
 
-#usernameContent input,button{
+#usernameContent input, button {
   vertical-align: middle;
 }
 
 /*Grid layout to manage the different containers with header, navigation, leaderboard and the game itself.
 In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
 Most of the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
+
 .header {
   grid-area: header;
 }
+
 .nav {
   grid-area: nav;
 }
+
 .sidebar {
   grid-area: leaderboard;
 }
 .gameAndControlsContainer {
   grid-area: game;
 }
+
 .footer {
   grid-area: footer;
 }
@@ -93,7 +101,7 @@ Most of the basics like color and padding are sett ind the grid classes, and als
   padding: 10px;
 }
 
-.grid-container > div {
+.grid-container>div {
   background-color: rgba(180, 180, 180, 0.8);
   text-align: center;
   padding: 5px 0;
@@ -106,7 +114,8 @@ h1 {
   color: rgb(0, 0, 0);
 }
 
-/*CSS for button(navbar) animation*/
+/*CSS for navbar animation links*/
+
 .nav {
   font-family: "Raleway", Arial, sans-serif;
   text-align: center;
@@ -164,12 +173,13 @@ h1 {
   right: 0;
 }
 #rules {
-    display: block;
+    display: none;
     font-size: 10px;
     width: 100%;
 }
 
-/*Used as a leaderbord to show current leaders of the tetris game*/
+/*Used as a leadbord to show current leaders of the tetris game*/
+
 /*.sidebar {
 }*/
 
@@ -197,6 +207,12 @@ h1 {
   color: red;
 }
 
+#changeUsernameBtn{
+  
+  padding: 8px 16px;
+  
+  font-size: 14px;
+}
 
 @media only screen and (min-width: 768px) {
   /* For desktop: */
@@ -208,7 +224,6 @@ h1 {
       ". game game game"
       "footer footer footer footer";
   }
-
   .nav li {
     display: inline-block;
   }
@@ -217,29 +232,29 @@ h1 {
     border: none;
     color: rgba(0, 0, 0, 0.5);
   }
-  #leftArrow, #rightArrow, #rotationArrow{
+  .touch-controls {
     display: none;
   }
 }
 
-#counter{
-    font-size: 75px;
-    padding: 20px;
+#counter {
+  font-size: 75px;
+  padding: 20px;
 }
 
-#touchCtrl{
-    display: inline-flex;
+#touchCtrl {
+  display: inline-flex;
 }
 
-#leftArrow, #rightArrow, #rotationArrow{
-    opacity: 0.2;
-    box-sizing: border-box;
-    padding: none;
-    margin: 4px 12px;
+.touch-controls {
+  opacity: 0.2;
+  box-sizing: border-box;
+  padding: none;
+  margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #rotationArrow img{
-    width: auto;
-    height: auto;
-    max-width: 60px;
+#leftArrow img, #rightArrow img, #rotationArrow img, #downArrow img {
+  width: auto;
+  height: auto;
+  max-width: 60px;
 }
