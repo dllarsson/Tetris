@@ -27,15 +27,15 @@ $(document).ready(function () {
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart click", leftMove);
-    $("#rightArrow").on("touchstart click", rightMove);
-    $("#downArrow").on("touchstart click", downMove);
-    $("#rotationArrow").on("touchstart click", rotate);
-    $("#playButton").on("touchstart click", play);
-    $("#resetButton").on("touchstart click", resetGame);
-    $("#navbtn").on("touchstart click", loadRules);
-    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
-    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
+    $("#leftArrow").on("click", leftMove);
+    $("#rightArrow").on("click", rightMove);
+    $("#downArrow").on("click", downMove);
+    $("#rotationArrow").on("click", rotate);
+    $("#playButton").on("click", play);
+    $("#resetButton").on("click", resetGame);
+    $("#navbtn").on("click", loadRules);
+    $("#changeUsernameBtn").on("click", showUserNameModal);
+    $("#handeUsernameButton").on("click", handleUsernameFromInput);
     makeGameBoard();
     printHighScore();
 });
@@ -302,55 +302,11 @@ function generateNextThreeSymbols() {
     }
 }
 
-function getSymbolXY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
+function getLastY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
     var isValue = false;
-    var xx = 0;
-    var yy = 0;
-    var xl = 0;
     var yl = 0;
-    for (let j = 0; j < symbol.length; j++) {
-        for (let i = 0; i < symbol.length; i++) {
-            var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0) {
-                xx = j;                 //saves where in the tetramino square the first block appears x-wise.
-                isValue = true;
-                break;
-            }
-
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
-    for (var i = 0; i < symbol.length; i++) {
-        var tempSymbol = symbol[i];
-        for (var j = 0; j < symbol.length; j++) {
-            if (tempSymbol[j] != 0) {
-                yy = i;                 //saves where in the tetramino square the first block appears y-wise.
-                isValue = true;
-                break;
-            }
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
-    for (let j = symbol.length - 1; j >= 0; j--) {
-        for (let i = 0; i < symbol.length; i++) {
-            var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0) {
-                xl = j;                 //saves where in the tetramino square the last block appears x-wise.
-                isValue = true;
-                break;
-            }
-
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
     for (var i = symbol.length - 1; i >= 0; i--) {
-        var tempSymbol = symbol[i];
+        let tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
                 yl = i;                 //saves where in the tetramino square the last block appears y-wise.
@@ -360,8 +316,7 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
         }
         if (isValue) break;
     }
-    var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
-    return indexes;
+    return yl;
 }
 var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
 function setCurrentBlockCoords(xCoord, yCoord) {
@@ -486,9 +441,9 @@ function paintSymbol(/*x, y*/) {
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
-    var indexes = getSymbolXY(piece);
+    var lastY = getLastY(piece);
     var isAtBottom = false;
-    if (y + indexes[3] >= 19) { //Block reaches bottom
+    if (y + lastY >= 19) { //Block reaches bottom
         isAtBottom = true;
         console.log("Stop");
     }
@@ -603,9 +558,16 @@ function saveSymbol() {
 function updateGameBoard() {
     paintSymbol();
     if (hasCollided || atBottom) {
+        y = 0;
+        x = 4;
         nextSymbols.splice(0, 1);
         checkLines();
-        hasCollided = false;
+        if (hasCollided) {
+            hasCollided = false;
+        }
+        if (atBottom) {
+            atBottom = false;
+        }
     }
 
 }
@@ -632,6 +594,7 @@ function checkIfGameOver() {
     }
 
     if (gameOver) {
+        PlaySoundEffect("gameOver");
         $("#gameOverText").css("display", "block");
         addHighScore();
     }
@@ -790,6 +753,7 @@ function keyPressed(e) {
     }
     else if (keyCode == 90) {   // Z key
         rotate();
+        PlaySoundEffect("rotate");
     }
 }
 
@@ -798,11 +762,17 @@ function leftMove() { // moves piece one step left
         x--;
         updateGameBoard();
     }
+    else {
+        PlaySoundEffect("error");
+    }
 }
 function rightMove() { // moves piece one step right
     if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
+    }
+    else {
+        PlaySoundEffect("error");
     }
 }
 
@@ -829,9 +799,6 @@ function checkLines() {   //Check lines after a block lands.
 
                         board[rowCount].splice(i, 1);
                         board[rowCount].unshift(0); // adds a new line to the board.
-
-                        // Give score here!
-
                     }
                     counter = 0;
                     i++;
@@ -839,6 +806,44 @@ function checkLines() {   //Check lines after a block lands.
             }
         }
         counter = 0;
+    }
+    if (linesCleared == 1) {
+        PlaySoundEffect("lineClear");
+    }
+    else if (linesCleared == 2) {
+        PlaySoundEffect("lineClear");
+    }
+    else if (linesCleared == 3) {
+        PlaySoundEffect("lineClear");
+    }
+    else if (linesCleared == 4) {
+        PlaySoundEffect("tetris");
+    }
+}
+
+function PlaySoundEffect(type) {
+
+    switch (type) {
+        case "lineClear":
+            var audio = new Audio('soundEffects/lineClear.mp3');
+            audio.play();
+            break;
+        case "tetris":
+            var audio = new Audio('soundEffects/tetris.mp3');
+            audio.play();
+            break;
+        case "gameOver":
+            var audio = new Audio('soundEffects/gameOver.mp3');
+            audio.play();
+            break;
+        case "error":
+            var audio = new Audio('soundEffects/error.mp3');
+            audio.play();
+            break;
+        case "rotate":
+            var audio = new Audio('soundEffects/rotate.mp3');
+            audio.play();
+            break;
     }
     linesCleared = 0;
 }
@@ -857,32 +862,8 @@ function giveScore(bonus) {
 }
 /* Clears a line*/
 
-// function giveScore() { // needs lots of rework.
-//     let newCount = 0;
-//     var tempBoardLine = 0;
-//     for (let i = 0; i < board.length; i++) {
-//         for (let j = newCount; j < board[i].length; j++) {
-//             if (board[i][j] > 10) {
-//                 newCount = j;
-//                 tempBoardLine += 99;
-//             }
-//             if (j != newCount) {
-//                 tempBoardLine = 0;
-//             }
-//             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
-//                 points += 100;
-//                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-//                 clearLine(newCount);
-//                 tempBoardLine = 0;      // resets the row
-//             }
-//         }
-//         if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
-//             points += 100;
-//         }
-//     }
-//     prevLine = 0;""
-//     $("#score").text("Score: " + points);
-// }
+
+
 
 /*Higscore list*/
 function printHighScore() {
