@@ -333,12 +333,12 @@ function resetCurrentBlockCoords() {
 function checkSides() {
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
-                if(currentBlock.blockX[i] == 0){
-                    return 0;
-                }
-                else if(currentBlock.blockX[i] == 9){
-                    return 1;
-                }
+            if (currentBlock.blockX[i] == 0) {
+                return 0;
+            }
+            else if (currentBlock.blockX[i] == 9) {
+                return 1;
+            }
 
         }
     }
@@ -356,6 +356,8 @@ function extractingColorNumber(pieceToCheck) {
     var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
     return stoppedColor;
 }
+var cantMoveLeft = false;
+var cantMoveRight = false;
 /* Sets the correct color for each piece. A number <10 defines a color for a moving block.
                  A number >10 defines a color for an existing block. */
 function drawSymbol(pieceToDraw) {
@@ -366,6 +368,17 @@ function drawSymbol(pieceToDraw) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
+                }
+                if (i > 0) {
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {
+                        cantMoveLeft = true;
+                    }
+                }
+                if (i < 9) {
+
+                    if ((board[i][j] < 10 && board[i + 1][j] > 10) || (board[i][j] < 10 && board[i + 1][j + 1] > 10)) {
+                        cantMoveRight = true;
+                    }
                 }
                 if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
@@ -415,6 +428,8 @@ function drawSymbol(pieceToDraw) {
 }
 function paintSymbol(/*x, y*/) {
     checkIfGameOver();
+    cantMoveLeft = false;
+    cantMoveRight = false;
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -697,15 +712,14 @@ function keyPressed(e) {
     }
 }
 
-
 function leftMove() { // moves piece one step left
-    if (checkSides() != 0) {
+    if (checkSides() != 0 && !cantMoveLeft) {
         x--;
         updateGameBoard();
     }
 }
 function rightMove() { // moves piece one step right
-    if (checkSides() != 1) {
+    if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
     }
