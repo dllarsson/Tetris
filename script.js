@@ -22,10 +22,14 @@ $(document).ready(function () {
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart", leftMove);
-    $("#rightArrow").on("touchstart", rightMove);
-    $("#downArrow").on("touchstart", downMove);
-    $("#rotationArrow").on("touchstart", rotate);
+    $("#leftArrow").on("touchstart click", leftMove);
+    $("#rightArrow").on("touchstart click", rightMove);
+    $("#downArrow").on("touchstart click", downMove);
+    $("#playButton").on("touchstart click", play);
+    $("#resetButton").on("touchstart click", resetGame);
+    $("#navbtn").on("touchstart click", loadRules);
+    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
+    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
     makeGameBoard();
 
 });
@@ -358,6 +362,8 @@ function extractingColorNumber(pieceToCheck) {
     var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
     return stoppedColor;
 }
+var cantMoveLeft = false;
+var cantMoveRight = false;
 /* Sets the correct color for each piece. A number <10 defines a color for a moving block.
                  A number >10 defines a color for an existing block. */
 function drawSymbol(pieceToDraw) {
@@ -370,6 +376,18 @@ function drawSymbol(pieceToDraw) {
                     isAtBottom = true;
                     hasCollided = true;
                     
+
+                }
+                if (i > 0) {
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {
+                        cantMoveLeft = true;
+                    }
+                }
+                if (i < 9) {
+
+                    if ((board[i][j] < 10 && board[i + 1][j] > 10) || (board[i][j] < 10 && board[i + 1][j + 1] > 10)) {
+                        cantMoveRight = true;
+                    }
                 }
                 if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
@@ -377,35 +395,43 @@ function drawSymbol(pieceToDraw) {
                 if (board[i][j] == 11) {
                     gameBoardContext.fillStyle = colors[0];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 22) {
                     gameBoardContext.fillStyle = colors[1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 33) {
                     gameBoardContext.fillStyle = colors[2];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 44) {
                     gameBoardContext.fillStyle = colors[3];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 55) {
                     gameBoardContext.fillStyle = colors[4];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
+
                 }
                 else if (board[i][j] == 66) {
                     gameBoardContext.fillStyle = colors[5];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 77) {
                     gameBoardContext.fillStyle = colors[6];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                     setCurrentBlockCoords(i, j);
                 }
 
@@ -418,6 +444,8 @@ function drawSymbol(pieceToDraw) {
 }
 function paintSymbol(/*x, y*/) {
     checkIfGameOver();
+    cantMoveLeft = false;
+    cantMoveRight = false;
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -475,6 +503,7 @@ function paintNextSymbolOne() {
             if (piece[i][j] != 0) {
                 pieceOneContext.fillStyle = colors[piece[i][j] - 1];
                 pieceOneContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceOneContext.strokeRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -489,6 +518,8 @@ function paintNextSymbolTwo() {
             if (piece[i][j] != 0) {
                 pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
                 pieceTwoContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceTwoContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -503,6 +534,8 @@ function paintSavedSymbol() {
             if (piece[i][j] != 0) {
                 savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
                 savedSymbolContext.fillRect(j * 20, i * 20, 20, 20);
+                savedSymbolContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -545,18 +578,28 @@ function updateGameBoard() {
 }
 
 function checkIfGameOver() {
+    var gameOver = false;
     if (x - 1 > 0 && board[x - 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
     }
     else if (board[x][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
+    //console.log(x + "    " + y);
+
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
+    }
+
+    if (gameOver) {
+        $("#gameOverText").css("display", "block");
     }
 }
 
@@ -593,6 +636,7 @@ function resetGame() {
     savedSymbol = [];
     points = 0;
     $("#score").text("Score: " + points);
+    $("#gameOverText").css("display", "none");
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -712,22 +756,21 @@ function keyPressed(e) {
     }
 }
 
-
 function leftMove() { // moves piece one step left
-    if (checkSides() != 0) {
+    if (checkSides() != 0 && !cantMoveLeft) {
         x--;
         updateGameBoard();
     }
 }
 function rightMove() { // moves piece one step right
-    if (checkSides() != 1) {
+    if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
     }
 }
 
 function downMove() { // moves piece one step down
-    if (y + 1 < 19) {
+    if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
