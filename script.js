@@ -1,3 +1,16 @@
+/*Higscore list*/
+function HighScore() {
+    var board = document.getElementsByClassName("leaderboard");
+    let highscore = JSON.parse(window.localStorage.getItem('highscore'))
+    if (highscore == null) {
+        highscore = []
+    }
+    let score ={ user: user, score: score};
+
+    highscore.push(score);
+    highscore.sort
+}
+
 /*Hide and show the rules on the front page through the button*/
 function loadRules() {
     var x = document.getElementById("rules");
@@ -14,7 +27,7 @@ function loadRules() {
   txtFile.onreadystatechange = function () {
       if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
           allText = txtFile.responseText;
-          allText = allText.split("\n").join("<br>");
+          allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/ 
       }
 
       document.getElementById('rules').innerHTML = allText;

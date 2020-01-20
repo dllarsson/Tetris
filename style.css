@@ -58,9 +58,9 @@ input{
   vertical-align: middle;
 }
 
-/*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
+/*Grid layout to manage the different containers with header, navigation, leaderboard and the game itself.
 In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
-Mostof the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
+Most of the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
 .header {
   grid-area: header;
 }
@@ -77,6 +77,7 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
   grid-area: footer;
 }
 
+/*Placement of the different areas on screen, mobilefirst*/
 .grid-container {
   display: grid;
   grid-template-areas:
@@ -105,7 +106,7 @@ h1 {
   color: rgb(0, 0, 0);
 }
 
-/*CSS for navbar animation links*/
+/*CSS for button(navbar) animation*/
 .nav {
   font-family: "Raleway", Arial, sans-serif;
   text-align: center;
@@ -168,7 +169,7 @@ h1 {
     width: 100%;
 }
 
-/*Used as a leadbord to show current leaders of the tetris game*/
+/*Used as a leaderbord to show current leaders of the tetris game*/
 /*.sidebar {
 }*/
 
