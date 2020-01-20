@@ -466,7 +466,7 @@ function drawSymbol(pieceToDraw) {
     gameBoardContext.fillStyle = colors[6];
 
 }
-function paintSymbol(/*x, y*/) {
+function paintSymbol() {
     checkIfGameOver();
     cantMoveLeft = false; // resets bool for movement.
     cantMoveRight = false; // resets bool for movement.
@@ -484,9 +484,6 @@ function paintSymbol(/*x, y*/) {
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            // if (x + indexes[0] < 0 || x + indexes[2] > 9) {
-            //     falseMove = true;
-            // }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
@@ -609,9 +606,8 @@ function checkIfGameOver() {
     else if (board[x][1] != 0) {
         console.log("gameoverman");
         gameOver = true;
-        clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
+        clearInterval(gameplayLoopID); 
     }
-    //console.log(x + "    " + y);
 
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
@@ -629,7 +625,21 @@ function checkIfGameOver() {
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    gameplayLoopID = setInterval(startGameplayLoop, 700);
+}
+
+function GameSpeed(){
+    if (points >3000){
+        gameplayLoopID = setInterval(startGameplayLoop, 500);
+    }
+    else if (points > 6000){
+        gameplayLoopID = setInterval(startGameplayLoop, 300);
+
+    }
+    else if (points > 9000){
+        gameplayLoopID = setInterval(startGameplayLoop, 100);
+
+    }
 }
 
 
@@ -644,7 +654,6 @@ function startGameplayLoop() {
     if (atBottom) {
         x = 4;
         y = 0;
-        //giveScore();
         atBottom = false;
     }
     y++;
@@ -756,6 +765,7 @@ function rotate() {
     }
     updateGameBoard();
 }
+
 
 function keyPressed(e) {
     var keyCode = e.keyCode;
