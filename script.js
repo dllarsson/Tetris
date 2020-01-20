@@ -21,10 +21,15 @@ $(document).ready(function () {
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart", leftMove);
-    $("#rightArrow").on("touchstart", rightMove);
-    $("#downArrow").on("touchstart", downMove);
-    $("#rotationArrow").on("touchstart", rotate);
+    $("#leftArrow").on("touchstart click", leftMove);
+    $("#rightArrow").on("touchstart click", rightMove);
+    $("#downArrow").on("touchstart click", downMove);
+    $("#rotationArrow").on("touchstart click", rotate);
+    $("#playButton").on("touchstart click", play);
+    $("#resetButton").on("touchstart click", resetGame);
+    $("#navbtn").on("touchstart click", loadRules);
+    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
+    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
     makeGameBoard();
 
 });
@@ -580,7 +585,7 @@ function checkIfGameOver() {
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    gameplayLoopID = setInterval(startGameplayLoop, 100);
 }
 
 
