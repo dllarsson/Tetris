@@ -375,7 +375,7 @@ function drawSymbol(pieceToDraw) {
                     atBottom = true;
                     isAtBottom = true;
                     hasCollided = true;
-                    
+
 
                 }
                 if (i > 0) {
@@ -476,12 +476,12 @@ function paintSymbol(/*x, y*/) {
 
             }
             if (isAtBottom || hasCollided) {
-                
+
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
                 hasCollided = false;
-                
+
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -564,16 +564,18 @@ function saveSymbol() {
 
 
 function updateGameBoard() {
+    $("#score").text("Score: " + points);
+
     if (nextSymbols.length < 1) {
         generateNextThreeSymbols();
     }
 
-   
-        paintSymbol();
-        if (hasCollided ||atBottom){
-            CheckLines();
-            hasCollided = false;
-        }
+
+    paintSymbol();
+    if (hasCollided || atBottom) {
+        CheckLines();
+        hasCollided = false;
+    }
 
 }
 
@@ -599,6 +601,7 @@ function checkIfGameOver() {
     }
 
     if (gameOver) {
+        PlaySoundEffect("gameOver");
         $("#gameOverText").css("display", "block");
     }
 }
@@ -753,6 +756,7 @@ function keyPressed(e) {
     }
     else if (keyCode == 90) {   // Z key
         rotate();
+        PlaySoundEffect("rotate");
     }
 }
 
@@ -761,11 +765,17 @@ function leftMove() { // moves piece one step left
         x--;
         updateGameBoard();
     }
+    else {
+        PlaySoundEffect("error");
+    }
 }
 function rightMove() { // moves piece one step right
     if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
+    }
+    else {
+        PlaySoundEffect("error");
     }
 }
 
@@ -780,18 +790,17 @@ function downMove() { // moves piece one step down
 
 function CheckLines() {   //Check lines after a block lands.
     let counter = 0;
+    let numberOfRows = 0;
     for (let i = 19; i >= 0; i--) {
         for (let j = 9; j >= 0; j--) {
             if (board[j][i] > 10) {
                 counter++;
                 if (counter == 10) {
+                    numberOfRows++;
                     for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                        
-                            board[rowCount].splice(i, 1);
-                            board[rowCount].unshift(0); // adds a new line to the board.
 
-                            // Give score here!
-                        
+                        board[rowCount].splice(i, 1);
+                        board[rowCount].unshift(0); // adds a new line to the board.
                     }
                     counter = 0;
                     i++;
@@ -800,32 +809,52 @@ function CheckLines() {   //Check lines after a block lands.
         }
         counter = 0;
     }
-}
-/* Clears a line*/
+    if (numberOfRows == 1) {
+        points += 10;
+        PlaySoundEffect("lineClear");
+    }
+    else if (numberOfRows == 2) {
+        points += 25;
+        PlaySoundEffect("lineClear");
 
-// function giveScore() { // needs lots of rework.
-//     let newCount = 0;
-//     var tempBoardLine = 0;
-//     for (let i = 0; i < board.length; i++) {
-//         for (let j = newCount; j < board[i].length; j++) {
-//             if (board[i][j] > 10) {
-//                 newCount = j;
-//                 tempBoardLine += 99;
-//             }
-//             if (j != newCount) {
-//                 tempBoardLine = 0;
-//             }
-//             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
-//                 points += 100;
-//                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-//                 clearLine(newCount);
-//                 tempBoardLine = 0;      // resets the row
-//             }
-//         }
-//         if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
-//             points += 100;
-//         }
-//     }
-//     prevLine = 0;
-//     $("#score").text("Score: " + points);
-// }
+    }
+    else if (numberOfRows == 3) {
+
+        points += 45;
+        PlaySoundEffect("lineClear");
+
+    }
+    else if (numberOfRows == 4) {
+        points += 70;
+        PlaySoundEffect("tetris");
+
+    }
+}
+
+function PlaySoundEffect(type) {
+
+    switch (type) {
+        case "lineClear":
+            var audio = new Audio('soundEffects/lineClear.mp3');
+            audio.play();
+            break;
+        case "tetris":
+            var audio = new Audio('soundEffects/tetris.mp3');
+            audio.play();
+            break;
+        case "gameOver":
+            var audio = new Audio('soundEffects/gameOver.mp3');
+            audio.play();
+            break;
+        case "error":
+            var audio = new Audio('soundEffects/error.mp3');
+            audio.play();
+            break;
+        case "rotate":
+            var audio = new Audio('soundEffects/rotate.mp3');
+            audio.play();
+            break;
+    }
+
+
+}
