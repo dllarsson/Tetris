@@ -15,6 +15,7 @@ const pieceTwoCanvas = document.getElementById("nextSymbolTwo");
 const pieceTwoContext = pieceTwoCanvas.getContext("2d");
 const savedSymbolCanvas = document.getElementById("savedSymbol");
 const savedSymbolContext = savedSymbolCanvas.getContext("2d");
+var hasCollided = false;
 
 $(document).ready(function () {
     var rulesText = document.getElementById("rules");
@@ -367,6 +368,7 @@ function drawSymbol(pieceToDraw) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
+                    hasCollided = true;
                     
                 }
                 if (atBottom && board[i][j] < 10) {
@@ -410,10 +412,7 @@ function drawSymbol(pieceToDraw) {
             }
         }
     }
-    if (atBottom){
-        CheckLines();
 
-    }
     gameBoardContext.fillStyle = colors[6];
 
 }
@@ -448,11 +447,13 @@ function paintSymbol(/*x, y*/) {
                 }
 
             }
-            if (isAtBottom) {
-
+            if (isAtBottom || hasCollided) {
+                
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
+                hasCollided = false;
+                
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -462,6 +463,7 @@ function paintSymbol(/*x, y*/) {
             makeGameBoard();
         }
     }
+
 }
 
 //gets the second symbol in the nextSymbols array and paints it in the top canvas to the right of the game board
@@ -533,13 +535,13 @@ function updateGameBoard() {
         generateNextThreeSymbols();
     }
 
-    if (atBottom) {
-        paintSymbol(/*x, y*/);
-    }
-    else {
-        paintSymbol(/*x, y*/);
-    }
-    //console.log(x + "    " + y);
+   
+        paintSymbol();
+        if (hasCollided ||atBottom){
+            CheckLines();
+            hasCollided = false;
+        }
+
 }
 
 function checkIfGameOver() {
@@ -561,7 +563,7 @@ function checkIfGameOver() {
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    gameplayLoopID = setInterval(startGameplayLoop, 200);
 }
 
 
@@ -733,7 +735,7 @@ function downMove() { // moves piece one step down
 
 
 
-function CheckLines() {   //Check lines after
+function CheckLines() {   //Check lines after a block lands.
     let counter = 0;
     for (let i = 19; i >= 0; i--) {
         for (let j = 9; j >= 0; j--) {
@@ -741,14 +743,15 @@ function CheckLines() {   //Check lines after
                 counter++;
                 if (counter == 10) {
                     for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                        for (let line = i; line < board[rowCount].length; line++) {
-                            board[rowCount].splice(line, 1);
+                        
+                            board[rowCount].splice(i, 1);
                             board[rowCount].unshift(0); // adds a new line to the board.
 
                             // Give score here!
-                        }
+                        
                     }
                     counter = 0;
+                    i++;
                 }
             }
         }
