@@ -24,7 +24,6 @@ $(document).ready(function () {
     $("#leftArrow").on("touchstart click", leftMove);
     $("#rightArrow").on("touchstart click", rightMove);
     $("#downArrow").on("touchstart click", downMove);
-    $("#rotationArrow").on("touchstart click", rotate);
     $("#playButton").on("touchstart click", play);
     $("#resetButton").on("touchstart click", resetGame);
     $("#navbtn").on("touchstart click", loadRules);
@@ -585,7 +584,7 @@ function checkIfGameOver() {
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 100);
+    gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
 
 
@@ -600,7 +599,7 @@ function startGameplayLoop() {
     if (atBottom) {
         x = 4;
         y = 0;
-        //giveScore();
+        giveScore();
         atBottom = false;
     }
     y++;
