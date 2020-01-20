@@ -785,7 +785,7 @@ function HighScore() {
         return a.points - b.points
     })
     for (var i = 0; i < 5; i++){
-        topScore = document.createElement('li')
+        var något = document.createElement('li')
         var score = {user: name, score: points}
         highScore.push(score)
         topScore.appendChild(score)
