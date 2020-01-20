@@ -101,9 +101,9 @@ function makePiece(type) {
     }
     else if (type === "t3") {
         return [
-            [0, 5, 0],
-            [0, 5, 5],
-            [0, 5, 0]
+            [5, 0, 0],
+            [5, 5, 0],
+            [5, 0, 0]
         ];
     }
     else if (type === "o") {
@@ -114,9 +114,9 @@ function makePiece(type) {
     }
     else if (type === "l") {
         return [
-            [0, 4, 0],
-            [0, 4, 0],
-            [0, 4, 4]
+            [4, 0, 0],
+            [4, 0, 0],
+            [4, 4, 0]
         ];
     }
     else if (type === "l1") {
@@ -156,9 +156,9 @@ function makePiece(type) {
     }
     else if (type === "j2") {
         return [
-            [0, 1, 1],
-            [0, 1, 0],
-            [0, 1, 0]
+            [1, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0]
         ];
     }
     else if (type === "j3") {
@@ -170,10 +170,10 @@ function makePiece(type) {
     }
     else if (type === "i") {
         return [
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0]
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0]
         ];
     }
     else if (type === "i1") {
@@ -207,9 +207,9 @@ function makePiece(type) {
     }
     else if (type === "z1") {
         return [
-            [0, 0, 6],
-            [0, 6, 6],
-            [0, 6, 0]
+            [0, 6, 0],
+            [6, 6, 0],
+            [6, 0, 0]
         ];
     }
 };
