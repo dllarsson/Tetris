@@ -27,15 +27,15 @@ $(document).ready(function () {
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart click", leftMove);
-    $("#rightArrow").on("touchstart click", rightMove);
-    $("#downArrow").on("touchstart click", downMove);
-    $("#rotationArrow").on("touchstart click", rotate);
-    $("#playButton").on("touchstart click", play);
-    $("#resetButton").on("touchstart click", resetGame);
-    $("#navbtn").on("touchstart click", loadRules);
-    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
-    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
+    $("#leftArrow").on("click", leftMove);
+    $("#rightArrow").on("click", rightMove);
+    $("#downArrow").on("click", downMove);
+    $("#rotationArrow").on("click", rotate);
+    $("#playButton").on("click", play);
+    $("#resetButton").on("click", resetGame);
+    $("#navbtn").on("click", loadRules);
+    $("#changeUsernameBtn").on("click", showUserNameModal);
+    $("#handeUsernameButton").on("click", handleUsernameFromInput);
     makeGameBoard();
 
 });
@@ -289,55 +289,11 @@ function generateNextThreeSymbols() {
     }
 }
 
-function getSymbolXY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
+function getLastY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
     var isValue = false;
-    var xx = 0;
-    var yy = 0;
-    var xl = 0;
     var yl = 0;
-    for (let j = 0; j < symbol.length; j++) {
-        for (let i = 0; i < symbol.length; i++) {
-            var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0) {
-                xx = j;                 //saves where in the tetramino square the first block appears x-wise.
-                isValue = true;
-                break;
-            }
-
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
-    for (var i = 0; i < symbol.length; i++) {
-        var tempSymbol = symbol[i];
-        for (var j = 0; j < symbol.length; j++) {
-            if (tempSymbol[j] != 0) {
-                yy = i;                 //saves where in the tetramino square the first block appears y-wise.
-                isValue = true;
-                break;
-            }
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
-    for (let j = symbol.length - 1; j >= 0; j--) {
-        for (let i = 0; i < symbol.length; i++) {
-            var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0) {
-                xl = j;                 //saves where in the tetramino square the last block appears x-wise.
-                isValue = true;
-                break;
-            }
-
-        }
-        if (isValue) break;
-    }
-    isValue = false;
-
     for (var i = symbol.length - 1; i >= 0; i--) {
-        var tempSymbol = symbol[i];
+        let tempSymbol = symbol[i];
         for (var j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
                 yl = i;                 //saves where in the tetramino square the last block appears y-wise.
@@ -347,8 +303,7 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
         }
         if (isValue) break;
     }
-    var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
-    return indexes;
+    return yl;
 }
 var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
 function setCurrentBlockCoords(xCoord, yCoord) {
@@ -473,9 +428,9 @@ function paintSymbol(/*x, y*/) {
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
-    var indexes = getSymbolXY(piece);
+    var lastY = getLastY(piece);
     var isAtBottom = false;
-    if (y + indexes[3] >= 19) { //Block reaches bottom
+    if (y + lastY >= 19) { //Block reaches bottom
         isAtBottom = true;
         console.log("Stop");
     }
@@ -828,24 +783,16 @@ function CheckLines() {   //Check lines after a block lands.
         counter = 0;
     }
     if (linesCleared == 1) {
-        points += 10;
         PlaySoundEffect("lineClear");
     }
     else if (linesCleared == 2) {
-        points += 25;
         PlaySoundEffect("lineClear");
-
     }
     else if (linesCleared == 3) {
-
-        points += 45;
         PlaySoundEffect("lineClear");
-
     }
     else if (linesCleared == 4) {
-        points += 70;
         PlaySoundEffect("tetris");
-
     }
 }
 
