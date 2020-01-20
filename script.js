@@ -4,6 +4,7 @@ var x = 4;
 var y = 0;
 var atBottom = false;
 var tick = 0;
+var points = 0;
 var playerName = "";
 var topScore = document.getElementById("highScore");
 var highScore = [];
@@ -401,13 +402,8 @@ function drawSymbol(pieceToDraw) {
 
                 }
                 if (i > 0) {
-<<<<<<< HEAD
                     if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {// checks if the moving block has a fixed block to the left
                         cantMoveLeft = true; // bool for movement
-=======
-                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {
-                        cantMoveLeft = true;
->>>>>>> master
                     }
                 }
                 if (i < 9) {
@@ -633,7 +629,7 @@ function checkIfGameOver() {
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 200);
+    gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
 
 
@@ -807,11 +803,14 @@ function downMove() { // moves piece one step down
 
 function CheckLines() {   //Check lines after a block lands.
     let counter = 0;
+    let linesCleared = 0;
     for (let i = 19; i >= 0; i--) {
         for (let j = 9; j >= 0; j--) {
             if (board[j][i] > 10) {
                 counter++;
                 if (counter == 10) {
+                    linesCleared++;
+                    giveScore(linesCleared);
                     for (let rowCount = 0; rowCount < board.length; rowCount++) {
                         
                             board[rowCount].splice(i, 1);
@@ -827,9 +826,19 @@ function CheckLines() {   //Check lines after a block lands.
         }
         counter = 0;
     }
+    linesCleared = 0;
 }
-function giveScore(){
+function giveScore(bonus){
         points += 100;
+        if(bonus == 2){
+            points += 100;
+        }
+        else if(bonus == 3){
+            points += 200;
+        }
+        else if(bonus == 4){
+            points += 300;
+        }
         $("#score").text("Score: " + points);
 }
 /* Clears a line*/
@@ -860,10 +869,6 @@ function giveScore(){
 //     prevLine = 0;
 //     $("#score").text("Score: " + points);
 // }
-function giveScore(){
-    prevLine = 0;
-    $("#score").text("Score: " + points);
-}
 
 /*Higscore list*/
 function HighScore() {
