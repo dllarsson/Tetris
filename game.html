@@ -14,7 +14,7 @@
             <h1>Type the username you want</h1>
             <br>
             <input type="text" placeholder="Enter a username" id="usernameInput">
-            <button class="btn" onclick="handleUsernameFromInput()">OK</button>
+            <button class="btn" id="handeUsernameButton">OK</button>
         </div>
     </div>
     <div class="grid-container">
@@ -24,21 +24,25 @@
         <div>
             <p id="usernameText">No username selected</p>
             <p id="score">Score: 0</p> <br>
-            <button onclick="showUserNameModal()" class="btn" id="changeUsernameBtn">Enter username</button>
+            <button class="btn" id="changeUsernameBtn">Enter username</button>
         </div>
 
         <div class="nav">
             <ul class="navul">
-                <li><button onclick="loadRules()" id="navbtn">RULES</button></li>
+                <li><button id="navbtn">RULES</button></li>
             </ul>
-            <div><p id="rules"></p></div>
+            <div>
+                <p id="rules"></p>
+            </div>
         </div>
 
         <div class="sidebar">
             <p>Leaderboard</p>
+            <p id="highScore"></p>
         </div>
 
         <div class="gameAndControlsContainer">
+            <p id="gameOverText">GAME OVER</p>
             <div id="gameContainer">
                 <div id="savedSymbolContainer">
                     <canvas id="savedSymbol" height="80" width="80" style="border: 2px solid black"></canvas>
@@ -51,9 +55,6 @@
                 </div>
             </div>
             <div id="touchCtrl">
-                <div class="touch-controls" id="rotationArrow">
-                    <img src="images/arrow-rotation.png" alt="Arrow for rotating tetris block">
-                </div>
                 <div class="touch-controls" id="leftArrow">
                     <img src="images/leftarrow.png" alt="Arrow for moving tetris block one step to the left">
                 </div>
@@ -62,12 +63,14 @@
                 </div>
                 <div class="touch-controls" id="rightArrow">
                     <img src="images/rightarrow.png" alt="Arrow for moving tetris block one step to the right">
+                </div>
+                <div class="touch-controls" id="rightArrow">
+                    <img src="images/rightarrow.png" alt="Arrow for moving tetris block one step to the right">
                 </div> 
             </div>
             <div>
-                <button class="btn" onclick="play();">Play</button>
-                <button class="btn" onclick="resetGame();">Reset</button>
-                <button class="btn" onclick="rotate();">Rotate</button>
+                <button class="btn" id="playButton">Play</button>
+                <button class="btn" id="resetButton">Reset</button>
             </div>
         </div>
 

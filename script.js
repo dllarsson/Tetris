@@ -1,8 +1,12 @@
+
+
 var x = 4;
 var y = 0;
 var atBottom = false;
 var tick = 0;
 var playerName = "";
+var topScore = document.getElementById("highScore");
+var highScore = [];
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
@@ -15,16 +19,21 @@ const pieceTwoCanvas = document.getElementById("nextSymbolTwo");
 const pieceTwoContext = pieceTwoCanvas.getContext("2d");
 const savedSymbolCanvas = document.getElementById("savedSymbol");
 const savedSymbolContext = savedSymbolCanvas.getContext("2d");
+var hasCollided = false;
 
 $(document).ready(function () {
     var rulesText = document.getElementById("rules");
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart", leftMove);
-    $("#rightArrow").on("touchstart", rightMove);
-    $("#downArrow").on("touchstart", downMove);
-    $("#rotationArrow").on("touchstart", rotate);
+    $("#leftArrow").on("touchstart click", leftMove);
+    $("#rightArrow").on("touchstart click", rightMove);
+    $("#downArrow").on("touchstart click", downMove);
+    $("#playButton").on("touchstart click", play);
+    $("#resetButton").on("touchstart click", resetGame);
+    $("#navbtn").on("touchstart click", loadRules);
+    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
+    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
     makeGameBoard();
 
 });
@@ -47,7 +56,23 @@ function loadRules() {
     } else {
         rulesText.style.display = "none";
     }
-}
+  }
+  
+  /*Load the rules from a textfile to the webpage*/
+  var txtFile = new XMLHttpRequest();
+  var allText = "file not found";
+  txtFile.onreadystatechange = function () {
+      if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
+          allText = txtFile.responseText;
+          allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/ 
+      }
+
+      document.getElementById('rules').innerHTML = allText;
+  }
+  txtFile.open("GET", 'rules.txt', true);
+  txtFile.send(null);
+
+
 
 /*Load the rules from a textfile to the webpage*/
 var txtFile = new XMLHttpRequest();
@@ -77,6 +102,8 @@ function handleUsernameFromInput() {
 function showUserNameModal() {
     $("#usernameContainer").css("display", "block");
 }
+
+
 
 function makePiece(type) {
     if (type === "t") {
@@ -369,11 +396,18 @@ function drawSymbol(pieceToDraw) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
+                    hasCollided = true;
                     
+
                 }
                 if (i > 0) {
+<<<<<<< HEAD
                     if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {// checks if the moving block has a fixed block to the left
                         cantMoveLeft = true; // bool for movement
+=======
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {
+                        cantMoveLeft = true;
+>>>>>>> master
                     }
                 }
                 if (i < 9) {
@@ -388,45 +422,50 @@ function drawSymbol(pieceToDraw) {
                 if (board[i][j] == 11) {
                     gameBoardContext.fillStyle = colors[0];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 22) {
                     gameBoardContext.fillStyle = colors[1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 33) {
                     gameBoardContext.fillStyle = colors[2];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 44) {
                     gameBoardContext.fillStyle = colors[3];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 55) {
                     gameBoardContext.fillStyle = colors[4];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
+
                 }
                 else if (board[i][j] == 66) {
                     gameBoardContext.fillStyle = colors[5];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 77) {
                     gameBoardContext.fillStyle = colors[6];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                     setCurrentBlockCoords(i, j);
                 }
 
             }
         }
     }
-    if (atBottom){
-        CheckLines();
 
-    }
     gameBoardContext.fillStyle = colors[6];
 
 }
@@ -463,11 +502,13 @@ function paintSymbol(/*x, y*/) {
                 }
 
             }
-            if (isAtBottom) {
-
+            if (isAtBottom || hasCollided) {
+                
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
+                hasCollided = false;
+                
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -477,6 +518,7 @@ function paintSymbol(/*x, y*/) {
             makeGameBoard();
         }
     }
+
 }
 
 //gets the second symbol in the nextSymbols array and paints it in the top canvas to the right of the game board
@@ -488,6 +530,7 @@ function paintNextSymbolOne() {
             if (piece[i][j] != 0) {
                 pieceOneContext.fillStyle = colors[piece[i][j] - 1];
                 pieceOneContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceOneContext.strokeRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -502,6 +545,8 @@ function paintNextSymbolTwo() {
             if (piece[i][j] != 0) {
                 pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
                 pieceTwoContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceTwoContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -516,6 +561,8 @@ function paintSavedSymbol() {
             if (piece[i][j] != 0) {
                 savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
                 savedSymbolContext.fillRect(j * 20, i * 20, 20, 20);
+                savedSymbolContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -548,35 +595,45 @@ function updateGameBoard() {
         generateNextThreeSymbols();
     }
 
-    if (atBottom) {
-        paintSymbol(/*x, y*/);
-    }
-    else {
-        paintSymbol(/*x, y*/);
-    }
-    //console.log(x + "    " + y);
+   
+        paintSymbol();
+        if (hasCollided ||atBottom){
+            CheckLines();
+            hasCollided = false;
+        }
+
 }
 
 function checkIfGameOver() {
+    var gameOver = false;
     if (x - 1 > 0 && board[x - 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
     }
     else if (board[x][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
+    //console.log(x + "    " + y);
+
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
+    }
+
+    if (gameOver) {
+        $("#gameOverText").css("display", "block");
     }
 }
 
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    gameplayLoopID = setInterval(startGameplayLoop, 200);
 }
 
 
@@ -606,6 +663,7 @@ function resetGame() {
     savedSymbol = [];
     points = 0;
     $("#score").text("Score: " + points);
+    $("#gameOverText").css("display", "none");
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -739,7 +797,7 @@ function rightMove() { // moves piece one step right
 }
 
 function downMove() { // moves piece one step down
-    if (y + 1 < 19) {
+    if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
@@ -747,7 +805,7 @@ function downMove() { // moves piece one step down
 
 
 
-function CheckLines() {   //Check lines after
+function CheckLines() {   //Check lines after a block lands.
     let counter = 0;
     for (let i = 19; i >= 0; i--) {
         for (let j = 9; j >= 0; j--) {
@@ -755,14 +813,15 @@ function CheckLines() {   //Check lines after
                 counter++;
                 if (counter == 10) {
                     for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                        for (let line = i; line < board[rowCount].length; line++) {
-                            board[rowCount].splice(line, 1);
+                        
+                            board[rowCount].splice(i, 1);
                             board[rowCount].unshift(0); // adds a new line to the board.
 
                             // Give score here!
-                        }
+                        
                     }
                     counter = 0;
+                    i++;
                 }
             }
         }
@@ -801,3 +860,34 @@ function giveScore(){
 //     prevLine = 0;
 //     $("#score").text("Score: " + points);
 // }
+function giveScore(){
+    prevLine = 0;
+    $("#score").text("Score: " + points);
+}
+
+/*Higscore list*/
+function HighScore() {
+    
+    highScore.sort(function (a, b) {
+        return a.points - b.points;
+    })
+    for (var i = 0; i < 5; i++){
+        var något = document.createElement('li');
+        var score = {user: name, score: points};
+        highScore.push(score);
+        topScore.appendChild(score);
+
+        if(i >= highScore.length-1)
+        {
+            break;
+        }
+    }}
+    /*let highscore = JSON.parse(window.localStorage.getItem('score'))
+    if (highscore == null) {
+        highscore = []
+    }
+    let score = { user: playerName, score: points};
+
+    highscore.push(score);
+    highscore.*/
+
