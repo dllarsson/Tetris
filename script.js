@@ -20,10 +20,11 @@ $(document).ready(function () {
     var rulesText = document.getElementById("rules");
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
-    document.getElementById("leftArrow").addEventListener("touchstart", leftMove, false);
-    document.getElementById("rightArrow").addEventListener("touchstart", rightMove, false);
-    document.getElementById("downArrow").addEventListener("touchstart", downMove, false);
-    document.getElementById("rotationArrow").addEventListener("touchstart", rotate, false);
+    $("#rules").css("display", "none");
+    $("#leftArrow").on("touchstart", leftMove);
+    $("#rightArrow").on("touchstart", rightMove);
+    $("#downArrow").on("touchstart", downMove);
+    $("#rotationArrow").on("touchstart", rotate);
     makeGameBoard();
 
 });
@@ -101,9 +102,9 @@ function makePiece(type) {
     }
     else if (type === "t3") {
         return [
-            [0, 5, 0],
-            [0, 5, 5],
-            [0, 5, 0]
+            [5, 0, 0],
+            [5, 5, 0],
+            [5, 0, 0]
         ];
     }
     else if (type === "o") {
@@ -114,9 +115,9 @@ function makePiece(type) {
     }
     else if (type === "l") {
         return [
-            [0, 4, 0],
-            [0, 4, 0],
-            [0, 4, 4]
+            [4, 0, 0],
+            [4, 0, 0],
+            [4, 4, 0]
         ];
     }
     else if (type === "l1") {
@@ -156,9 +157,9 @@ function makePiece(type) {
     }
     else if (type === "j2") {
         return [
-            [0, 1, 1],
-            [0, 1, 0],
-            [0, 1, 0]
+            [1, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0]
         ];
     }
     else if (type === "j3") {
@@ -170,10 +171,10 @@ function makePiece(type) {
     }
     else if (type === "i") {
         return [
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0],
-            [0, 2, 0, 0]
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0],
+            [2, 0, 0, 0]
         ];
     }
     else if (type === "i1") {
@@ -207,17 +208,19 @@ function makePiece(type) {
     }
     else if (type === "z1") {
         return [
-            [0, 0, 6],
-            [0, 6, 6],
-            [0, 6, 0]
+            [0, 6, 0],
+            [6, 6, 0],
+            [6, 0, 0]
         ];
     }
 };
 
 var board = [];
-var boardWithPieces = [];
+var firstBlock = true;
+/* Sets the game board state when a piece has stopped moving (?) */
 function makeGameBoard() {
     var gameBoard = [];
+
     for (let i = 0; i < 10; i++) {
         var tempArr = [];
         for (let j = 0; j < 20; j++) {
@@ -233,25 +236,13 @@ function makeGameBoard() {
         }
         gameBoard.push(tempArr);
     }
+    if (firstBlock == true) {
+        collitionBoard = gameBoard;
+        firstBlock = false;
+    }
     board = gameBoard;
 }
-/*
-ska bort?
-function paintGameBoard() {
-    var x = 0;
-    var y = 0;
 
-    for (var i = 0; i < 10; i++) {
-        if (i % 2 == 0) y = 0;
-        else y = 25;
-        for (var j = 0; j < 20; j++) {
-            gameBoardContext.fillStyle = "#f0f0f0";
-            gameBoardContext.fillRect(x, y, 25, 25);
-            y += 50;
-        }
-        x += 25;
-    }
-}*/
 
 //randomizes a symbol (used in generateNextThreeSymbols())
 function randomizeSymbol() {
@@ -330,18 +321,103 @@ function getSymbolXY(symbol) {     //returns an array of the first and last posi
     var indexes = [xx, yy, xl, yl];     //array of the first and last position x-wise and y-wise in the tetramino building block square.
     return indexes;
 }
-function paintSymbol(x, y) {
-    checkIfGameOver();
-    var piece = makePiece(nextSymbols[0]);
+var currentBlock = { currentPiece: makePiece(nextSymbols[0]), blockX: [], blockY: [] }
+function setCurrentBlockCoords(xCoord, yCoord) {
+    currentBlock.blockX.unshift(xCoord);
+    currentBlock.blockY.unshift(yCoord);
+}
+function resetCurrentBlockCoords() {
+    currentBlock.blockX = [];
+    currentBlock.blockY = [];
+}
+
+function checkSides() {
+    if (currentBlock.blockX != 0) {
+        for (let i = 0; i < currentBlock.blockX.length; i++) {
+            if (currentBlock.blockX[i] == 0) {
+                return 0;
+            }
+            else if (currentBlock.blockX[i] == 9) {
+                return 1;
+            }
+
+        }
+    }
+}
+/*extracts color for a block and returns color stop code */
+function extractingColorNumber(pieceToCheck) {
     var currentPieceNumber;
-    piece.forEach(function (element) {
+    pieceToCheck.forEach(function (element) {
         element.forEach(function (elementInElement) {
             if (elementInElement != 0) {
                 currentPieceNumber = elementInElement;
             }
         });
     });
-    var pieceToWrite = currentPieceNumber + "" + currentPieceNumber;
+    var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
+    return stoppedColor;
+}
+/* Sets the correct color for each piece. A number <10 defines a color for a moving block.
+                 A number >10 defines a color for an existing block. */
+function drawSymbol(pieceToDraw) {
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 20; j++) {
+            if (board[i][j] != 0) {
+                if (board[i][j] < 10 && board[i][j + 1] > 10) {
+                    console.log("collition");
+                    atBottom = true;
+                    isAtBottom = true;
+                }
+                if (atBottom && board[i][j] < 10) {
+                    board[i][j] = parseInt(pieceToDraw);
+                }
+                if (board[i][j] == 11) {
+                    gameBoardContext.fillStyle = colors[0];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 22) {
+                    gameBoardContext.fillStyle = colors[1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 33) {
+                    gameBoardContext.fillStyle = colors[2];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 44) {
+                    gameBoardContext.fillStyle = colors[3];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 55) {
+                    gameBoardContext.fillStyle = colors[4];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 66) {
+                    gameBoardContext.fillStyle = colors[5];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] == 77) {
+                    gameBoardContext.fillStyle = colors[6];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                }
+                else if (board[i][j] < 10) {
+                    gameBoardContext.fillStyle = colors[board[i][j] - 1];
+                    gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+
+                    setCurrentBlockCoords(i, j);
+                }
+
+            }
+        }
+    }
+
+    gameBoardContext.fillStyle = colors[6];
+    gameBoardContext.fillRect(9 * 25, 19 * 25, 25, 25);
+
+}
+function paintSymbol(/*x, y*/) {
+    checkIfGameOver();
+    var piece = makePiece(nextSymbols[0]);
+    var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
     var indexes = getSymbolXY(piece);
     var isAtBottom = false;
@@ -349,25 +425,29 @@ function paintSymbol(x, y) {
         isAtBottom = true;
         console.log("Stop");
     }
-    if (board[x + indexes[0]][y + indexes[3]] > 10 || board[x + indexes[2]][y + indexes[3]] > 10) { // Block connects with other
-        isAtBottom = true;
-        console.log("Stop");
-    }
-    else if (x + indexes[2] > 9) {
-        x = x - 1;
-        return console.log("Too far right");
-    }
-    else if (x - indexes[0] < 0) {
-        x = x + 1;
-        return console.log("Too far left");
-    }
+    // // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
+    // if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
+    //     if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
+    //         isAtBottom = true;
+    //         console.log("Stop");
+    //     }
+    // }
+    // else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
+    //     x = x - 1;
+    //     return console.log("Too far right");
+    // }
+    // else if (x - indexes[0] < 0) {
+    //     x = x + 1;
+    //     return console.log("Too far left");
+    // }
+
 
     for (let i = 0; i < piece.length; i++) {
 
         for (let j = 0; j < piece.length; j++) {
-            if (x + indexes[0] < 0 || x + indexes[2] > 9) {
-                falseMove = true;
-            }
+            // if (x + indexes[0] < 0 || x + indexes[2] > 9) {
+            //     falseMove = true;
+            // }
             for (let i = 0; i < piece.length; i++) {
 
                 for (let j = 0; j < piece.length; j++) {
@@ -381,55 +461,14 @@ function paintSymbol(x, y) {
 
             }
             if (isAtBottom) {
-                boardWithPieces = board;
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
-                //sets the correct color for each piece
-                for (let i = 0; i < 10; i++) {
-                    for (let j = 0; j < 20; j++) {
-                        if (board[i][j] != 0) {
-                            if (atBottom && board[i][j] < 10) {
-                                board[i][j] = parseInt(pieceToWrite);
-                            }
-                            if (board[i][j] == 11) {
-                                gameBoardContext.fillStyle = colors[0];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 22) {
-                                gameBoardContext.fillStyle = colors[1];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 33) {
-                                gameBoardContext.fillStyle = colors[2];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 44) {
-                                gameBoardContext.fillStyle = colors[3];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 55) {
-                                gameBoardContext.fillStyle = colors[4];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 66) {
-                                gameBoardContext.fillStyle = colors[5];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] == 77) {
-                                gameBoardContext.fillStyle = colors[6];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                            else if (board[i][j] < 10) {
-                                gameBoardContext.fillStyle = colors[board[i][j] - 1];
-                                gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-                            }
-                        }
-                    }
-                }
+                resetCurrentBlockCoords();
+                drawSymbol(pieceToWrite);
             }
             makeGameBoard();
         }
@@ -506,27 +545,35 @@ function updateGameBoard() {
     }
 
     if (atBottom) {
-        paintSymbol(x, y);
+        paintSymbol(/*x, y*/);
     }
     else {
-        paintSymbol(x, y);
+        paintSymbol(/*x, y*/);
     }
     //console.log(x + "    " + y);
 }
 
 function checkIfGameOver() {
+    var gameOver = false;
     if (x - 1 > 0 && board[x - 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
     }
     else if (board[x][1] != 0) {
         console.log("gameoverman");
-        clearInterval(gameplayLoopID);
+        gameOver = true;
+        clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
+    }
+
+    if (gameOver) {
+        $("#gameOverText").css("display", "block");
     }
 }
 
@@ -535,6 +582,8 @@ function play() {
     resetGame();
     gameplayLoopID = setInterval(startGameplayLoop, 800);
 }
+
+
 function startGameplayLoop() {
     makeGameBoard();
     tick++;
@@ -546,21 +595,22 @@ function startGameplayLoop() {
     if (atBottom) {
         x = 4;
         y = 0;
-        giveScore();
+        //giveScore();
         atBottom = false;
     }
     y++;
 }
 
 function resetGame() {
-    resetBoard(0);
+    resetBoard();
     tick = 0;
     $("#counter").text(tick);
     clearInterval(gameplayLoopID);
     nextSymbols = [];
     savedSymbol = [];
     points = 0;
-    document.getElementById("score").innerText = "Score: " + points;
+    $("#score").text("Score: " + points);
+    $("#gameOverText").css("display", "none");
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -569,25 +619,9 @@ function resetGame() {
     savedSymbolContext.clearRect(0, 0, savedSymbolCanvas.width, savedSymbolCanvas.height);
 }
 
-function startGameplayLoop() {
-    makeGameBoard();
-    tick++;
-    $("#counter").text(tick);
-    generateNextThreeSymbols();
-    paintNextSymbolOne();
-    paintNextSymbolTwo();
-    updateGameBoard();
-    if (atBottom) {
-        x = 4;
-        y = 0;
-        giveScore();
-        atBottom = false;
-    }
-    y++;
-}
-function resetBoard(jStart) {
+function resetBoard() {
     for (let i = 0; i < board.length; i++) {
-        for (let j = jStart; j < board[i].length; j++) {
+        for (let j = 0; j < board[i].length; j++) {
             board[i][j] = 0;
         }
     }
@@ -650,29 +684,29 @@ function rotate() {
             nextSymbols[0] = "z";
             break;
 
-        // function rotate(sym, direction){
-        //     let rotate=function(sym,direction){
-        // 		for(let y=0;y<sym.length;++y){
-        // 			for(let x=0;x<y;++x){
-        // 				[
-        // 					sym[x][y],
-        // 					sym[y][x]
-        // 				]=[
-        // 					sym[y][x],
-        // 					sym[x][y],
-        // 				]
-        // 			}
-        // 		}
-        // 		if(dir>0){
-        // 			sym.forEach(row=>row.reverse());
-        // 		}
-        // 		else{
-        // 			sym.reverse();
-        // 		}
-        //     };
-        //     return rotate;
-        // }
+    }
 
+
+    var lastXInSymbol;
+    var symbol = makePiece(nextSymbols[0]);
+    var isValue = false;
+    for (let j = symbol.length - 1; j >= 0; j--) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0) {
+                lastXInSymbol = j;                 //saves where in the tetramino square the last block appears x-wise.
+                isValue = true;
+                break;
+            }
+
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+    if (x + lastXInSymbol > 9) {
+        x = x - lastXInSymbol;
+
+        updateGameBoard();
     }
     updateGameBoard();
 }
@@ -698,25 +732,33 @@ function keyPressed(e) {
 
 
 function leftMove() { // moves piece one step left
-    if (x > 0) {
+    if (checkSides() != 0) {
         x--;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
 function rightMove() { // moves piece one step right
-    if (x < 10) {
+    if (checkSides() != 1) {
         x++;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
 
 function downMove() { // moves piece one step down
     if (y + 1 < 19) {
         y++;
+        updateGameBoard();
     }
-    updateGameBoard();
 }
-
+/* Clears a line*/
+function clearLine(lineCount) {
+    for (let rowCount = 0; rowCount < board.length; rowCount++) {
+        for (let line = lineCount; line < board[rowCount].length; line++) {
+            board[rowCount].splice(line, 1);
+            board[rowCount].unshift(0); // adds a new line to the board.
+        }
+    }
+}
 var points = 0;
 var prevLine = 0;
 function giveScore() { // needs lots of rework.
@@ -726,21 +768,15 @@ function giveScore() { // needs lots of rework.
         for (let j = newCount; j < board[i].length; j++) {
             if (board[i][j] > 10) {
                 newCount = j;
+                tempBoardLine += 99;
             }
-            tempBoardLine += 99;
             if (j != newCount) {
                 tempBoardLine = 0;
             }
             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
                 points += 100;
                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-                for (let rowCount = 0; rowCount < board.length; rowCount++) {
-                    for (let line = newCount; line < board[rowCount].length; line++) {
-                        board[rowCount].splice(line, 1);
-                        board[rowCount].unshift(0); // clears line when full
-                    }
-                }
-                //resetBoard(newCount);
+                clearLine(newCount);
                 tempBoardLine = 0;      // resets the row
             }
         }
@@ -749,5 +785,5 @@ function giveScore() { // needs lots of rework.
         }
     }
     prevLine = 0;
-    document.getElementById("score").innerText = "Score: " + points;
+    $("#score").text("Score: " + points);
 }

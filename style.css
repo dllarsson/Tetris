@@ -8,18 +8,39 @@ body {
   background-color: black;
 }
 
+
+
 #gameContainer {
   display: inline-flex;
   text-align: center;
 }
 .gameAndControlsContainer{
   text-align: center;
+  position: relative;
 }
 
 canvas {
   margin-left: 5px;
   margin-right: 5px;
   background-color: rgb(226, 226, 226);
+}
+
+#gameOverText{
+  display:none;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size:35px;
+  text-shadow: 5px 5px 5px #000000, 5px 5px 5px #000000;
+  color: white;
+  animation:  gameOverTextFadeIn 2s;
+}
+
+@keyframes gameOverTextFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 
@@ -214,6 +235,10 @@ h1 {
 }
 
 @media only screen and (min-width: 768px) {
+
+  #gameOverText{
+    font-size:40px;
+  }
   /* For desktop: */
   .grid-container {
     grid-template-areas:
