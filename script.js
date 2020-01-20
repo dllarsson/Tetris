@@ -29,6 +29,7 @@ $(document).ready(function () {
     $("#leftArrow").on("touchstart click", leftMove);
     $("#rightArrow").on("touchstart click", rightMove);
     $("#downArrow").on("touchstart click", downMove);
+    $("#rotationArrow").on("touchstart click", rotate);
     $("#playButton").on("touchstart click", play);
     $("#resetButton").on("touchstart click", resetGame);
     $("#navbtn").on("touchstart click", loadRules);
@@ -501,7 +502,7 @@ function paintSymbol(/*x, y*/) {
                 
                 atBottom = true;
                 isAtBottom = false;
-                nextSymbols.splice(0, 1);
+                //nextSymbols.splice(0, 1);
                 hasCollided = false;
                 
             }
@@ -586,13 +587,12 @@ function saveSymbol() {
 
 
 function updateGameBoard() {
-    if (nextSymbols.length < 1) {
-        generateNextThreeSymbols();
-    }
+    
 
    
         paintSymbol();
         if (hasCollided ||atBottom){
+            nextSymbols.splice(0,1);
             CheckLines();
             hasCollided = false;
         }
@@ -733,27 +733,24 @@ function rotate() {
             break;
 
     }
-
-
     var lastXInSymbol;
-    var symbol = makePiece(nextSymbols[0]);
-    var isValue = false;
-    for (let j = symbol.length - 1; j >= 0; j--) {
-        for (let i = 0; i < symbol.length; i++) {
-            var tempSymbol = symbol[i];
-            if (tempSymbol[j] != 0) {
+    var symbolToCheck = makePiece(nextSymbols[0]);
+    var valueIsCorrect = false;
+    for (let j = symbolToCheck.length - 1; j >= 0; j--) {
+        for (let i = 0; i < symbolToCheck.length; i++) {
+            var tempSymbolToCheck = symbolToCheck[i];
+            if (tempSymbolToCheck[j] != 0) {
                 lastXInSymbol = j;                 //saves where in the tetramino square the last block appears x-wise.
-                isValue = true;
+                valueIsCorrect = true;
                 break;
             }
 
         }
-        if (isValue) break;
+        if (valueIsCorrect) break;
     }
-    isValue = false;
+    valueIsCorrect = false;
     if (x + lastXInSymbol > 9) {
         x = x - lastXInSymbol;
-
         updateGameBoard();
     }
     updateGameBoard();
