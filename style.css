@@ -83,9 +83,9 @@ input {
   vertical-align: middle;
 }
 
-/*Grid layout to manage the different containers with header, navigation, leadboard and the game itself.
+/*Grid layout to manage the different containers with header, navigation, leaderboard and the game itself.
 In .grid-container the placement of the containers are arranged to give the best experience on the site, easy and simple.
-Mostof the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
+Most of the basics like color and padding are sett ind the grid classes, and also the responsive of the site*/
 
 .header {
   grid-area: header;
@@ -106,6 +106,7 @@ Mostof the basics like color and padding are sett ind the grid classes, and also
   grid-area: footer;
 }
 
+/*Placement of the different areas on screen, mobilefirst*/
 .grid-container {
   display: grid;
   grid-template-areas:
@@ -277,7 +278,7 @@ h1 {
   margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #downArrow img {
+#leftArrow img, #rightArrow img, #downArrow img, #rotationArrow img {
   width: auto;
   height: auto;
   max-width: 60px;
