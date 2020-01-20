@@ -378,35 +378,43 @@ function drawSymbol(pieceToDraw) {
                 if (board[i][j] == 11) {
                     gameBoardContext.fillStyle = colors[0];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 22) {
                     gameBoardContext.fillStyle = colors[1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 33) {
                     gameBoardContext.fillStyle = colors[2];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 44) {
                     gameBoardContext.fillStyle = colors[3];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 55) {
                     gameBoardContext.fillStyle = colors[4];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
+
                 }
                 else if (board[i][j] == 66) {
                     gameBoardContext.fillStyle = colors[5];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 77) {
                     gameBoardContext.fillStyle = colors[6];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                     setCurrentBlockCoords(i, j);
                 }
 
@@ -488,6 +496,7 @@ function paintNextSymbolOne() {
             if (piece[i][j] != 0) {
                 pieceOneContext.fillStyle = colors[piece[i][j] - 1];
                 pieceOneContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceOneContext.strokeRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -502,6 +511,8 @@ function paintNextSymbolTwo() {
             if (piece[i][j] != 0) {
                 pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
                 pieceTwoContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceTwoContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -516,6 +527,8 @@ function paintSavedSymbol() {
             if (piece[i][j] != 0) {
                 savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
                 savedSymbolContext.fillRect(j * 20, i * 20, 20, 20);
+                savedSymbolContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -749,7 +762,7 @@ function rightMove() { // moves piece one step right
 }
 
 function downMove() { // moves piece one step down
-    if (y + 1 < 19) {
+    if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
