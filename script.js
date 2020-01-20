@@ -334,12 +334,12 @@ function resetCurrentBlockCoords() {
 function checkSides() {
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
-                if(currentBlock.blockX[i] == 0){
-                    return 0;
-                }
-                else if(currentBlock.blockX[i] == 9){
-                    return 1;
-                }
+            if (currentBlock.blockX[i] == 0) {
+                return 0;
+            }
+            else if (currentBlock.blockX[i] == 9) {
+                return 1;
+            }
 
         }
     }
@@ -675,6 +675,29 @@ function rotate() {
             nextSymbols[0] = "z";
             break;
 
+    }
+
+
+    var lastXInSymbol;
+    var symbol = makePiece(nextSymbols[0]);
+    var isValue = false;
+    for (let j = symbol.length - 1; j >= 0; j--) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0) {
+                lastXInSymbol = j;                 //saves where in the tetramino square the last block appears x-wise.
+                isValue = true;
+                break;
+            }
+
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+    if (x + lastXInSymbol > 9) {
+        x = x - lastXInSymbol;
+
+        updateGameBoard();
     }
     updateGameBoard();
 }
