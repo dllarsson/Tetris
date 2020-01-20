@@ -365,21 +365,21 @@ function drawSymbol(pieceToDraw) {
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
-                if (board[i][j] < 10 && board[i][j + 1] > 10) {
+                if (board[i][j] < 10 && board[i][j + 1] > 10) { // checks if the moving block collides with a fix block.
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
                     
                 }
                 if (i > 0) {
-                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {
-                        cantMoveLeft = true;
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10) ) {// checks if the moving block has a fixed block to the left
+                        cantMoveLeft = true; // bool for movement
                     }
                 }
                 if (i < 9) {
 
-                    if ((board[i][j] < 10 && board[i + 1][j] > 10) || (board[i][j] < 10 && board[i + 1][j + 1] > 10)) {
-                        cantMoveRight = true;
+                    if ((board[i][j] < 10 && board[i + 1][j] > 10) || (board[i][j] < 10 && board[i + 1][j + 1] > 10)) { // checks if the moving block has a fixed block to the right
+                        cantMoveRight = true; // bool for movement
                     }
                 }
                 if (atBottom && board[i][j] < 10) {
@@ -432,8 +432,8 @@ function drawSymbol(pieceToDraw) {
 }
 function paintSymbol(/*x, y*/) {
     checkIfGameOver();
-    cantMoveLeft = false;
-    cantMoveRight = false;
+    cantMoveLeft = false; // resets bool for movement.
+    cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -768,6 +768,10 @@ function CheckLines() {   //Check lines after
         }
         counter = 0;
     }
+}
+function giveScore(){
+        points += 100;
+        $("#score").text("Score: " + points);
 }
 /* Clears a line*/
 
