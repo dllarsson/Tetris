@@ -7,6 +7,7 @@ var playerName = "";
 var setUsernameBeforeStartingGame = false;
 var highScore;
 var startGame = false;
+var currentLevel = 1;
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
@@ -596,15 +597,20 @@ function play() {
 }
 
 function gameSpeed() {
-    if (points > 3000) {
+    if (points > 200 && currentLevel === 1) {
+        clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 500);
+        currentLevel = 2;
     }
-    else if (points > 6000) {
+    else if (points > 6000 && currentLevel === 2) {
+        clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 300);
-
+        currentLevel = 3;
     }
-    else if (points > 9000) {
+    else if (points > 9000 && currentLevel === 3) {
+        clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 100);
+        currentLevel = 4;
     }
 }
 
