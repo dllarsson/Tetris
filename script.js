@@ -597,7 +597,7 @@ function play() {
 }
 
 function gameSpeed() {
-    if (points > 200 && currentLevel === 1) {
+    if (points > 3000 && currentLevel === 1) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 500);
         currentLevel = 2;
