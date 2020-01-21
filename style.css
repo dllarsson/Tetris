@@ -303,7 +303,7 @@ h1 {
   margin: 4px 12px;
 }
 
-#leftArrow img, #rightArrow img, #downArrow img, #rotationArrow img {
+#leftArrow img, #rightArrow img, #downArrow img, #rotationArrow img, #saveSymbol img {
   width: auto;
   height: auto;
   max-width: 60px;

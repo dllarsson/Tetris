@@ -1,5 +1,3 @@
-
-
 var x = 4;
 var y = 0;
 var atBottom = false;
@@ -32,6 +30,7 @@ $(document).ready(function () {
     $("#rightArrow").on("click", rightMove);
     $("#downArrow").on("click", downMove);
     $("#rotationArrow").on("click", rotate);
+    $("#saveSymbol").on("click", saveSymbol);    
     $("#playButton").on("click", play);
     $("#resetButton").on("click", resetGame);
     $("#navbtn").on("click", loadRules);
@@ -60,22 +59,6 @@ function loadRules() {
         rulesText.style.display = "none";
     }
 }
-
-/*Load the rules from a textfile to the webpage*/
-var txtFile = new XMLHttpRequest();
-var allText = "file not found";
-txtFile.onreadystatechange = function () {
-    if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
-        allText = txtFile.responseText;
-        allText = allText.split("\n").join("<br>"); /*To present the text the way it's writen in the textdocument*/
-    }
-
-    document.getElementById('rules').innerHTML = allText;
-}
-txtFile.open("GET", 'rules.txt', true);
-txtFile.send(null);
-
-
 
 /*Load the rules from a textfile to the webpage*/
 var txtFile = new XMLHttpRequest();
@@ -279,8 +262,6 @@ function makeGameBoard() {
         gameBoard.push(tempArr);
     }
     if (firstBlock == true) {
-        //vad är collisionBoard?
-        collisionBoard = gameBoard;
         firstBlock = false;
     }
     board = gameBoard;
@@ -572,23 +553,20 @@ function updateGameBoard() {
     }
 
 }
-
+//if the coordinates where the next piece is supposed to spawn isn't empty, the game stops and gives the player a game over
+//message and runs the addHighScore function
 function checkIfGameOver() {
     var gameOver = false;
     if (x - 1 > 0 && board[x - 1][1] != 0) {
-        console.log("gameoverman");
         gameOver = true;
         clearInterval(gameplayLoopID);
     }
     else if (board[x][1] != 0) {
-        console.log("gameoverman");
         gameOver = true;
-        clearInterval(gameplayLoopID); 
+        clearInterval(gameplayLoopID);
     }
 
-
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
-        console.log("gameoverman");
         gameOver = true;
         clearInterval(gameplayLoopID);
     }
@@ -600,7 +578,8 @@ function checkIfGameOver() {
     }
 }
 
-
+//if the player hasn't set their username it shows the username input window, if the username is set it resets the board
+//and then starts the game
 function play() {
     if (playerName == "") {
         showUserNameModal();
@@ -612,22 +591,25 @@ function play() {
     }
 }
 
-function GameSpeed(){
-    if (points > 3000){
+function gameSpeed() {
+    if (points > 3000) {
         gameplayLoopID = setInterval(startGameplayLoop, 500);
     }
-    else if (points > 6000){
+    else if (points > 6000) {
         gameplayLoopID = setInterval(startGameplayLoop, 300);
 
     }
-    else if (points > 9000){
+    else if (points > 9000) {
         gameplayLoopID = setInterval(startGameplayLoop, 100);
     }
 }
 
-
+//creates the board array, increments the tick variable and updates the counter HTML element,
+//generates the current symbol for play, and the two pieces that will come after that and paints these in their respective canvases,
+//updates gameboard every time the interval runs the startGameplayLoop function. if the piece being playe reaches the bottom of the board,
+// it resets the x and y values to their defaults, if it hasn't reached the bottom it increments the y variable by one
 function startGameplayLoop() {
-    GameSpeed();
+    gameSpeed();
     makeGameBoard();
     tick++;
     $("#counter").text(tick);
@@ -643,6 +625,8 @@ function startGameplayLoop() {
     y++;
 }
 
+//resets all variables to their start value, clears the gameboard array, resets some html elements to their default value,
+//clears all the canvases to an empty state and stops the stops the gameplay loop
 function resetGame() {
     resetBoard();
     tick = 0;
@@ -902,6 +886,8 @@ function giveScore(bonus) {
 
 
 /*Higscore list*/
+//prints either a message stating that the highscore is empty if highscore list is empty,
+//else it prints the top 5 highest scores 
 function printHighScore() {
     var scoreToPrint;
     var leaderBoardDiv = $("#leaderBoardContainer");
@@ -937,12 +923,15 @@ function printHighScore() {
     }
 }
 
+//if there are no earlier recorded highscores, it creates an empty array. if there are less than 5 entries on the list,
+//it adds the newest one, sorts the list, stores it in local storage and then runs the printHighScore function.
+//if there are 5 or more entries on the list of scores it adds the newest score to the array, sorts it by points and
+//and removes any score that isn't in the top 5 and then runs the printHighScore function
 function addHighScore() {
     var listOfScores;
     if (localStorage.getItem("score") == null) {
         listOfScores = [];
     }
-
     else {
         listOfScores = JSON.parse(localStorage.getItem("score"));
     }
