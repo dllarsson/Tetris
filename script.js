@@ -19,16 +19,21 @@ const pieceTwoCanvas = document.getElementById("nextSymbolTwo");
 const pieceTwoContext = pieceTwoCanvas.getContext("2d");
 const savedSymbolCanvas = document.getElementById("savedSymbol");
 const savedSymbolContext = savedSymbolCanvas.getContext("2d");
+var hasCollided = false;
 
 $(document).ready(function () {
     var rulesText = document.getElementById("rules");
     rulesText.style.display = "none";
     window.addEventListener("keydown", keyPressed, false);
     $("#rules").css("display", "none");
-    $("#leftArrow").on("touchstart", leftMove);
-    $("#rightArrow").on("touchstart", rightMove);
-    $("#downArrow").on("touchstart", downMove);
-    $("#rotationArrow").on("touchstart", rotate);
+    $("#leftArrow").on("touchstart click", leftMove);
+    $("#rightArrow").on("touchstart click", rightMove);
+    $("#downArrow").on("touchstart click", downMove);
+    $("#playButton").on("touchstart click", play);
+    $("#resetButton").on("touchstart click", resetGame);
+    $("#navbtn").on("touchstart click", loadRules);
+    $("#changeUsernameBtn").on("touchstart click", showUserNameModal);
+    $("#handeUsernameButton").on("touchstart click", handleUsernameFromInput);
     makeGameBoard();
 
 });
@@ -356,12 +361,12 @@ function resetCurrentBlockCoords() {
 function checkSides() {
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
-                if(currentBlock.blockX[i] == 0){
-                    return 0;
-                }
-                else if(currentBlock.blockX[i] == 9){
-                    return 1;
-                }
+            if (currentBlock.blockX[i] == 0) {
+                return 0;
+            }
+            else if (currentBlock.blockX[i] == 9) {
+                return 1;
+            }
 
         }
     }
@@ -379,6 +384,8 @@ function extractingColorNumber(pieceToCheck) {
     var stoppedColor = currentPieceNumber + "" + currentPieceNumber;
     return stoppedColor;
 }
+var cantMoveLeft = false;
+var cantMoveRight = false;
 /* Sets the correct color for each piece. A number <10 defines a color for a moving block.
                  A number >10 defines a color for an existing block. */
 function drawSymbol(pieceToDraw) {
@@ -389,6 +396,20 @@ function drawSymbol(pieceToDraw) {
                     console.log("collition");
                     atBottom = true;
                     isAtBottom = true;
+                    hasCollided = true;
+                    
+
+                }
+                if (i > 0) {
+                    if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {
+                        cantMoveLeft = true;
+                    }
+                }
+                if (i < 9) {
+
+                    if ((board[i][j] < 10 && board[i + 1][j] > 10) || (board[i][j] < 10 && board[i + 1][j + 1] > 10)) {
+                        cantMoveRight = true;
+                    }
                 }
                 if (atBottom && board[i][j] < 10) {
                     board[i][j] = parseInt(pieceToDraw);
@@ -396,35 +417,43 @@ function drawSymbol(pieceToDraw) {
                 if (board[i][j] == 11) {
                     gameBoardContext.fillStyle = colors[0];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 22) {
                     gameBoardContext.fillStyle = colors[1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 33) {
                     gameBoardContext.fillStyle = colors[2];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 44) {
                     gameBoardContext.fillStyle = colors[3];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 55) {
                     gameBoardContext.fillStyle = colors[4];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
+
                 }
                 else if (board[i][j] == 66) {
                     gameBoardContext.fillStyle = colors[5];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] == 77) {
                     gameBoardContext.fillStyle = colors[6];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                 }
                 else if (board[i][j] < 10) {
                     gameBoardContext.fillStyle = colors[board[i][j] - 1];
                     gameBoardContext.fillRect(i * 25, j * 25, 25, 25);
-
+                    gameBoardContext.strokeRect(i * 25, j * 25, 25, 25);
                     setCurrentBlockCoords(i, j);
                 }
 
@@ -433,11 +462,12 @@ function drawSymbol(pieceToDraw) {
     }
 
     gameBoardContext.fillStyle = colors[6];
-    gameBoardContext.fillRect(9 * 25, 19 * 25, 25, 25);
 
 }
 function paintSymbol(/*x, y*/) {
     checkIfGameOver();
+    cantMoveLeft = false;
+    cantMoveRight = false;
     var piece = makePiece(nextSymbols[0]);
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -447,21 +477,6 @@ function paintSymbol(/*x, y*/) {
         isAtBottom = true;
         console.log("Stop");
     }
-    // // if ((indexes[3] != 0 && board[x + indexes[0]][y + indexes[3] + 1] > 10) || (indexes[3] != 0 && board[x + indexes[2]][y + indexes[3] + 1] > 10) || (indexes[3] == 0 && board[x + indexes[0]][y+indexes[3]] > 10) || (indexes[3] == 0 && board[x + indexes[2]][y+indexes[3]] > 10)) { // Block connects with other
-    // if (currentBlock.blockX != 0 && currentBlock.blockY != 0) {
-    //     if ((board[currentBlock.blockX[0]][currentBlock.blockY[0]] != 0 && board[currentBlock.blockX[0]][currentBlock.blockY[0] + 1] != 0) || (board[currentBlock.blockX[1]][currentBlock.blockY[1]] != 0 && board[currentBlock.blockX[1]][currentBlock.blockY[1] + 1] != 0) || (board[currentBlock.blockX[2]][currentBlock.blockY[2]] != 0 && board[currentBlock.blockX[2]][currentBlock.blockY[2] + 1] != 0) || (board[currentBlock.blockX[3]][currentBlock.blockY[3]] != 0 && board[currentBlock.blockX[3]][currentBlock.blockY[3] + 1] != 0)) {
-    //         isAtBottom = true;
-    //         console.log("Stop");
-    //     }
-    // }
-    // else if (x + indexes[2] > 9) { // kan detta göras i movement-funktionerna? onödigt ta in x och y i funktionen?
-    //     x = x - 1;
-    //     return console.log("Too far right");
-    // }
-    // else if (x - indexes[0] < 0) {
-    //     x = x + 1;
-    //     return console.log("Too far left");
-    // }
 
 
     for (let i = 0; i < piece.length; i++) {
@@ -482,10 +497,13 @@ function paintSymbol(/*x, y*/) {
                 }
 
             }
-            if (isAtBottom) {
+            if (isAtBottom || hasCollided) {
+                
                 atBottom = true;
                 isAtBottom = false;
                 nextSymbols.splice(0, 1);
+                hasCollided = false;
+                
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -495,6 +513,7 @@ function paintSymbol(/*x, y*/) {
             makeGameBoard();
         }
     }
+
 }
 
 //gets the second symbol in the nextSymbols array and paints it in the top canvas to the right of the game board
@@ -506,6 +525,7 @@ function paintNextSymbolOne() {
             if (piece[i][j] != 0) {
                 pieceOneContext.fillStyle = colors[piece[i][j] - 1];
                 pieceOneContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceOneContext.strokeRect(j * 20, i * 20, 20, 20);
             }
         }
     }
@@ -520,6 +540,8 @@ function paintNextSymbolTwo() {
             if (piece[i][j] != 0) {
                 pieceTwoContext.fillStyle = colors[piece[i][j] - 1];
                 pieceTwoContext.fillRect(j * 20, i * 20, 20, 20);
+                pieceTwoContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -534,6 +556,8 @@ function paintSavedSymbol() {
             if (piece[i][j] != 0) {
                 savedSymbolContext.fillStyle = colors[piece[i][j] - 1];
                 savedSymbolContext.fillRect(j * 20, i * 20, 20, 20);
+                savedSymbolContext.strokeRect(j * 20, i * 20, 20, 20);
+
             }
         }
     }
@@ -566,35 +590,45 @@ function updateGameBoard() {
         generateNextThreeSymbols();
     }
 
-    if (atBottom) {
-        paintSymbol(/*x, y*/);
-    }
-    else {
-        paintSymbol(/*x, y*/);
-    }
-    //console.log(x + "    " + y);
+   
+        paintSymbol();
+        if (hasCollided ||atBottom){
+            CheckLines();
+            hasCollided = false;
+        }
+
 }
 
 function checkIfGameOver() {
+    var gameOver = false;
     if (x - 1 > 0 && board[x - 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
     }
     else if (board[x][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID); // uncaught reference error när x > 10. dvs om man trycker höger för många gånger. (funkar åt vänster.)
     }
+    //console.log(x + "    " + y);
+
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
         console.log("gameoverman");
+        gameOver = true;
         clearInterval(gameplayLoopID);
+    }
+
+    if (gameOver) {
+        $("#gameOverText").css("display", "block");
     }
 }
 
 
 function play() {
     resetGame();
-    gameplayLoopID = setInterval(startGameplayLoop, 800);
+    gameplayLoopID = setInterval(startGameplayLoop, 200);
 }
 
 
@@ -609,7 +643,7 @@ function startGameplayLoop() {
     if (atBottom) {
         x = 4;
         y = 0;
-        giveScore();
+        //giveScore();
         atBottom = false;
     }
     y++;
@@ -624,6 +658,7 @@ function resetGame() {
     savedSymbol = [];
     points = 0;
     $("#score").text("Score: " + points);
+    $("#gameOverText").css("display", "none");
     x = 4;
     y = 0;
     gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -698,6 +733,29 @@ function rotate() {
             break;
 
     }
+
+
+    var lastXInSymbol;
+    var symbol = makePiece(nextSymbols[0]);
+    var isValue = false;
+    for (let j = symbol.length - 1; j >= 0; j--) {
+        for (let i = 0; i < symbol.length; i++) {
+            var tempSymbol = symbol[i];
+            if (tempSymbol[j] != 0) {
+                lastXInSymbol = j;                 //saves where in the tetramino square the last block appears x-wise.
+                isValue = true;
+                break;
+            }
+
+        }
+        if (isValue) break;
+    }
+    isValue = false;
+    if (x + lastXInSymbol > 9) {
+        x = x - lastXInSymbol;
+
+        updateGameBoard();
+    }
     updateGameBoard();
 }
 
@@ -720,59 +778,49 @@ function keyPressed(e) {
     }
 }
 
-
 function leftMove() { // moves piece one step left
-    if (checkSides() != 0) {
+    if (checkSides() != 0 && !cantMoveLeft) {
         x--;
         updateGameBoard();
     }
 }
 function rightMove() { // moves piece one step right
-    if (checkSides() != 1) {
+    if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
     }
 }
 
 function downMove() { // moves piece one step down
-    if (y + 1 < 19) {
+    if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
 }
-/* Clears a line*/
-function clearLine(lineCount) {
-    for (let rowCount = 0; rowCount < board.length; rowCount++) {
-        for (let line = lineCount; line < board[rowCount].length; line++) {
-            board[rowCount].splice(line, 1);
-            board[rowCount].unshift(0); // adds a new line to the board.
-        }
-    }
-}
-var points = 0;
-var prevLine = 0;
-function giveScore() { // needs lots of rework.
-    let newCount = 0;
-    var tempBoardLine = 0;
-    for (let i = 0; i < board.length; i++) {
-        for (let j = newCount; j < board[i].length; j++) {
-            if (board[i][j] > 10) {
-                newCount = j;
-                tempBoardLine += 99;
-            }
-            if (j != newCount) {
-                tempBoardLine = 0;
-            }
-            if (tempBoardLine == 990) { // if there are blocks on all positions in a row
-                points += 100;
-                prevLine += tempBoardLine; // variable to decide if bonus points are eligible
-                clearLine(newCount);
-                tempBoardLine = 0;      // resets the row
+
+
+
+function CheckLines() {   //Check lines after a block lands.
+    let counter = 0;
+    for (let i = 19; i >= 0; i--) {
+        for (let j = 9; j >= 0; j--) {
+            if (board[j][i] > 10) {
+                counter++;
+                if (counter == 10) {
+                    for (let rowCount = 0; rowCount < board.length; rowCount++) {
+                        
+                            board[rowCount].splice(i, 1);
+                            board[rowCount].unshift(0); // adds a new line to the board.
+
+                            // Give score here!
+                        
+                    }
+                    counter = 0;
+                    i++;
+                }
             }
         }
-        if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
-            points += 100;
-        }
+        counter = 0;
     }
     prevLine = 0;
     $("#score").text("Score: " + points);
@@ -804,3 +852,32 @@ function HighScore() {
     highscore.push(score);
     highscore.*/
 
+
+/* Clears a line*/
+
+// function giveScore() { // needs lots of rework.
+//     let newCount = 0;
+//     var tempBoardLine = 0;
+//     for (let i = 0; i < board.length; i++) {
+//         for (let j = newCount; j < board[i].length; j++) {
+//             if (board[i][j] > 10) {
+//                 newCount = j;
+//                 tempBoardLine += 99;
+//             }
+//             if (j != newCount) {
+//                 tempBoardLine = 0;
+//             }
+//             if (tempBoardLine == 990) { // if there are blocks on all positions in a row
+//                 points += 100;
+//                 prevLine += tempBoardLine; // variable to decide if bonus points are eligible
+//                 clearLine(newCount);
+//                 tempBoardLine = 0;      // resets the row
+//             }
+//         }
+//         if (prevLine % 990 == 0 && prevLine != 0 && prevLine != 990) {
+//             points += 100;
+//         }
+//     }
+//     prevLine = 0;
+//     $("#score").text("Score: " + points);
+// }
