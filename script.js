@@ -790,7 +790,6 @@ function rightMove() { // moves piece one step right
 }
 
 function downMove() { // moves piece one step down
-    sleep
     
     if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
