@@ -29,6 +29,7 @@ $(document).ready(function () {
     $("#rightArrow").on("click", rightMove);
     $("#downArrow").on("click", downMove);
     $("#rotationArrow").on("click", rotate);
+    $("#saveSymbol").on("click", savedSymbol);    
     $("#playButton").on("click", play);
     $("#resetButton").on("click", resetGame);
     $("#navbtn").on("click", loadRules);
@@ -558,7 +559,7 @@ function checkIfGameOver() {
     }
     else if (board[x][1] != 0) {
         gameOver = true;
-        clearInterval(gameplayLoopID); 
+        clearInterval(gameplayLoopID);
     }
 
     else if (x + 1 < 10 && board[x + 1][1] != 0) {
@@ -586,15 +587,15 @@ function play() {
     }
 }
 
-function gameSpeed(){
-    if (points > 3000){
+function gameSpeed() {
+    if (points > 3000) {
         gameplayLoopID = setInterval(startGameplayLoop, 500);
     }
-    else if (points > 6000){
+    else if (points > 6000) {
         gameplayLoopID = setInterval(startGameplayLoop, 300);
 
     }
-    else if (points > 9000){
+    else if (points > 9000) {
         gameplayLoopID = setInterval(startGameplayLoop, 100);
     }
 }
@@ -774,15 +775,15 @@ function rightMove() { // moves piece one step right
 
 function downMove() { // moves piece one step down
     sleep
-    
+
     if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
 }
 
-function checkRotationCollition(rotationDirection){
-        
+function checkRotationCollition(rotationDirection) {
+
 }
 
 
