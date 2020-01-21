@@ -29,7 +29,7 @@ $(document).ready(function () {
     $("#rightArrow").on("click", rightMove);
     $("#downArrow").on("click", downMove);
     $("#rotationArrow").on("click", rotate);
-    $("#saveSymbol").on("click", savedSymbol);    
+    $("#saveSymbol").on("click", saveSymbol);    
     $("#playButton").on("click", play);
     $("#resetButton").on("click", resetGame);
     $("#navbtn").on("click", loadRules);
