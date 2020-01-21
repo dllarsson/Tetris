@@ -594,7 +594,7 @@ function checkIfGameOver() {
     }
 
     if (gameOver) {
-        PlaySoundEffect("gameOver");
+        playSoundEffect("gameOver");
         $("#gameOverText").css("display", "block");
         addHighScore();
     }
@@ -714,6 +714,8 @@ function rotate() {
             break;
 
     }
+    //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
+    //gameboard when the player rotates a piece
     var lastXInSymbol;
     var symbolToCheck = makePiece(nextSymbols[0]);
     var valueIsCorrect = false;
@@ -721,7 +723,7 @@ function rotate() {
         for (let i = 0; i < symbolToCheck.length; i++) {
             var tempSymbolToCheck = symbolToCheck[i];
             if (tempSymbolToCheck[j] != 0) {
-                lastXInSymbol = j;                 //saves where in the tetramino square the last block appears x-wise.
+                lastXInSymbol = j;
                 valueIsCorrect = true;
                 break;
             }
@@ -753,7 +755,7 @@ function keyPressed(e) {
     }
     else if (keyCode == 90) {   // Z key
         rotate();
-        PlaySoundEffect("rotate");
+        playSoundEffect("rotate");
     }
 }
 
@@ -763,7 +765,7 @@ function leftMove() { // moves piece one step left
         updateGameBoard();
     }
     else {
-        PlaySoundEffect("error");
+        playSoundEffect("error");
     }
 }
 function rightMove() { // moves piece one step right
@@ -772,7 +774,7 @@ function rightMove() { // moves piece one step right
         updateGameBoard();
     }
     else {
-        PlaySoundEffect("error");
+        playSoundEffect("error");
     }
 }
 
@@ -808,20 +810,20 @@ function checkLines() {   //Check lines after a block lands.
         counter = 0;
     }
     if (linesCleared == 1) {
-        PlaySoundEffect("lineClear");
+        playSoundEffect("lineClear");
     }
     else if (linesCleared == 2) {
-        PlaySoundEffect("lineClear");
+        playSoundEffect("lineClear");
     }
     else if (linesCleared == 3) {
-        PlaySoundEffect("lineClear");
+        playSoundEffect("lineClear");
     }
     else if (linesCleared == 4) {
-        PlaySoundEffect("tetris");
+        playSoundEffect("tetris");
     }
 }
 
-function PlaySoundEffect(type) {
+function playSoundEffect(type) {
 
     switch (type) {
         case "lineClear":

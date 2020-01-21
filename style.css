@@ -37,6 +37,12 @@ canvas {
   display:none;
 }
 
+li{
+  list-style-position: inside;
+  position:relative;
+  margin-left: -20px;
+}
+
 #leaderboardTitle{
   text-decoration: underline;
 }
