@@ -752,6 +752,7 @@ function leftMove() { // moves piece one step left
     }
 }
 function rightMove() { // moves piece one step right
+
     if (checkSides() != 1 && !cantMoveRight) {
         x++;
         updateGameBoard();
@@ -762,12 +763,17 @@ function rightMove() { // moves piece one step right
 }
 
 function downMove() { // moves piece one step down
+    sleep
+    
     if (y + 1 < 19 && board[x][y + 1] == 0) {
         y++;
         updateGameBoard();
     }
 }
 
+function checkRotationCollition(rotationDirection){
+        
+}
 
 
 function CheckLines() {   //Check lines after a block lands.
