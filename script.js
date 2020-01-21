@@ -1,7 +1,6 @@
 var x = 4;
 var y = 0;
 var atBottom = false;
-var tick = 0;
 var points = 0;
 var playerName = "";
 var setUsernameBeforeStartingGame = false;
@@ -30,7 +29,6 @@ $(document).ready(function () {
     $("#rules").css("display", "none");
     $("#leftArrow").on("click", leftMove);
     $("#rightArrow").on("click", rightMove);
-    $("#downArrow").on("click", downMove);
     $("#rotationArrow").on("click", rotate);
     $("#saveSymbol").on("click", saveSymbol);
     $("#playButton").on("click", play);
@@ -597,32 +595,31 @@ function play() {
 }
 
 function gameSpeed() {
-    if (points > 3000 && currentLevel === 1) {
+    if (points > 30 && currentLevel === 1) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 400);
         currentLevel = 2;
     }
-    else if (points > 6000 && currentLevel === 2) {
+    else if (points > 300 && currentLevel === 2) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 300);
         currentLevel = 3;
     }
-    else if (points > 9000 && currentLevel === 3) {
+    else if (points > 500 && currentLevel === 3) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 100);
         currentLevel = 4;
     }
 }
 
-//creates the board array, increments the tick variable and updates the counter HTML element,
+//creates the board array, updates the counter HTML element,
 //generates the current symbol for play, and the two pieces that will come after that and paints these in their respective canvases,
 //updates gameboard every time the interval runs the startGameplayLoop function. if the piece being playe reaches the bottom of the board,
 // it resets the x and y values to their defaults, if it hasn't reached the bottom it increments the y variable by one
 function startGameplayLoop() {
     gameSpeed();
     makeGameBoard();
-    tick++;
-    $("#counter").text(tick);
+    $("#counter").text("Level: " + currentLevel);
     generateNextThreeSymbols();
     paintNextSymbolOne();
     paintNextSymbolTwo();
@@ -640,8 +637,6 @@ function startGameplayLoop() {
 function resetGame() {
     resetBoard();
     startGame = false;
-    tick = 0;
-    $("#counter").text(tick);
     clearInterval(gameplayLoopID);
     nextSymbols = [];
     savedSymbol = [];
@@ -739,9 +734,6 @@ function keyPressed(e) {
     }
     else if (keyCode == 39) {   // Right key
         rightMove();
-    }
-    else if (keyCode == 40) {   // Down key
-       // downMove();
     }
     else if (keyCode == 88) {   // X Key
         saveSymbol();
@@ -857,6 +849,8 @@ function checkLines() {   //Check lines after a block lands.
     }
 }
 
+
+//Plays sound effects when somehting happens like a lineclear.
 function playSoundEffect(type) {
 
     switch (type) {
@@ -881,7 +875,6 @@ function playSoundEffect(type) {
             audio.play();
             break;
     }
-    linesCleared = 0;
 }
 function giveScore(bonus) {
     points += 100;

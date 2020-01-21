@@ -52,11 +52,11 @@ li{
   margin: 0;
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 48%;
   transform: translate(-50%, -50%);
   font-size:35px;
   text-shadow: 5px 5px 5px #000000, 5px 5px 5px #000000;
-  color: white;
+  color: red;
   animation:  gameOverTextFadeIn 2s;
 }
 
@@ -122,8 +122,11 @@ Most of the basics like color and padding are sett ind the grid classes, and als
   grid-area: game;
 }
 
-.footer {
+footer {
   grid-area: footer;
+  color: rgba(180, 180, 180, 0.8);
+  text-align: center;
+  
 }
 
 /*Placement of the different areas on screen, mobilefirst*/
@@ -288,8 +291,8 @@ h1 {
 }
 
 #counter {
-  font-size: 75px;
-  padding: 20px;
+  font-size: 30px;
+  padding: 0px;
 }
 
 #touchCtrl {
