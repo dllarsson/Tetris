@@ -592,14 +592,14 @@ function play() {
     else {
         resetGame();
         startGame = true;
-        gameplayLoopID = setInterval(startGameplayLoop, 800);
+        gameplayLoopID = setInterval(startGameplayLoop, 600);
     }
 }
 
 function gameSpeed() {
     if (points > 3000 && currentLevel === 1) {
         clearInterval(gameplayLoopID);
-        gameplayLoopID = setInterval(startGameplayLoop, 500);
+        gameplayLoopID = setInterval(startGameplayLoop, 400);
         currentLevel = 2;
     }
     else if (points > 6000 && currentLevel === 2) {
@@ -726,26 +726,7 @@ function rotate() {
         }
         //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
         //gameboard when the player rotates a piece
-        var lastXInSymbol;
-        var symbolToCheck = makePiece(nextSymbols[0]);
-        var valueIsCorrect = false;
-        for (let j = symbolToCheck.length - 1; j >= 0; j--) {
-            for (let i = 0; i < symbolToCheck.length; i++) {
-                var tempSymbolToCheck = symbolToCheck[i];
-                if (tempSymbolToCheck[j] != 0) {
-                    lastXInSymbol = j;
-                    valueIsCorrect = true;
-                    break;
-                }
 
-            }
-            if (valueIsCorrect) break;
-        }
-        valueIsCorrect = false;
-        if (x + lastXInSymbol > 9) {
-            x = x - lastXInSymbol;
-            updateGameBoard();
-        }
         updateGameBoard();
     }
 }
@@ -760,7 +741,7 @@ function keyPressed(e) {
         rightMove();
     }
     else if (keyCode == 40) {   // Down key
-        downMove();
+       // downMove();
     }
     else if (keyCode == 88) {   // X Key
         saveSymbol();
@@ -805,6 +786,27 @@ function downMove() { // moves piece one step down
 
 //Checks if rotation is possible. If not returns false.
 function checkRotationCollition(rotationDirection) {
+        var lastXInSymbol;
+        var symbolToCheck = makePiece(nextSymbols[0]);
+        var valueIsCorrect = false;
+        for (let j = symbolToCheck.length - 1; j >= 0; j--) {
+            for (let i = 0; i < symbolToCheck.length; i++) {
+                var tempSymbolToCheck = symbolToCheck[i];
+                if (tempSymbolToCheck[j] != 0) {
+                    lastXInSymbol = j;
+                    valueIsCorrect = true;
+                    break;
+                }
+
+            }
+            if (valueIsCorrect) break;
+        }
+        valueIsCorrect = false;
+        if (x + lastXInSymbol > 9) {
+            x = x - lastXInSymbol + 1;
+        }
+
+
 
     let canRotate = true;
     let piece = makePiece(nextSymbols[0]);
