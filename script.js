@@ -6,6 +6,7 @@ var points = 0;
 var playerName = "";
 var setUsernameBeforeStartingGame = false;
 var highScore;
+var startGame = false;
 var nextSymbols = [];
 var savedSymbol = [];
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
@@ -30,7 +31,7 @@ $(document).ready(function () {
     $("#rightArrow").on("click", rightMove);
     $("#downArrow").on("click", downMove);
     $("#rotationArrow").on("click", rotate);
-    $("#saveSymbol").on("click", saveSymbol);    
+    $("#saveSymbol").on("click", saveSymbol);
     $("#playButton").on("click", play);
     $("#resetButton").on("click", resetGame);
     $("#navbtn").on("click", loadRules);
@@ -421,7 +422,7 @@ function paintSymbol() {
     cantMoveLeft = false; // resets bool for movement.
     cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
-    if (!checkRotationCollition()){ // If this is not true then block cant rotate and goes back to previous symbol.
+    if (!checkRotationCollition()) { // If this is not true then block cant rotate and goes back to previous symbol.
         piece = makePiece(previousRotatedSymbol);
     }
     var pieceToWrite = extractingColorNumber(piece);
@@ -518,20 +519,22 @@ function paintSavedSymbol() {
 //saves the symbol currently being played and removes it from the nextSymbols array. If called again with a piece already saved
 //it will swap the saved one for the one being played
 function saveSymbol() {
-    if (savedSymbol.length < 1) {
-        savedSymbol[0] = nextSymbols[0];
-        nextSymbols.splice(0, 1);
-        y = 0;
-        x = 4;
-        paintSavedSymbol();
-    }
-    else {
-        var symbolToSwap = savedSymbol[0];
-        savedSymbol[0] = nextSymbols[0];
-        nextSymbols[0] = symbolToSwap;
-        y = 0;
-        x = 4;
-        paintSavedSymbol();
+    if (startGame) {
+        if (savedSymbol.length < 1) {
+            savedSymbol[0] = nextSymbols[0];
+            nextSymbols.splice(0, 1);
+            y = 0;
+            x = 4;
+            paintSavedSymbol();
+        }
+        else {
+            var symbolToSwap = savedSymbol[0];
+            savedSymbol[0] = nextSymbols[0];
+            nextSymbols[0] = symbolToSwap;
+            y = 0;
+            x = 4;
+            paintSavedSymbol();
+        }
     }
 }
 
@@ -587,6 +590,7 @@ function play() {
     }
     else {
         resetGame();
+        startGame = true;
         gameplayLoopID = setInterval(startGameplayLoop, 800);
     }
 }
@@ -629,6 +633,7 @@ function startGameplayLoop() {
 //clears all the canvases to an empty state and stops the stops the gameplay loop
 function resetGame() {
     resetBoard();
+    startGame = false;
     tick = 0;
     $("#counter").text(tick);
     clearInterval(gameplayLoopID);
@@ -654,86 +659,88 @@ function resetBoard() {
 }
 
 function rotate() {
-    switch (nextSymbols[0]) {
-        case "t":
-            nextSymbols[0] = "t1";
-            break;
-        case "t1":
-            nextSymbols[0] = "t2";
-            break;
-        case "t2":
-            nextSymbols[0] = "t3";
-            break;
-        case "t3":
-            nextSymbols[0] = "t";
-            break;
-        case "l":
-            nextSymbols[0] = "l1";
-            break;
-        case "l1":
-            nextSymbols[0] = "l2";
-            break;
-        case "l2":
-            nextSymbols[0] = "l3";
-            break;
-        case "l3":
-            nextSymbols[0] = "l";
-            break;
-        case "j":
-            nextSymbols[0] = "j1";
-            break;
-        case "j1":
-            nextSymbols[0] = "j2";
-            break;
-        case "j2":
-            nextSymbols[0] = "j3";
-            break;
-        case "j3":
-            nextSymbols[0] = "j";
-            break;
-        case "i":
-            nextSymbols[0] = "i1";
-            break;
-        case "i1":
-            nextSymbols[0] = "i";
-            break;
-        case "s":
-            nextSymbols[0] = "s1";
-            break;
-        case "s1":
-            nextSymbols[0] = "s";
-            break;
-        case "z":
-            nextSymbols[0] = "z1";
-            break;
-        case "z1":
-            nextSymbols[0] = "z";
-            break;
-
-    }
-    //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
-    //gameboard when the player rotates a piece
-    var lastXInSymbol;
-    var symbolToCheck = makePiece(nextSymbols[0]);
-    var valueIsCorrect = false;
-    for (let j = symbolToCheck.length - 1; j >= 0; j--) {
-        for (let i = 0; i < symbolToCheck.length; i++) {
-            var tempSymbolToCheck = symbolToCheck[i];
-            if (tempSymbolToCheck[j] != 0) {
-                lastXInSymbol = j;
-                valueIsCorrect = true;
+    if (startGame) {
+        switch (nextSymbols[0]) {
+            case "t":
+                nextSymbols[0] = "t1";
                 break;
-            }
+            case "t1":
+                nextSymbols[0] = "t2";
+                break;
+            case "t2":
+                nextSymbols[0] = "t3";
+                break;
+            case "t3":
+                nextSymbols[0] = "t";
+                break;
+            case "l":
+                nextSymbols[0] = "l1";
+                break;
+            case "l1":
+                nextSymbols[0] = "l2";
+                break;
+            case "l2":
+                nextSymbols[0] = "l3";
+                break;
+            case "l3":
+                nextSymbols[0] = "l";
+                break;
+            case "j":
+                nextSymbols[0] = "j1";
+                break;
+            case "j1":
+                nextSymbols[0] = "j2";
+                break;
+            case "j2":
+                nextSymbols[0] = "j3";
+                break;
+            case "j3":
+                nextSymbols[0] = "j";
+                break;
+            case "i":
+                nextSymbols[0] = "i1";
+                break;
+            case "i1":
+                nextSymbols[0] = "i";
+                break;
+            case "s":
+                nextSymbols[0] = "s1";
+                break;
+            case "s1":
+                nextSymbols[0] = "s";
+                break;
+            case "z":
+                nextSymbols[0] = "z1";
+                break;
+            case "z1":
+                nextSymbols[0] = "z";
+                break;
 
         }
-        if (valueIsCorrect) break;
-    }
-    valueIsCorrect = false;
-    if (x + lastXInSymbol > 9) {
-        x = x - lastXInSymbol;
+        //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
+        //gameboard when the player rotates a piece
+        var lastXInSymbol;
+        var symbolToCheck = makePiece(nextSymbols[0]);
+        var valueIsCorrect = false;
+        for (let j = symbolToCheck.length - 1; j >= 0; j--) {
+            for (let i = 0; i < symbolToCheck.length; i++) {
+                var tempSymbolToCheck = symbolToCheck[i];
+                if (tempSymbolToCheck[j] != 0) {
+                    lastXInSymbol = j;
+                    valueIsCorrect = true;
+                    break;
+                }
+
+            }
+            if (valueIsCorrect) break;
+        }
+        valueIsCorrect = false;
+        if (x + lastXInSymbol > 9) {
+            x = x - lastXInSymbol;
+            updateGameBoard();
+        }
         updateGameBoard();
     }
-    updateGameBoard();
 }
 
 
@@ -760,7 +767,7 @@ function keyPressed(e) {
 }
 
 function leftMove() { // moves piece one step left
-    if (checkSides() != 0 && !cantMoveLeft) {
+    if (checkSides() != 0 && !cantMoveLeft && startGame) {
         x--;
         updateGameBoard();
     }
@@ -770,7 +777,7 @@ function leftMove() { // moves piece one step left
 }
 function rightMove() { // moves piece one step right
 
-    if (checkSides() != 1 && !cantMoveRight) {
+    if (checkSides() != 1 && !cantMoveRight && startGame) {
         x++;
         updateGameBoard();
     }
@@ -780,8 +787,8 @@ function rightMove() { // moves piece one step right
 }
 
 function downMove() { // moves piece one step down
-    
-    if (y + 1 < 19 && board[x][y + 1] == 0) {
+
+    if (y + 1 < 19 && board[x][y + 1] == 0 && startGame) {
         y++;
         updateGameBoard();
     }
@@ -790,18 +797,18 @@ function downMove() { // moves piece one step down
 
 
 //Checks if rotation is possible. If not returns false.
-function checkRotationCollition(rotationDirection){
+function checkRotationCollition(rotationDirection) {
 
     let canRotate = true;
-        let piece = makePiece(nextSymbols[0]);
-        for (let i = 0; i < piece.length; i++){
-            for (let j = 0; j < piece.length; j++){
-                if (piece[i][j] != 0 && board[x+j][y+i] !=0){
-                    canRotate = false;
-                }
+    let piece = makePiece(nextSymbols[0]);
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece.length; j++) {
+            if (piece[i][j] != 0 && board[x + j][y + i] != 0) {
+                canRotate = false;
             }
         }
-        return canRotate;
+    }
+    return canRotate;
 }
 
 
