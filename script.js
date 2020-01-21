@@ -646,6 +646,7 @@ function resetGame() {
     nextSymbols = [];
     savedSymbol = [];
     points = 0;
+    currentLevel = 1;
     $("#score").text("Score: " + points);
     $("#gameOverText").css("display", "none");
     x = 4;
