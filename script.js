@@ -21,6 +21,7 @@ const pieceTwoContext = pieceTwoCanvas.getContext("2d");
 const savedSymbolCanvas = document.getElementById("savedSymbol");
 const savedSymbolContext = savedSymbolCanvas.getContext("2d");
 var hasCollided = false;
+var previousRotatedSymbol;
 
 $(document).ready(function () {
     var rulesText = document.getElementById("rules");
@@ -439,6 +440,9 @@ function paintSymbol() {
     cantMoveLeft = false; // resets bool for movement.
     cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
+    if (!checkRotationCollition()){ // If this is not true then block cant rotate and goes back to previous symbol.
+        piece = makePiece(previousRotatedSymbol);
+    }
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
     var lastY = getLastY(piece);
@@ -764,6 +768,8 @@ function keyPressed(e) {
         saveSymbol();
     }
     else if (keyCode == 90) {   // Z key
+        previousRotatedSymbol = nextSymbols[0]; //Saves current symbol incase rotation is not valid. 
+
         rotate();
         playSoundEffect("rotate");
     }
@@ -797,8 +803,21 @@ function downMove() { // moves piece one step down
     }
 }
 
+
+
+//Checks if rotation is possible. If not returns false.
 function checkRotationCollition(rotationDirection){
-        
+
+    let canRotate = true;
+        let piece = makePiece(nextSymbols[0]);
+        for (let i = 0; i < piece.length; i++){
+            for (let j = 0; j < piece.length; j++){
+                if (piece[i][j] != 0 && board[x+j][y+i] !=0){
+                    canRotate = false;
+                }
+            }
+        }
+        return canRotate;
 }
 
 
@@ -950,3 +969,5 @@ function addHighScore() {
 
     printHighScore();
 }
+
+
