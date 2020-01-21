@@ -957,9 +957,6 @@ function addHighScore() {
 // highscore.push(score);
 // highscore.*/
 
-
-/* Clears a line*/
-
 // function giveScore() { // needs lots of rework.
 //     let newCount = 0;
 //     var tempBoardLine = 0;
