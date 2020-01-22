@@ -67,7 +67,6 @@ var allText = "file not found";
 txtFile.onreadystatechange = function () {
     if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
         allText = txtFile.responseText;
-        //allText = allText.split("\n").join("<br>");
     }
 
     document.getElementById('rules').innerText = allText;
@@ -107,7 +106,7 @@ function closeUsernameModal() {
 }
 
 
-
+// returns a 2d-array representing the tetris block
 function makePiece(type) {
     if (type === "t") {
         return [
@@ -246,11 +245,10 @@ function makePiece(type) {
 };
 
 var board = [];
-/* Sets the game board state when a piece has stopped moving */
 function makeGameBoard() {
 
     /*
-        Makes a temp gamebord and saved the blocks and to the "board" variable.
+        Makes a temp gameboard and saves the blocks and to the "board" variable.
     */
     var gameBoard = [];
 
@@ -292,9 +290,9 @@ function generateNextThreeSymbols() {
 function getLastY(symbol) {     //returns the last position y-wise in the tetramino building block square.
     var isValue = false;
     var yl = 0;
-    for (var i = symbol.length - 1; i >= 0; i--) {
+    for (let i = symbol.length - 1; i >= 0; i--) {
         let tempSymbol = symbol[i];
-        for (var j = 0; j < symbol.length; j++) {
+        for (let j = 0; j < symbol.length; j++) {
             if (tempSymbol[j] != 0) {
                 yl = i;                 //saves where in the tetramino square the last block appears y-wise.
                 isValue = true;
@@ -316,8 +314,6 @@ function resetCurrentBlockCoords() {
 }
 // checks if the current block is at any edge of the side of the game board
 function checkSides() {
-
-
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
             if (currentBlock.blockX[i] == 0) {
@@ -326,7 +322,6 @@ function checkSides() {
             else if (currentBlock.blockX[i] == 9) {
                 return 1;
             }
-
         }
     }
 }
@@ -451,7 +446,7 @@ function paintSymbol() {
                 }
 
             }
-            if (isAtBottom || hasCollided) {
+            if (isAtBottom || hasCollided) { //if either is true a block has stopped moving
                 atBottom = true;
                 isAtBottom = false;
                 hasCollided = false;
@@ -538,7 +533,7 @@ function saveSymbol() {
 }
 
 
-
+// this function checks the state of the game board for each iteration
 function updateGameBoard() {
     paintSymbol();
     if (hasCollided || atBottom) {
@@ -658,7 +653,7 @@ function resetBoard() {
         }
     }
 }
-
+//Replaces current block with a 90 degree rotated equivalent block.
 function rotate() {
     if (startGame) {
         switch (nextSymbols[0]) {
@@ -763,16 +758,6 @@ function rightMove() { // moves piece one step right
         playSoundEffect("error");
     }
 }
-
-function downMove() { // moves piece one step down
-
-    if (y + 1 < 19 && board[x][y + 1] == 0 && startGame) {
-        y++;
-        updateGameBoard();
-    }
-}
-
-
 
 //Checks if the rotaded block actually has space to rotate. If not returns false.
 function checkRotationCollition(rotationDirection) {
@@ -892,10 +877,6 @@ function giveScore(bonus) {
     }
     $("#score").text("Score: " + points);
 }
-/* Clears a line*/
-
-
-
 
 /*Higscore list*/
 //prints either a message stating that the highscore is empty if highscore list is empty,
