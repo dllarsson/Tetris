@@ -3,7 +3,7 @@ var y = 0;
 var atBottom = false;
 var points = 0;
 var playerName = "";
-var setUsernameBeforeStartingGame = false;
+var setUsernameAfterGameOver = false;
 var highScore;
 var startGame = false;
 var currentLevel = 1;
@@ -34,7 +34,8 @@ $(document).ready(function () {
     $("#playButton").on("click", play);
     $("#resetButton").on("click", resetGame);
     $("#navbtn").on("click", loadRules);
-    $("#changeUsernameBtn").on("click", showUserNameModal);
+    $("#changeUsernameBtn").on("click", showUsernameModal);
+    $("#cancelUsernameInput").on("click", closeUsernameModal);
     $("#handeUsernameButton").on("click", handleUsernameFromInput);
     makeGameBoard();
     printHighScore();
@@ -83,22 +84,26 @@ function handleUsernameFromInput() {
         $("#usernameText").text("Your username is: " + playerName);
         $("#usernameInput").val("");
         $("#changeUsernameBtn").html("Change username");
-        if (setUsernameBeforeStartingGame) {
-            play();
+        if (setUsernameAfterGameOver) {
+            addHighScore();
         }
     }
 
     else {
-        $("#invalidUsername").css("display", "block");
+        $("#invalidUsername").css("visibility", "visible");
         $("#invalidUsername").fadeOut(3000, function () {
-            $("#invalidUsername").css('display', "none");
+            $("#invalidUsername").css("visibility", "hidden");
         });
     }
 }
 
 //displays the modal where you enter your username
-function showUserNameModal() {
+function showUsernameModal() {
     $("#usernameContainer").css("display", "block");
+}
+
+function closeUsernameModal(){
+    $("#usernameContainer").css("display", "none");
 }
 
 
@@ -345,7 +350,7 @@ function drawSymbol(pieceToDraw) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
                 if (board[i][j] < 10 && board[i][j + 1] > 10) { // checks if the moving block collides with a fix block.
-                    console.log("collision");
+                    //console.log("collision");
                     atBottom = true;
                     isAtBottom = true;
                     hasCollided = true;
@@ -430,7 +435,7 @@ function paintSymbol() {
     var isAtBottom = false;
     if (y + lastY >= 19) { //Block reaches bottom
         isAtBottom = true;
-        console.log("Stop");
+        //console.log("Stop");
     }
 
 
@@ -576,22 +581,20 @@ function checkIfGameOver() {
     if (gameOver) {
         playSoundEffect("gameOver");
         $("#gameOverText").css("display", "block");
-        addHighScore();
+        
+    if (playerName == "") {
+        showUsernameModal();
+        setUsernameAfterGameOver = true;
+    }
     }
 }
 
 //if the player hasn't set their username it shows the username input window, if the username is set it resets the board
 //and then starts the game
 function play() {
-    if (playerName == "") {
-        showUserNameModal();
-        setUsernameBeforeStartingGame = true;
-    }
-    else {
         resetGame();
         startGame = true;
         gameplayLoopID = setInterval(startGameplayLoop, 600);
-    }
 }
 
 function gameSpeed() {

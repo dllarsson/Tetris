@@ -35,7 +35,7 @@ canvas {
 
 #invalidUsername{
   color:red;
-  display:none;
+  visibility:hidden;
 }
 
 li{
