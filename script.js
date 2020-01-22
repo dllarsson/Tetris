@@ -559,7 +559,7 @@ function updateGameBoard() {
 //message and runs the addHighScore function
 function checkIfGameOver() {
     var gameOver = false;
-    if (x - 1 > 0 && board[x - 1][1] != 0) {
+    if (x - 1 >= 0 && board[x - 1][1] != 0) {
         gameOver = true;
         clearInterval(gameplayLoopID);
     }
