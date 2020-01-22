@@ -246,8 +246,7 @@ function makePiece(type) {
 };
 
 var board = [];
-var firstBlock = true;
-/* Sets the game board state when a piece has stopped moving (?) */
+/* Sets the game board state when a piece has stopped moving */
 function makeGameBoard() {
     var gameBoard = [];
 
@@ -265,9 +264,6 @@ function makeGameBoard() {
 
         }
         gameBoard.push(tempArr);
-    }
-    if (firstBlock == true) {
-        firstBlock = false;
     }
     board = gameBoard;
 }
@@ -289,7 +285,7 @@ function generateNextThreeSymbols() {
     }
 }
 
-function getLastY(symbol) {     //returns an array of the first and last position x-wise and y-wise in the tetramino building block square.
+function getLastY(symbol) {     //returns the last position y-wise in the tetramino building block square.
     var isValue = false;
     var yl = 0;
     for (var i = symbol.length - 1; i >= 0; i--) {
@@ -314,7 +310,7 @@ function resetCurrentBlockCoords() {
     currentBlock.blockX = [];
     currentBlock.blockY = [];
 }
-
+// checks if the current block is at any edge of the side of the game board
 function checkSides() {
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
@@ -350,12 +346,9 @@ function drawSymbol(pieceToDraw) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
                 if (board[i][j] < 10 && board[i][j + 1] > 10) { // checks if the moving block collides with a fix block.
-                    //console.log("collision");
                     atBottom = true;
                     isAtBottom = true;
                     hasCollided = true;
-
-
                 }
                 if (i > 0) {
                     if ((board[i][j] < 10 && board[i - 1][j] > 10) || (board[i][j] < 10 && board[i - 1][j + 1] > 10)) {// checks if the moving block has a fixed block to the left
@@ -435,7 +428,6 @@ function paintSymbol() {
     var isAtBottom = false;
     if (y + lastY >= 19) { //Block reaches bottom
         isAtBottom = true;
-        //console.log("Stop");
     }
 
 
@@ -458,7 +450,6 @@ function paintSymbol() {
 
                 atBottom = true;
                 isAtBottom = false;
-                //nextSymbols.splice(0, 1);
                 hasCollided = false;
 
             }
@@ -627,11 +618,6 @@ function startGameplayLoop() {
     paintNextSymbolOne();
     paintNextSymbolTwo();
     updateGameBoard();
-    if (atBottom) {
-        x = 4;
-        y = 0;
-        atBottom = false;
-    }
     y++;
 }
 
@@ -722,8 +708,7 @@ function rotate() {
                 break;
 
         }
-        //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
-        //gameboard when the player rotates a piece
+        
 
         updateGameBoard();
     }
@@ -781,6 +766,8 @@ function downMove() { // moves piece one step down
 
 //Checks if rotation is possible. If not returns false.
 function checkRotationCollition(rotationDirection) {
+    //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
+        //gameboard when the player rotates a piece
         var lastXInSymbol;
         var symbolToCheck = makePiece(nextSymbols[0]);
         var valueIsCorrect = false;
