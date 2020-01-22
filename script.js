@@ -876,15 +876,16 @@ function playSoundEffect(type) {
             break;
     }
 }
+//updates the players score
 function giveScore(bonus) {
     points += 100;
-    if (bonus == 2) {
+    if (bonus == 2) { // each time a player clears two lines 100 bonus points is given
         points += 100;
     }
-    else if (bonus == 3) {
+    else if (bonus == 3) { // each time a player clears three lines 200 bonus points is given
         points += 200;
     }
-    else if (bonus == 4) {
+    else if (bonus == 4) { // each time a player clears four lines 300 bonus points is given
         points += 300;
     }
     $("#score").text("Score: " + points);
