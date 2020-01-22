@@ -67,10 +67,10 @@ var allText = "file not found";
 txtFile.onreadystatechange = function () {
     if (txtFile.readyState === XMLHttpRequest.DONE && txtFile.status == 200) {
         allText = txtFile.responseText;
-        allText = allText.split("\n").join("<br>");
+        //allText = allText.split("\n").join("<br>");
     }
 
-    document.getElementById('rules').innerHTML = allText;
+    document.getElementById('rules').innerText = allText;
 }
 txtFile.open("GET", 'rules.txt', true);
 txtFile.send(null);
@@ -102,7 +102,7 @@ function showUsernameModal() {
     $("#usernameContainer").css("display", "block");
 }
 
-function closeUsernameModal(){
+function closeUsernameModal() {
     $("#usernameContainer").css("display", "none");
 }
 
@@ -421,12 +421,11 @@ function drawSymbol(pieceToDraw) {
 
 }
 function paintSymbol() {
-    checkIfGameOver();
     cantMoveLeft = false; // resets bool for movement.
     cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
     if (!checkRotationCollition()) { // If this is not true then block cant rotate and goes back to previous symbol.
-        piece = makePiece(previousRotatedSymbol); 
+        piece = makePiece(previousRotatedSymbol);
     }
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -453,11 +452,10 @@ function paintSymbol() {
 
             }
             if (isAtBottom || hasCollided) {
-
                 atBottom = true;
                 isAtBottom = false;
                 hasCollided = false;
-
+                checkIfGameOver();
             }
             if (falseMove != true) {
                 gameBoardContext.clearRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
@@ -578,26 +576,26 @@ function checkIfGameOver() {
     if (gameOver) {
         playSoundEffect("gameOver");
         $("#gameOverText").css("display", "block");
-        
-    if (playerName == "") {
-        showUsernameModal();
-        setUsernameAfterGameOver = true;
-    }
+
+        if (playerName == "") {
+            showUsernameModal();
+            setUsernameAfterGameOver = true;
+        }
     }
 }
 
 //if the player hasn't set their username it shows the username input window, if the username is set it resets the board
 //and then starts the game
 function play() {
-        resetGame();
-        startGame = true;
-        gameplayLoopID = setInterval(startGameplayLoop, 600);
+    resetGame();
+    startGame = true;
+    gameplayLoopID = setInterval(startGameplayLoop, 600);
 }
 
 function gameSpeed() {
-        /*
-            sets the game loop interval to a certain speed depending on what the current score is.
-         */
+    /*
+        sets the game loop interval to a certain speed depending on what the current score is.
+     */
     if (points > 30 && currentLevel === 1) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 400);
@@ -651,9 +649,9 @@ function resetGame() {
 }
 
 function resetBoard() {
-        /*
-            Writes 0 to all values in the board variable, making the board empty of blocks.
-         */
+    /*
+        Writes 0 to all values in the board variable, making the board empty of blocks.
+     */
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             board[i][j] = 0;
@@ -720,7 +718,7 @@ function rotate() {
                 break;
 
         }
-        
+
 
         updateGameBoard();
     }
@@ -779,26 +777,26 @@ function downMove() { // moves piece one step down
 //Checks if the rotaded block actually has space to rotate. If not returns false.
 function checkRotationCollition(rotationDirection) {
     //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
-        //gameboard when the player rotates a piece
-        var lastXInSymbol;
-        var symbolToCheck = makePiece(nextSymbols[0]);
-        var valueIsCorrect = false;
-        for (let j = symbolToCheck.length - 1; j >= 0; j--) {
-            for (let i = 0; i < symbolToCheck.length; i++) {
-                var tempSymbolToCheck = symbolToCheck[i];
-                if (tempSymbolToCheck[j] != 0) {
-                    lastXInSymbol = j;
-                    valueIsCorrect = true;
-                    break;
-                }
-
+    //gameboard when the player rotates a piece
+    var lastXInSymbol;
+    var symbolToCheck = makePiece(nextSymbols[0]);
+    var valueIsCorrect = false;
+    for (let j = symbolToCheck.length - 1; j >= 0; j--) {
+        for (let i = 0; i < symbolToCheck.length; i++) {
+            var tempSymbolToCheck = symbolToCheck[i];
+            if (tempSymbolToCheck[j] != 0) {
+                lastXInSymbol = j;
+                valueIsCorrect = true;
+                break;
             }
-            if (valueIsCorrect) break;
+
         }
-        valueIsCorrect = false;
-        if (x + lastXInSymbol > 9) {
-            x = x - lastXInSymbol + 1;
-        }
+        if (valueIsCorrect) break;
+    }
+    valueIsCorrect = false;
+    if (x + lastXInSymbol > 9) {
+        x = x - lastXInSymbol + 1;
+    }
 
 
 
