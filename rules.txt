@@ -8,8 +8,9 @@ the arrow keys or buttons.
 Try to move the tetrominoes to get them to
 move together.
 
-3. Use the action button to rotate the
-tetrominoes to fit holes.
+3. Use the Z-button to rotate the
+tetrominoes to fit holes. Use the X-button
+to save a block or to use it again.
 
 4. Complete lines to gain points and
 raise the level. The more lines completed
