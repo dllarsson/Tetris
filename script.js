@@ -20,7 +20,7 @@ const pieceTwoContext = pieceTwoCanvas.getContext("2d");
 const savedSymbolCanvas = document.getElementById("savedSymbol");
 const savedSymbolContext = savedSymbolCanvas.getContext("2d");
 var hasCollided = false;
-var previousRotatedSymbol;
+var previousRotatedSymbol; // Saves block before rotating, incase rotation is invalid then uses this to return to previous.
 
 $(document).ready(function () {
     var rulesText = document.getElementById("rules");
@@ -249,6 +249,10 @@ var board = [];
 var firstBlock = true;
 /* Sets the game board state when a piece has stopped moving (?) */
 function makeGameBoard() {
+
+    /*
+        Makes a temp gamebord and saved the blocks and to the "board" variable.
+    */
     var gameBoard = [];
 
     for (let i = 0; i < 10; i++) {
@@ -316,6 +320,8 @@ function resetCurrentBlockCoords() {
 }
 
 function checkSides() {
+
+
     if (currentBlock.blockX != 0) {
         for (let i = 0; i < currentBlock.blockX.length; i++) {
             if (currentBlock.blockX[i] == 0) {
@@ -350,7 +356,6 @@ function drawSymbol(pieceToDraw) {
         for (let j = 0; j < 20; j++) {
             if (board[i][j] != 0) {
                 if (board[i][j] < 10 && board[i][j + 1] > 10) { // checks if the moving block collides with a fix block.
-                    //console.log("collision");
                     atBottom = true;
                     isAtBottom = true;
                     hasCollided = true;
@@ -427,7 +432,7 @@ function paintSymbol() {
     cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
     if (!checkRotationCollition()) { // If this is not true then block cant rotate and goes back to previous symbol.
-        piece = makePiece(previousRotatedSymbol);
+        piece = makePiece(previousRotatedSymbol); 
     }
     var pieceToWrite = extractingColorNumber(piece);
     var falseMove = false;
@@ -598,6 +603,9 @@ function play() {
 }
 
 function gameSpeed() {
+        /*
+            sets the game loop interval to a certain speed depending on what the current score is.
+         */
     if (points > 30 && currentLevel === 1) {
         clearInterval(gameplayLoopID);
         gameplayLoopID = setInterval(startGameplayLoop, 400);
@@ -656,6 +664,9 @@ function resetGame() {
 }
 
 function resetBoard() {
+        /*
+            Writes 0 to all values in the board variable, making the board empty of blocks.
+         */
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             board[i][j] = 0;
@@ -779,8 +790,9 @@ function downMove() { // moves piece one step down
 
 
 
-//Checks if rotation is possible. If not returns false.
+//Checks if the rotaded block actually has space to rotate. If not returns false.
 function checkRotationCollition(rotationDirection) {
+        
         var lastXInSymbol;
         var symbolToCheck = makePiece(nextSymbols[0]);
         var valueIsCorrect = false;
@@ -817,6 +829,8 @@ function checkRotationCollition(rotationDirection) {
 
 
 function checkLines() {   //Check lines after a block lands.
+
+    // if an entire row is full x wise then it will clear that line and add a new line ontop of the game board.
     let counter = 0;
     let linesCleared = 0;
     for (let i = 19; i >= 0; i--) {
