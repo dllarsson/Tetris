@@ -9,6 +9,7 @@ var startGame = false;
 var currentLevel = 1;
 var nextSymbols = [];
 var savedSymbol = [];
+var highScoreAdded = false;
 var colors = ["blue", "#03f8fc", "green", "orange", "#b503fc", "red", "yellow"];
 var gameplayLoopID;
 const gameBoardCanvas = document.getElementById("game");
@@ -419,7 +420,7 @@ function paintSymbol() {
     cantMoveLeft = false; // resets bool for movement.
     cantMoveRight = false; // resets bool for movement.
     var piece = makePiece(nextSymbols[0]);
-    if (!checkRotationCollition()) { // If this is not true then block cant rotate and goes back to previous symbol.
+    if (!checkRotationCollision()) { // If this is not true then block cant rotate and goes back to previous symbol.
         piece = makePiece(previousRotatedSymbol);
     }
     var pieceToWrite = extractingColorNumber(piece);
@@ -576,6 +577,11 @@ function checkIfGameOver() {
             showUsernameModal();
             setUsernameAfterGameOver = true;
         }
+        else {
+            if (!highScoreAdded) {
+                addHighScore();
+            }
+        }
     }
 }
 
@@ -627,6 +633,7 @@ function startGameplayLoop() {
 //clears all the canvases to an empty state and stops the stops the gameplay loop
 function resetGame() {
     resetBoard();
+    highScoreAdded = false;
     startGame = false;
     clearInterval(gameplayLoopID);
     nextSymbols = [];
@@ -760,7 +767,7 @@ function rightMove() { // moves piece one step right
 }
 
 //Checks if the rotaded block actually has space to rotate. If not returns false.
-function checkRotationCollition(rotationDirection) {
+function checkRotationCollision(rotationDirection) {
     //finds last X in the symbol currently being play and makes sure it the whole symbol stays inside the
     //gameboard when the player rotates a piece
     var lastXInSymbol;
@@ -922,6 +929,7 @@ function printHighScore() {
 //and removes any score that isn't in the top 5 and then runs the printHighScore function
 function addHighScore() {
     var listOfScores;
+
     if (localStorage.getItem("score") == null) {
         listOfScores = [];
     }
@@ -948,7 +956,7 @@ function addHighScore() {
         listOfScores.splice(listOfScores.length - 1, 1);
         localStorage.setItem("score", JSON.stringify(listOfScores));
     }
-
+    highScoreAdded = true;
     printHighScore();
 }
 
